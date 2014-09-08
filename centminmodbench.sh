@@ -1,6 +1,14 @@
 #!/bin/bash
 ###############################################################
+# centminmodbench.sh
+# https://github.com/centminmod/centminmodbench
 # benchmark script for centminmod.com users
+#
+# merges several existing benchmark scripts I wrote already
+# for mysqlslap and php bench.php and micro_bench.php
+#
+# inspired by STH Linux benchmark script 
+# https://github.com/STH-Dev/linux-bench
 ###############################################################
 SCRIPTNAME=centminmodbench.sh
 VER=0.0.1
