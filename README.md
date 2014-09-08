@@ -20,7 +20,8 @@ To run type in SSH window as root user:
 
 If you want to download to server and run in SSH window as root user:
 
-    mkdir /root/tools && cd /root/tools
+    mkdir -p /root/tools
+    cd /root/tools
     wget -O centminmodbench.sh https://github.com/centminmod/centminmodbench/raw/master/centminmodbench.sh
     chmod +x centminmodbench.sh
 
