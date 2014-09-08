@@ -711,6 +711,8 @@ cecho "FIO random reads: " $boldyellow
 s
 cecho "FIO random writes: " $boldyellow
 ./fio writes.ini
+
+s
 	fi
 }
 
