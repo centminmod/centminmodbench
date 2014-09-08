@@ -391,10 +391,10 @@ cleanmem() {
 
 phpmem() {
 	if [[ "$SHOWPHPSTATS" = [yY] ]]; then
-		bbcodestart
+		
 		p=${PROCESSNAME}
 		ps -C $p -O rss | gawk '{ count ++; sum += $2 }; END {count --; print "[php stats]: Number of processes =",count; print "[php stats]: Memory usage per process =",sum/1024/count, "MB"; print "[php stats]: TOTAL memory usage =", sum/1024, "MB" ;};'
-		bbcodeend
+		
 	fi
 }
 
@@ -406,7 +406,7 @@ restartphp() {
 
 phpi() {
 	{
-	bbcodestart
+	
 
 	cecho "-------------------------------------------" $boldgreen
 	cecho "System PHP Info" $boldyellow
@@ -419,24 +419,24 @@ phpi() {
 	cat /etc/redhat-release && uname -m
 	echo "Centmin Mod $(cat /etc/centminmod-release)"
 	free -ml
-	bbcodeend
-	bbcodestart
+	
+	
 	echo "----------------------------------------------"
 	php -v
-	bbcodeend
-	bbcodestart
+	
+	
 	echo "----------------------------------------------"
 	php --ini
-	bbcodeend
-	bbcodestart
+	
+	
 	echo "----------------------------------------------"
 	php -m
-	bbcodeend
-	bbcodestart
+	
+	
 	echo "----------------------------------------------"
-	php -i
-	bbcodeend
-	} 2>&1 > ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log
+	# php -i
+	
+	} 2>&1 | tee ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log
 	sed -i "s/$CLIENTIP/ipaddress/g" ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log
 	sed -i "s/$SERVERIP/serverip/g" ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log
 	sed -i "s/$HOSTNAME/hostname/g" ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log
@@ -458,9 +458,9 @@ fbench() {
 	for ((i = 0 ; i < $RUNS ; i++)); do
 		{
 		echo
-		bbcodestart
+		
 		/usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' php Zend/bench.php
-		bbcodeend
+		
 		phpmem
 		} 2>&1 | tee -a $PHPBENCHLOG
 	done
@@ -473,14 +473,14 @@ fbench() {
 	TIMEMEM=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPBENCHLOG | awk '{ sum += $10 } END { if (NR > 0) printf "%.2f\n", sum / NR }' )
 	TIMECS=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPBENCHLOG | awk '{ sum += $13 } END { if (NR > 0) printf "%.2f\n", sum / NR }' )
 	echo 
-	bbcodestart
+	
 	echo -e "bench.php results from $RUNS runs\n$TOTAL"
 	echo
 	echo "bench.php avg: $AVG"
 	echo "Avg: real: ${TIMEREAL}s user: ${TIMEUSER}s sys: ${TIMESYS}s cpu: ${TIMECPU}% maxmem: ${TIMEMEM}KB cswaits: ${TIMECS}"
 	echo "created results log at $PHPBENCHLOG"
 	echo "server PHP info log at ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log"
-	bbcodeend
+	
 	echo
 }
 
@@ -496,9 +496,9 @@ fmicrobench() {
 	for ((i = 0 ; i < $RUNS ; i++)); do
 		{
 		echo
-		bbcodestart
+		
 		/usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' php Zend/micro_bench.php
-		bbcodeend
+		
 		phpmem
 		} 2>&1 | tee -a $PHPMICROBENCHLOG
 	done
@@ -511,14 +511,14 @@ fmicrobench() {
 	MTIMEMEM=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPMICROBENCHLOG | awk '{ sum += $10 } END { if (NR > 0) printf "%.2f\n", sum / NR }' )
 	MTIMECS=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPMICROBENCHLOG | awk '{ sum += $13 } END { if (NR > 0) printf "%.2f\n", sum / NR }' )
 	echo 
-	bbcodestart
+	
 	echo -e "micro_bench.php results from $RUNS runs\n$MTOTAL"
 	echo
 	echo "micro_bench.php avg: $MAVG"
 	echo "Avg: real: ${MTIMEREAL}s user: ${MTIMEUSER}s sys: ${MTIMESYS}s cpu: ${MTIMECPU}% maxmem: ${MTIMEMEM}KB cswaits: ${MTIMECS}"
 	echo "created results log at $PHPMICROBENCHLOG"
 	echo "server PHP info log at ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log"
-	bbcodeend
+	
 	echo
 }
 
@@ -533,6 +533,7 @@ ended() {
 #####################
 starttime=$(date +%s.%N)
 {
+	bbcodestart
 	byline
 	baseinfo
 	opensslbench
@@ -563,6 +564,7 @@ starttime=$(date +%s.%N)
 	fi
 
 	ended
+	bbcodeend
 } 2>&1 | tee ${LOGDIR}/centminmodbench_results_${DT}.log
 
 endtime=$(date +%s.%N)
