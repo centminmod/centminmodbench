@@ -22,7 +22,7 @@ If you want to download to server and run in SSH window as root user:
     wget -O centminmodbench.sh https://github.com/centminmod/centminmodbench/raw/master/centminmodbench.sh
     chmod +x centminmodbench.sh
 
-To run script location then in SSH window as root user type:
+To run script locally in SSH window as root user type:
 
     /root/tools/centminmodbench.sh
 
