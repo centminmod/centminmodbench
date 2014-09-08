@@ -46,7 +46,7 @@ BBCODE='y'
 
 # how many runs to do for bench.php & micro_bench.php
 # the results will be averaged over that many runs
-RUNS='4'
+RUNS='3'
 
 IOPING_VERSION=0.6
 FIO_VERSION=2.0.9
@@ -467,9 +467,9 @@ phpi() {
 	# php -i
 	
 	} 2>&1 | tee ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log
-	sed -i "s/$CLIENTIP/ipaddress/g" ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log
-	sed -i "s/$SERVERIP/serverip/g" ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log
-	sed -i "s/$HOSTNAME/hostname/g" ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log
+	sed -i "s/$CLIENTIP/ipaddress/g" ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log 2>/dev/null
+	sed -i "s/$SERVERIP/serverip/g" ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log 2>/dev/null
+	sed -i "s/$HOSTNAME/hostname/g" ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log 2>/dev/null
 }
 
 changedir() {
@@ -763,9 +763,9 @@ bandwidthbench() {
 		# download_benchmark 'MammothVPS, Sydney, Australia' 'http://www.mammothvpscustomer.com/test100MB.dat'
 		fi
 		
-		if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
-		download_benchmark 'Leaseweb, Haarlem, NL' 'http://mirror.nl.leaseweb.net/speedtest/100mb.bin'
-		fi
+		# if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
+		# download_benchmark 'Leaseweb, Haarlem, NL' 'http://mirror.nl.leaseweb.net/speedtest/100mb.bin'
+		# fi
 		
 		if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
 		download_benchmark 'Leaseweb, Manassas, VA, USA' 'http://mirror.us.leaseweb.net/speedtest/100mb.bin'
