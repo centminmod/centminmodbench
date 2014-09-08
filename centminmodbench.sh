@@ -30,6 +30,7 @@ RUN_DISKDD='y'
 RUN_DISKIOPING='y'
 RUN_DISKFIO='y'
 RUN_BANDWIDTHBENCH='y'
+RUN_PINGTESTS='y'
 RUN_UNIXBENCH='n'
 UNIXBENCH_VER='5.1.3'
 
@@ -769,6 +770,73 @@ bandwidthbench() {
 	fi
 }
 
+pingtests() {
+	if [[ "$RUN_PINGTESTS" = [yY] ]]; then
+	s
+	cecho "-------------------------------------------" $boldgreen
+	cecho "Running ping tests..." $boldyellow
+	cecho "-------------------------------------------" $boldgreen
+
+	s
+	cecho "Pings (cachefly.cachefly.net):" $boldyellow
+	ping -c 3 cachefly.cachefly.net 2>&1
+
+	s
+	cecho "Pings (syd-au-ping.vultr.com):" $boldyellow
+	ping -c 3 syd-au-ping.vultr.com 2>&1
+
+	s
+	cecho "Pings (hnd-jp-ping.vultr.com):" $boldyellow
+	ping -c 3 hnd-jp-ping.vultr.com 2>&1
+
+	s
+	cecho "Pings (lax-ca-us-ping.vultr.com):" $boldyellow
+	ping -c 3 lax-ca-us-ping.vultr.com 2>&1
+
+	s
+	cecho "Pings (wa-us-ping.vultr.com):" $boldyellow
+	ping -c 3 wa-us-ping.vultr.com 2>&1
+
+	s
+	cecho "Pings (tx-us-ping.vultr.com):" $boldyellow
+	ping -c 3 tx-us-ping.vultr.com 2>&1
+
+	s
+	cecho "Pings (il-us-ping.vultr.com):" $boldyellow
+	ping -c 3 il-us-ping.vultr.com 2>&1
+
+	s
+	cecho "Pings (ga-us-ping.vultr.com):" $boldyellow
+	ping -c 3 ga-us-ping.vultr.com 2>&1
+
+	s
+	cecho "Pings (fl-us-ping.vultr.com):" $boldyellow
+	ping -c 3 fl-us-ping.vultr.com 2>&1
+
+	s
+	cecho "Pings (nj-us-ping.vultr.com):" $boldyellow
+	ping -c 3 nj-us-ping.vultr.com 2>&1
+
+	s
+	cecho "Pings (fra-de-ping.vultr.com):" $boldyellow
+	ping -c 3 fra-de-ping.vultr.com 2>&1
+
+	s
+	cecho "Pings (ams-nl-ping.vultr.com):" $boldyellow
+	ping -c 3 ams-nl-ping.vultr.com 2>&1
+
+	s
+	cecho "Pings (lon-gb-ping.vultr.com):" $boldyellow
+	ping -c 3 lon-gb-ping.vultr.com 2>&1
+
+	s
+	cecho "Pings (par-fr-ping.vultr.com):" $boldyellow
+	ping -c 3 par-fr-ping.vultr.com 2>&1
+
+	s
+	fi
+}
+
 ended() {
 	s
 	cecho "-------------------------------------------" $boldgreen
@@ -787,6 +855,7 @@ starttime=$(date +%s.%N)
 	diskdd
 	diskfio
 	bandwidthbench
+	pingtests
 	opensslbench
 	mysqlslapper
 
