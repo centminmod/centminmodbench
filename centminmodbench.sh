@@ -723,7 +723,7 @@ s
 download_benchmark() {
   cecho "Benchmarking download from $1 ($2)" $boldyellow
   DOWNLOAD_SPEED=`wget -O /dev/null $2 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}'`
-  cecho "Got $DOWNLOAD_SPEED" $boldyellow
+  # cecho "Got $DOWNLOAD_SPEED" $boldyellow
   cecho "Download $1: $DOWNLOAD_SPEED" $boldyellow 2>&1 
 }
 
