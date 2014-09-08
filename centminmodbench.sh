@@ -17,6 +17,16 @@ MYSQLSLAP_SAVECSV='n'
 
 RUN_UNIXBENCH='n'
 UNIXBENCH_VER='5.1.3'
+
+SHOWPHPSTATS='n'
+PHPVER=$(php -v | awk -F " " '{print $2}' | head -n1)
+
+# Print output in a forum friendly [CODE] tag format
+BBCODE='y'
+
+# how many runs to do for bench.php & micro_bench.php
+# the results will be averaged over that many runs
+RUNS='4'
 ###############################################################
 DT=`date +"%d%m%y-%H%M%S"`
 OPENSSL_LINKFILE="openssl-${OPENSSL_VERSION}.tar.gz"
@@ -40,6 +50,18 @@ secidx=5 # Number of Secondary Indexes
 intcol=5 # Number of INT columns
 charcol=5 # Number of VARCHAR Columns
 queries=15000 # Number of Queries per client
+
+DIR_TMP='/svr-setup'
+PHPBENCHLOGDIR='/home/phpbench_logs'
+PHPBENCHLOGFILE="bench_${DT}.log"
+PHPMICROBENCHLOGFILE="bench_micro_${DT}.log"
+PHPBENCHLOG="${PHPBENCHLOGDIR}/${PHPBENCHLOGFILE}"
+PHPMICROBENCHLOG="${PHPBENCHLOGDIR}/${PHPMICROBENCHLOGFILE}"
+
+CLIENTIP=$(echo "${SSH_CLIENT%% *}")
+SERVERIP=$(ip addr show | grep -o "inet [0-9]*\.[0-9]*\.[0-9]*\.[0-9]*" | grep -o "[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*" | grep -v 127.0.0.1)
+HOSTNAME=$(hostname)
+PROCESSNAME='php-fpm'
 ###############################################################
 if [ ! -f /etc/centos-release ] ; then
 	cecho "$SCRIPTNAME is meant to be run on CentOS system only" $boldyellow
@@ -56,6 +78,10 @@ fi
 
 if [[ ! -d ${MYSQLSLAP_DIR} ]]; then 
 	mkdir -p ${MYSQLSLAP_DIR}
+fi
+
+if [ ! -d "$PHPBENCHLOGDIR" ]; then
+	mkdir -p $PHPBENCHLOGDIR
 fi
 
 if [[ ! -f /usr/bin/wget ]]; then
@@ -345,6 +371,157 @@ fi
 	fi
 }
 
+bbcodestart() {
+	if [[ "$BBCODE" = [yY] ]]; then
+		echo "[CODE]"
+	fi
+}
+
+bbcodeend() {
+	if [[ "$BBCODE" = [yY] ]]; then
+		echo "[/CODE]"
+	fi
+}
+
+cleanmem() {
+	if [ ! -f /proc/user_beancounters ]; then
+		sync && echo 3 > /proc/sys/vm/drop_caches > /dev/null
+	fi
+}
+
+phpmem() {
+	if [[ "$SHOWPHPSTATS" = [yY] ]]; then
+		bbcodestart
+		p=${PROCESSNAME}
+		ps -C $p -O rss | gawk '{ count ++; sum += $2 }; END {count --; print "[php stats]: Number of processes =",count; print "[php stats]: Memory usage per process =",sum/1024/count, "MB"; print "[php stats]: TOTAL memory usage =", sum/1024, "MB" ;};'
+		bbcodeend
+	fi
+}
+
+restartphp() {
+	service php-fpm restart 2>&1 >/dev/null
+	cleanmem
+	sleep 4
+}
+
+phpi() {
+	{
+	bbcodestart
+
+	cecho "-------------------------------------------" $boldgreen
+	cecho "System PHP Info" $boldyellow
+	cecho "-------------------------------------------" $boldgreen
+	s
+
+	CPUNAME=$(cat /proc/cpuinfo | grep "model name" | cut -d ":" -f2 | tr -s " " | head -n 1)
+	CPUCOUNT=$(cat /proc/cpuinfo | grep "model name" | cut -d ":" -f2 | wc -l)
+	echo "CPU: $CPUCOUNT x$CPUNAME"
+	cat /etc/redhat-release && uname -m
+	echo "Centmin Mod $(cat /etc/centminmod-release)"
+	free -ml
+	bbcodeend
+	bbcodestart
+	echo "----------------------------------------------"
+	php -v
+	bbcodeend
+	bbcodestart
+	echo "----------------------------------------------"
+	php --ini
+	bbcodeend
+	bbcodestart
+	echo "----------------------------------------------"
+	php -m
+	bbcodeend
+	bbcodestart
+	echo "----------------------------------------------"
+	php -i
+	bbcodeend
+	} 2>&1 > ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log
+	sed -i "s/$CLIENTIP/ipaddress/g" ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log
+	sed -i "s/$SERVERIP/serverip/g" ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log
+	sed -i "s/$HOSTNAME/hostname/g" ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log
+}
+
+changedir() {
+	cd ${DIR_TMP}/php-${PHPVER}
+}
+
+fbench() {
+	cecho "-------------------------------------------" $boldgreen
+	cecho "Run PHP test Zend/bench.php" $boldyellow
+	cecho "-------------------------------------------" $boldgreen
+	s
+
+	changedir
+	touch $PHPBENCHLOG
+	echo -e "\n$(date)" >> $PHPBENCHLOG
+	for ((i = 0 ; i < $RUNS ; i++)); do
+		{
+		echo
+		bbcodestart
+		/usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' php Zend/bench.php
+		bbcodeend
+		phpmem
+		} 2>&1 | tee -a $PHPBENCHLOG
+	done
+	TOTAL=$(awk '/Total/ {print $2}' $PHPBENCHLOG)
+	AVG=$(awk '/Total/ {print $2}' $PHPBENCHLOG | awk '{ sum += $1 } END { if (NR > 0) printf "%.4f\n", sum / NR }')
+	TIMEREAL=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPBENCHLOG | awk '{ sum += $2 } END { if (NR > 0) printf "%.2f\n", sum / NR }')
+	TIMEUSER=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPBENCHLOG | awk '{ sum += $4 } END { if (NR > 0) printf "%.2f\n", sum / NR }' )
+	TIMESYS=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPBENCHLOG | awk '{ sum += $6 } END { if (NR > 0) printf "%.2f\n", sum / NR }' )
+	TIMECPU=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPBENCHLOG | awk '{ sum += $8 } END { if (NR > 0) printf "%.2f\n", sum / NR }' )
+	TIMEMEM=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPBENCHLOG | awk '{ sum += $10 } END { if (NR > 0) printf "%.2f\n", sum / NR }' )
+	TIMECS=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPBENCHLOG | awk '{ sum += $13 } END { if (NR > 0) printf "%.2f\n", sum / NR }' )
+	echo 
+	bbcodestart
+	echo -e "bench.php results from $RUNS runs\n$TOTAL"
+	echo
+	echo "bench.php avg: $AVG"
+	echo "Avg: real: ${TIMEREAL}s user: ${TIMEUSER}s sys: ${TIMESYS}s cpu: ${TIMECPU}% maxmem: ${TIMEMEM}KB cswaits: ${TIMECS}"
+	echo "created results log at $PHPBENCHLOG"
+	echo "server PHP info log at ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log"
+	bbcodeend
+	echo
+}
+
+fmicrobench() {
+	cecho "-------------------------------------------" $boldgreen
+	cecho "Run PHP test Zend/micro_bench.php" $boldyellow
+	cecho "-------------------------------------------" $boldgreen
+	s
+	
+	changedir
+	touch $PHPMICROBENCHLOG
+	echo -e "\n$(date)" >> $PHPMICROBENCHLOG
+	for ((i = 0 ; i < $RUNS ; i++)); do
+		{
+		echo
+		bbcodestart
+		/usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' php Zend/micro_bench.php
+		bbcodeend
+		phpmem
+		} 2>&1 | tee -a $PHPMICROBENCHLOG
+	done
+	MTOTAL=$(awk '/Total/ {print $2}' $PHPMICROBENCHLOG)
+	MAVG=$(awk '/Total/ {print $2}' $PHPMICROBENCHLOG | awk '{ sum += $1 } END { if (NR > 0) printf "%.4f\n", sum / NR }')
+	MTIMEREAL=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPMICROBENCHLOG | awk '{ sum += $2 } END { if (NR > 0) printf "%.2f\n", sum / NR }')
+	MTIMEUSER=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPMICROBENCHLOG | awk '{ sum += $4 } END { if (NR > 0) printf "%.2f\n", sum / NR }' )
+	MTIMESYS=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPMICROBENCHLOG | awk '{ sum += $6 } END { if (NR > 0) printf "%.2f\n", sum / NR }' )
+	MTIMECPU=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPMICROBENCHLOG | awk '{ sum += $8 } END { if (NR > 0) printf "%.2f\n", sum / NR }' )
+	MTIMEMEM=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPMICROBENCHLOG | awk '{ sum += $10 } END { if (NR > 0) printf "%.2f\n", sum / NR }' )
+	MTIMECS=$(echo $TOTAL | awk '/maxmem:/ {print $0}' $PHPMICROBENCHLOG | awk '{ sum += $13 } END { if (NR > 0) printf "%.2f\n", sum / NR }' )
+	echo 
+	bbcodestart
+	echo -e "micro_bench.php results from $RUNS runs\n$MTOTAL"
+	echo
+	echo "micro_bench.php avg: $MAVG"
+	echo "Avg: real: ${MTIMEREAL}s user: ${MTIMEUSER}s sys: ${MTIMESYS}s cpu: ${MTIMECPU}% maxmem: ${MTIMEMEM}KB cswaits: ${MTIMECS}"
+	echo "created results log at $PHPMICROBENCHLOG"
+	echo "server PHP info log at ${PHPBENCHLOGDIR}/bench_phpinfo_${DT}.log"
+	bbcodeend
+	echo
+}
+
 ended() {
 	s
 	cecho "-------------------------------------------" $boldgreen
@@ -360,6 +537,13 @@ starttime=$(date +%s.%N)
 	baseinfo
 	opensslbench
 	mysqlslapper
+
+	phpi
+	restartphp
+	fbench
+	restartphp
+	fmicrobench
+	
 	ubench
 	
 	if [[ "$1" = 'vultr' ]]; then
