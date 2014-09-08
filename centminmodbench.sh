@@ -17,7 +17,7 @@ SCRIPTNAME=centminmodbench.sh
 VER=0.0.1
 ###############################################################
 EMAIL='youremail@yourdomain.com'
-DEBUG='y'
+DEBUG='n'
 
 SEVERBEAR='n'
 OPENSSLBENCH='y'
@@ -29,7 +29,7 @@ MYSQLSLAP_SAVECSV='n'
 RUN_DISKDD='y'
 RUN_DISKIOPING='y'
 RUN_DISKFIO='y'
-RUN_BANDWIDTHBENCH='n'
+RUN_BANDWIDTHBENCH='y'
 RUN_UNIXBENCH='n'
 UNIXBENCH_VER='5.1.3'
 
@@ -115,6 +115,10 @@ fi
 
 if [[ ! -f /usr/bin/lscpu ]]; then
 	yum -q -y install util-linux-ng
+fi
+
+if [[ "$DEBUG" = [yY] ]]; then
+	RUN_BANDWIDTHBENCH='n'
 fi
 ###############################################################
 # Setup Colours
