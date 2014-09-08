@@ -31,15 +31,15 @@ MYSQLDATADIR=$(mysqladmin var | tr -s ' ' | awk -F '| ' '/datadir/ {print $4}')
 # mysqlslap default test settings
 dbname=test # Database Name
 engine=myisam # Storage Engine (myisam or innodb)
-clients=8 # Concurrecy Level (number of clients)
-uniqq=20 # Number of Unique queries to generate (dft = 10)
-uniqwn=20 # Number of Unique Write queries to generate (dft = 10)
-rowinserts=200 # Number of row inserts per thread (dft = 100)
+clients=16 # Concurrecy Level (number of clients)
+uniqq=25 # Number of Unique queries to generate (dft = 10)
+uniqwn=25 # Number of Unique Write queries to generate (dft = 10)
+rowinserts=500 # Number of row inserts per thread (dft = 100)
 it=10 # Iterations (number of runs)
 secidx=5 # Number of Secondary Indexes
 intcol=5 # Number of INT columns
 charcol=5 # Number of VARCHAR Columns
-queries=10000 # Number of Queries per client
+queries=15000 # Number of Queries per client
 ###############################################################
 if [ ! -f /etc/centos-release ] ; then
 	cecho "$SCRIPTNAME is meant to be run on CentOS system only" $boldyellow
@@ -193,8 +193,12 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 	openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}
 
 	cecho "-------------------------------------------" $boldgreen
-	cecho "openssl speed -evp aes256 aes128 -multi ${CPUS}" $boldyellow
-	openssl speed -evp aes256 aes128 -multi ${CPUS}
+	cecho "openssl speed -evp aes256 -multi ${CPUS}" $boldyellow
+	openssl speed -evp aes256 -multi ${CPUS}
+
+	cecho "-------------------------------------------" $boldgreen
+	cecho "openssl speed -evp aes128 -multi ${CPUS}" $boldyellow
+	openssl speed -evp aes128 -multi ${CPUS}
 
 	if [[ "$OPENSSL_NONSYSTEM" = [yY] ]]; then
 		cecho "-------------------------------------------" $boldgreen
@@ -211,8 +215,12 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}
 
 			cecho "-------------------------------------------" $boldgreen
-			cecho "openssl speed -evp aes256 aes128 -multi ${CPUS}" $boldyellow
-			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes256 aes128 -multi ${CPUS}
+			cecho "openssl speed -evp aes256 -multi ${CPUS}" $boldyellow
+			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes256 -multi ${CPUS}
+		
+			cecho "-------------------------------------------" $boldgreen
+			cecho "openssl speed -evp aes128 -multi ${CPUS}" $boldyellow
+			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes128 -multi ${CPUS}
 		fi
 	fi
 fi
