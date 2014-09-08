@@ -7,6 +7,9 @@
 # merges several existing benchmark scripts I wrote already
 # for mysqlslap and php bench.php and micro_bench.php
 #
+# disk dd, ioping and fio test parameters match those used
+# for serverbear.com benchmark runs so they are comparable
+#
 # inspired by STH Linux benchmark script 
 # https://github.com/STH-Dev/linux-bench
 ###############################################################
@@ -23,6 +26,10 @@ OPENSSL_VERSION='1.0.1i'
 
 MYSQLSLAP_SAVECSV='n'
 
+RUN_DISKDD='y'
+RUN_DISKIOPING='y'
+RUN_DISKFIO='y'
+RUN_BANDWIDTHBENCH='n'
 RUN_UNIXBENCH='n'
 UNIXBENCH_VER='5.1.3'
 
@@ -35,6 +42,9 @@ BBCODE='y'
 # how many runs to do for bench.php & micro_bench.php
 # the results will be averaged over that many runs
 RUNS='4'
+
+IOPING_VERSION=0.6
+FIO_VERSION=2.0.9
 ###############################################################
 DT=`date +"%d%m%y-%H%M%S"`
 OPENSSL_LINKFILE="openssl-${OPENSSL_VERSION}.tar.gz"
@@ -70,6 +80,9 @@ CLIENTIP=$(echo "${SSH_CLIENT%% *}")
 SERVERIP=$(ip addr show | grep -o "inet [0-9]*\.[0-9]*\.[0-9]*\.[0-9]*" | grep -o "[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*" | grep -v 127.0.0.1)
 HOSTNAME=$(hostname)
 PROCESSNAME='php-fpm'
+
+IOPING_DIR="${BENCHDIR}/ioping-${IOPING_VERSION}"
+FIO_DIR="${BENCHDIR}/fio-${FIO_VERSION}"
 ###############################################################
 if [ ! -f /etc/centos-release ] ; then
 	cecho "$SCRIPTNAME is meant to be run on CentOS system only" $boldyellow
@@ -334,7 +347,7 @@ ubench()
 
         cecho "Download UnixBench${UNIXBENCH_VER}.tgz ..." $boldyellow
     if [ -s UnixBench${UNIXBENCH_VER}.tgz ]; then
-        cecho "openssl ${OPENSSL_VERSION} found, skipping download..." $boldgreen
+        cecho "UnixBench${UNIXBENCH_VER}.tgz found, skipping download..." $boldgreen
     else
         wget -cnv https://byte-unixbench.googlecode.com/files/UnixBench${UNIXBENCH_VER}.tgz --tries=3
 ERROR=$?
@@ -458,7 +471,6 @@ fbench() {
 	cecho "-------------------------------------------" $boldgreen
 	cecho "Run PHP test Zend/bench.php" $boldyellow
 	cecho "-------------------------------------------" $boldgreen
-	s
 
 	changedir
 	touch $PHPBENCHLOG
@@ -496,7 +508,6 @@ fmicrobench() {
 	cecho "-------------------------------------------" $boldgreen
 	cecho "Run PHP test Zend/micro_bench.php" $boldyellow
 	cecho "-------------------------------------------" $boldgreen
-	s
 	
 	changedir
 	touch $PHPMICROBENCHLOG
@@ -530,6 +541,213 @@ fmicrobench() {
 	echo
 }
 
+diskdd() {
+
+	if [[ "$RUN_DISKDD" = [yY] ]]; then
+	cecho "-------------------------------------------" $boldgreen
+	cecho "disk DD tests" $boldyellow
+	cecho "-------------------------------------------" $boldgreen
+
+	s
+	cecho "dd if=/dev/zero of=sb-io-test bs=1M count=1k conv=fdatasync"	$boldyellow
+	dd if=/dev/zero of=sb-io-test bs=1M count=1k conv=fdatasync
+	
+	s
+	cecho "dd if=/dev/zero of=sb-io-test bs=64k count=16k conv=fdatasync" $boldyellow
+	dd if=/dev/zero of=sb-io-test bs=64k count=16k conv=fdatasync
+
+	s	
+	cecho "dd if=/dev/zero of=sb-io-test bs=1M count=1k oflag=dsync" $boldyellow
+	dd if=/dev/zero of=sb-io-test bs=1M count=1k oflag=dsync
+	
+	s
+	cecho "dd if=/dev/zero of=sb-io-test bs=64k count=16k oflag=dsync" $boldyellow
+	dd if=/dev/zero of=sb-io-test bs=64k count=16k oflag=dsync
+
+	rm sb-io-test 2>/dev/null
+	# cd ..
+	fi
+}
+
+diskioping() {
+
+	if [[ "$RUN_DISKIOPING" = [yY] ]]; then
+	cecho "-------------------------------------------" $boldgreen
+	cecho "disk ioping tests" $boldyellow
+	cecho "-------------------------------------------" $boldgreen
+	s
+
+	cd $BENCHDIR
+
+        cecho "Download ioping-$IOPING_VERSION.tar.gz ..." $boldyellow
+    if [ -s ioping-$IOPING_VERSION.tar.gz ]; then
+        cecho "ioping-$IOPING_VERSION.tar.gz found, skipping download..." $boldgreen
+    else
+        wget -cnv --no-check-certificate https://ioping.googlecode.com/files/ioping-$IOPING_VERSION.tar.gz --tries=3
+ERROR=$?
+	if [[ "$ERROR" != '0' ]]; then
+	cecho "Error: ioping-$IOPING_VERSION.tar.gz download failed." $boldgreen
+	exit #$ERROR
+else 
+         cecho "Download done." $boldyellow
+	fi
+    fi
+
+if [ ! -d ioping-$IOPING_VERSION ]; then
+	tar xzf ioping-$IOPING_VERSION.tar.gz
+	ERROR=$?
+	if [[ "$ERROR" != '0' ]]; then
+		cecho "Error: ioping-$IOPING_VERSION.tar.gz extraction failed." $boldgreen
+		exit #$ERROR
+	else 
+         cecho "ioping-$IOPING_VERSION.tar.gz valid file." $boldyellow
+		echo ""
+	fi
+fi
+
+	cecho "Running IOPing I/O benchmark..." $boldyellow
+	cd $IOPING_DIR
+	if [ ! -f ioping ]; then
+		make -j${CPUS} 2>&1
+	fi
+	s
+	cecho "IOPing I/O: ./ioping -c 10 ." $boldyellow
+	./ioping -c 10 .
+	s
+	cecho "IOPing seek rate: ./ioping -RD ." $boldyellow
+	./ioping -RD .
+	s
+	cecho "IOPing sequential: ./ioping -RL ." $boldyellow
+	./ioping -RL .
+	s
+	cecho "IOPing cached: ./ioping -RC ." $boldyellow
+	./ioping -RC .
+	s
+	fi
+}
+
+diskfio() {
+	if [[ "$RUN_DISKFIO" = [yY] ]]; then
+	cecho "-------------------------------------------" $boldgreen
+	cecho "disk FIO tests" $boldyellow
+	cecho "-------------------------------------------" $boldgreen
+	s
+
+	cd $BENCHDIR
+
+        cecho "Download fio-$FIO_VERSION.tar.gz ..." $boldyellow
+    if [ -s fio-$FIO_VERSION.tar.gz ]; then
+        cecho "fio-$FIO_VERSION.tar.gz found, skipping download..." $boldgreen
+    else
+        wget -cnv --no-check-certificate https://github.com/Crowd9/Benchmark/raw/master/fio-$FIO_VERSION.tar.gz --tries=3
+ERROR=$?
+	if [[ "$ERROR" != '0' ]]; then
+	cecho "Error: fio-$FIO_VERSION.tar.gz download failed." $boldgreen
+	exit #$ERROR
+else 
+         cecho "Download done." $boldyellow
+	fi
+    fi
+
+if [ ! -d fio-$FIO_VERSION ]; then
+	tar xzf fio-$FIO_VERSION.tar.gz
+	ERROR=$?
+	if [[ "$ERROR" != '0' ]]; then
+		cecho "Error: fio-$FIO_VERSION.tar.gz extraction failed." $boldgreen
+		exit #$ERROR
+	else 
+         cecho "fio-$FIO_VERSION.tar.gz valid file." $boldyellow
+		echo ""
+	fi
+fi
+
+cat > $FIO_DIR/reads.ini << EOF
+[global]
+randrepeat=1
+ioengine=libaio
+bs=4k
+ba=4k
+size=1G
+direct=1
+gtod_reduce=1
+norandommap
+iodepth=64
+numjobs=1
+
+[randomreads]
+startdelay=0
+filename=sb-io-test
+readwrite=randread
+EOF
+
+cat > $FIO_DIR/writes.ini << EOF
+[global]
+randrepeat=1
+ioengine=libaio
+bs=4k
+ba=4k
+size=1G
+direct=1
+gtod_reduce=1
+norandommap
+iodepth=64
+numjobs=1
+
+[randomwrites]
+startdelay=0
+filename=sb-io-test
+readwrite=randwrite
+EOF
+
+cecho "Running FIO benchmark..." $boldyellow
+s
+cd $FIO_DIR
+make -j${CPUS} 2>&1
+
+s
+cecho "FIO random reads: " $boldyellow
+./fio reads.ini
+
+s
+cecho "FIO random writes: " $boldyellow
+./fio writes.ini
+	fi
+}
+
+download_benchmark() {
+  cecho "Benchmarking download from $1 ($2)" $boldyellow
+  DOWNLOAD_SPEED=`wget -O /dev/null $2 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}'`
+  cecho "Got $DOWNLOAD_SPEED" $boldyellow
+  cecho "Download $1: $DOWNLOAD_SPEED" $boldyellow 2>&1 
+}
+
+bandwidthbench() {
+	if [[ "$RUN_BANDWIDTHBENCH" = [yY] ]]; then
+	s
+	cecho "-------------------------------------------" $boldgreen
+	cecho "Running bandwidth benchmark..." $boldyellow
+	cecho "-------------------------------------------" $boldgreen
+	s
+	
+	download_benchmark 'Cachefly' 'http://cachefly.cachefly.net/100mb.test'
+	download_benchmark 'Linode, Atlanta, GA, USA' 'http://speedtest.atlanta.linode.com/100MB-atlanta.bin'
+	download_benchmark 'Linode, Dallas, TX, USA' 'http://speedtest.dallas.linode.com/100MB-dallas.bin'
+	download_benchmark 'Linode, Tokyo, JP' 'http://speedtest.tokyo.linode.com/100MB-tokyo.bin'
+	download_benchmark 'Linode, London, UK' 'http://speedtest.london.linode.com/100MB-london.bin'
+	download_benchmark 'OVH, Paris, France' 'http://proof.ovh.net/files/100Mio.dat'
+	download_benchmark 'SmartDC, Rotterdam, Netherlands' 'http://mirror.i3d.net/100mb.bin'
+	download_benchmark 'Hetzner, Nuernberg, Germany' 'http://hetzner.de/100MB.iso'
+	download_benchmark 'iiNet, Perth, WA, Australia' 'http://ftp.iinet.net.au/test100MB.dat'
+	download_benchmark 'MammothVPS, Sydney, Australia' 'http://www.mammothvpscustomer.com/test100MB.dat'
+	download_benchmark 'Leaseweb, Haarlem, NL' 'http://mirror.nl.leaseweb.net/speedtest/100mb.bin'
+	download_benchmark 'Leaseweb, Manassas, VA, USA' 'http://mirror.us.leaseweb.net/speedtest/100mb.bin'
+	download_benchmark 'Softlayer, Singapore' 'http://speedtest.sng01.softlayer.com/downloads/test100.zip'
+	download_benchmark 'Softlayer, Seattle, WA, USA' 'http://speedtest.sea01.softlayer.com/downloads/test100.zip'
+	download_benchmark 'Softlayer, San Jose, CA, USA' 'http://speedtest.sjc01.softlayer.com/downloads/test100.zip'
+	download_benchmark 'Softlayer, Washington, DC, USA' 'http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
+	fi
+}
+
 ended() {
 	s
 	cecho "-------------------------------------------" $boldgreen
@@ -544,6 +762,10 @@ starttime=$(date +%s.%N)
 	bbcodestart
 	byline
 	baseinfo
+	diskioping
+	diskdd
+	diskfio
+	bandwidthbench
 	opensslbench
 	mysqlslapper
 
