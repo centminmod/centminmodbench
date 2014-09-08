@@ -212,6 +212,10 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 	cecho "openssl speed rc4 -multi ${CPUS}" $boldyellow
 	openssl speed rc4 -multi ${CPUS}
 
+	cecho "-------------------------------------------" $boldgreen
+	cecho "oopenssl speed -evp aes128 -multi ${CPUS}" $boldyellow
+	openssl speed -evp aes128 -multi ${CPUS}
+
 	if [[ "$OPENSSL_NONSYSTEM" = [yY] ]]; then
 		cecho "-------------------------------------------" $boldgreen
 		cecho "Centmin Mod Nginx static OpenSSL Benchmark" $boldyellow
@@ -245,6 +249,10 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 			cecho "-------------------------------------------" $boldgreen
 			cecho "openssl speed rc4 -multi ${CPUS}" $boldyellow
 			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed rc4 -multi ${CPUS}
+
+			cecho "-------------------------------------------" $boldgreen
+			cecho "oopenssl speed -evp aes128 -multi ${CPUS}" $boldyellow
+			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes128 -multi ${CPUS}
 		fi
 	fi
 fi
