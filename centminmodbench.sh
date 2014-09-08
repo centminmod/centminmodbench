@@ -213,6 +213,10 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 	openssl speed rc4 -multi ${CPUS}
 
 	cecho "-------------------------------------------" $boldgreen
+	cecho "oopenssl speed -evp aes256 -multi ${CPUS}" $boldyellow
+	openssl speed -evp aes256 -multi ${CPUS}
+
+	cecho "-------------------------------------------" $boldgreen
 	cecho "oopenssl speed -evp aes128 -multi ${CPUS}" $boldyellow
 	openssl speed -evp aes128 -multi ${CPUS}
 
@@ -249,6 +253,10 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 			cecho "-------------------------------------------" $boldgreen
 			cecho "openssl speed rc4 -multi ${CPUS}" $boldyellow
 			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed rc4 -multi ${CPUS}
+
+			cecho "-------------------------------------------" $boldgreen
+			cecho "oopenssl speed -evp aes256 -multi ${CPUS}" $boldyellow
+			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes256 -multi ${CPUS}
 
 			cecho "-------------------------------------------" $boldgreen
 			cecho "oopenssl speed -evp aes128 -multi ${CPUS}" $boldyellow
