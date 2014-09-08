@@ -30,6 +30,10 @@ RUN_DISKDD='y'
 RUN_DISKIOPING='y'
 RUN_DISKFIO='y'
 RUN_BANDWIDTHBENCH='y'
+EUROPE_BANDWIDTHTESTS='y'
+ASIA_BANDWIDTHTESTS='y'
+AUSTRALIA_BANDWIDTHTESTS='y'
+USA_BANDWIDTHTESTS='y'
 RUN_PINGTESTS='y'
 RUN_UNIXBENCH='n'
 UNIXBENCH_VER='5.1.3'
@@ -736,37 +740,71 @@ bandwidthbench() {
 	cecho "-------------------------------------------" $boldgreen
 	s
 	
-	download_benchmark 'Cachefly' 'http://cachefly.cachefly.net/100mb.test'
-	download_benchmark 'Linode, Atlanta, GA, USA' 'http://speedtest.atlanta.linode.com/100MB-atlanta.bin'
-	download_benchmark 'Linode, Dallas, TX, USA' 'http://speedtest.dallas.linode.com/100MB-dallas.bin'
-	download_benchmark 'Linode, Tokyo, JP' 'http://speedtest.tokyo.linode.com/100MB-tokyo.bin'
-	download_benchmark 'Linode, London, UK' 'http://speedtest.london.linode.com/100MB-london.bin'
-	download_benchmark 'OVH, Paris, France' 'http://proof.ovh.net/files/100Mio.dat'
-	download_benchmark 'SmartDC, Rotterdam, Netherlands' 'http://mirror.i3d.net/100mb.bin'
-	download_benchmark 'Hetzner, Nuernberg, Germany' 'http://hetzner.de/100MB.iso'
-	download_benchmark 'iiNet, Perth, WA, Australia' 'http://ftp.iinet.net.au/test100MB.dat'
-	download_benchmark 'MammothVPS, Sydney, Australia' 'http://www.mammothvpscustomer.com/test100MB.dat'
-	download_benchmark 'Leaseweb, Haarlem, NL' 'http://mirror.nl.leaseweb.net/speedtest/100mb.bin'
-	download_benchmark 'Leaseweb, Manassas, VA, USA' 'http://mirror.us.leaseweb.net/speedtest/100mb.bin'
-	download_benchmark 'Softlayer, Singapore' 'http://speedtest.sng01.softlayer.com/downloads/test100.zip'
-	download_benchmark 'Softlayer, Seattle, WA, USA' 'http://speedtest.sea01.softlayer.com/downloads/test100.zip'
-	download_benchmark 'Softlayer, San Jose, CA, USA' 'http://speedtest.sjc01.softlayer.com/downloads/test100.zip'
-	download_benchmark 'Softlayer, Washington, DC, USA' 'http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
+		download_benchmark 'Cachefly' 'http://cachefly.cachefly.net/100mb.test'
+		
+		if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
+		download_benchmark 'Linode, Atlanta, GA, USA' 'http://speedtest.atlanta.linode.com/100MB-atlanta.bin'
+		download_benchmark 'Linode, Dallas, TX, USA' 'http://speedtest.dallas.linode.com/100MB-dallas.bin'
+		fi
 
-	download_benchmark 'Vultr, Sydney, Australia' 'http://syd-au-ping.vultr.com/vultr.com.100MB.bin'
-	download_benchmark 'Vultr, Tokyo, Japan' 'http://hnd-jp-ping.vultr.com/vultr.com.100MB.bin'
-	download_benchmark 'Vultr, Los Angeles, California' 'http://lax-ca-us-ping.vultr.com/vultr.com.100MB.bin'
-	download_benchmark 'Vultr, Seattle, Washington' 'http://wa-us-ping.vultr.com/vultr.com.100MB.bin'
-	download_benchmark 'Vultr, Dallas, Texas' 'http://tx-us-ping.vultr.com/vultr.com.100MB.bin'
-	download_benchmark 'Vultr, Chicago, Illinois' 'http://il-us-ping.vultr.com/vultr.com.100MB.bin'
-	download_benchmark 'Vultr, Atlanta, Georgia' 'http://ga-us-ping.vultr.com/vultr.com.100MB.bin'
-	download_benchmark 'Vultr, Miami, Florida' 'http://fl-us-ping.vultr.com/vultr.com.100MB.bin'
-	download_benchmark 'Vultr, New York / New Jersey' 'http://nj-us-ping.vultr.com/vultr.com.100MB.bin'
-	download_benchmark 'Vultr, Frankfurt, Germany' 'http://fra-de-ping.vultr.com/vultr.com.100MB.bin'
-	download_benchmark 'Vultr, Amsterdam, Netherlands' 'http://ams-nl-ping.vultr.com/vultr.com.100MB.bin'
-	download_benchmark 'Vultr, London, UK' 'http://lon-gb-ping.vultr.com/vultr.com.100MB.bin'
-	download_benchmark 'Vultr, Paris, France' 'http://par-fr-ping.vultr.com/vultr.com.100MB.bin'
-
+		if [[ "$ASIA_BANDWIDTHTESTS" = [yY] ]]; then
+		download_benchmark 'Linode, Tokyo, JP' 'http://speedtest.tokyo.linode.com/100MB-tokyo.bin'
+		fi
+		
+		if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
+		download_benchmark 'Linode, London, UK' 'http://speedtest.london.linode.com/100MB-london.bin'
+		download_benchmark 'OVH, Paris, France' 'http://proof.ovh.net/files/100Mio.dat'
+		download_benchmark 'SmartDC, Rotterdam, Netherlands' 'http://mirror.i3d.net/100mb.bin'
+		download_benchmark 'Hetzner, Nuernberg, Germany' 'http://hetzner.de/100MB.iso'
+		fi
+		
+		if [[ "$AUSTRALIA_BANDWIDTHTESTS" = [yY] ]]; then
+		download_benchmark 'iiNet, Perth, WA, Australia' 'http://ftp.iinet.net.au/test100MB.dat'
+		download_benchmark 'MammothVPS, Sydney, Australia' 'http://www.mammothvpscustomer.com/test100MB.dat'
+		fi
+		
+		if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
+		download_benchmark 'Leaseweb, Haarlem, NL' 'http://mirror.nl.leaseweb.net/speedtest/100mb.bin'
+		fi
+		
+		if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
+		download_benchmark 'Leaseweb, Manassas, VA, USA' 'http://mirror.us.leaseweb.net/speedtest/100mb.bin'
+		fi
+		
+		if [[ "$ASIA_BANDWIDTHTESTS" = [yY] ]]; then
+		download_benchmark 'Softlayer, Singapore' 'http://speedtest.sng01.softlayer.com/downloads/test100.zip'
+		fi
+		
+		if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
+		download_benchmark 'Softlayer, Seattle, WA, USA' 'http://speedtest.sea01.softlayer.com/downloads/test100.zip'
+		download_benchmark 'Softlayer, San Jose, CA, USA' 'http://speedtest.sjc01.softlayer.com/downloads/test100.zip'
+		download_benchmark 'Softlayer, Washington, DC, USA' 'http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
+		fi
+		
+		if [[ "$AUSTRALIA_BANDWIDTHTESTS" = [yY] ]]; then
+		download_benchmark 'Vultr, Sydney, Australia' 'http://syd-au-ping.vultr.com/vultr.com.100MB.bin'
+		fi
+		
+		if [[ "$ASIA_BANDWIDTHTESTS" = [yY] ]]; then
+		download_benchmark 'Vultr, Tokyo, Japan' 'http://hnd-jp-ping.vultr.com/vultr.com.100MB.bin'
+		fi
+		
+		if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
+		download_benchmark 'Vultr, Los Angeles, California' 'http://lax-ca-us-ping.vultr.com/vultr.com.100MB.bin'
+		download_benchmark 'Vultr, Seattle, Washington' 'http://wa-us-ping.vultr.com/vultr.com.100MB.bin'
+		download_benchmark 'Vultr, Dallas, Texas' 'http://tx-us-ping.vultr.com/vultr.com.100MB.bin'
+		download_benchmark 'Vultr, Chicago, Illinois' 'http://il-us-ping.vultr.com/vultr.com.100MB.bin'
+		download_benchmark 'Vultr, Atlanta, Georgia' 'http://ga-us-ping.vultr.com/vultr.com.100MB.bin'
+		download_benchmark 'Vultr, Miami, Florida' 'http://fl-us-ping.vultr.com/vultr.com.100MB.bin'
+		download_benchmark 'Vultr, New York / New Jersey' 'http://nj-us-ping.vultr.com/vultr.com.100MB.bin'
+		fi
+		
+		if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
+		download_benchmark 'Vultr, Frankfurt, Germany' 'http://fra-de-ping.vultr.com/vultr.com.100MB.bin'
+		download_benchmark 'Vultr, Amsterdam, Netherlands' 'http://ams-nl-ping.vultr.com/vultr.com.100MB.bin'
+		download_benchmark 'Vultr, London, UK' 'http://lon-gb-ping.vultr.com/vultr.com.100MB.bin'
+		download_benchmark 'Vultr, Paris, France' 'http://par-fr-ping.vultr.com/vultr.com.100MB.bin'
+		fi
 	fi
 }
 
