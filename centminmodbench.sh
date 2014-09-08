@@ -31,15 +31,15 @@ MYSQLDATADIR=$(mysqladmin var | tr -s ' ' | awk -F '| ' '/datadir/ {print $4}')
 # mysqlslap default test settings
 dbname=test # Database Name
 engine=myisam # Storage Engine (myisam or innodb)
-clients=1 # Concurrecy Level (number of clients)
-uniqq=10 # Number of Unique queries to generate (dft = 10)
-uniqwn=10 # Number of Unique Write queries to generate (dft = 10)
-rowinserts=100 # Number of row inserts per thread (dft = 100)
-it=5 # Iterations (number of runs)
+clients=8 # Concurrecy Level (number of clients)
+uniqq=20 # Number of Unique queries to generate (dft = 10)
+uniqwn=20 # Number of Unique Write queries to generate (dft = 10)
+rowinserts=200 # Number of row inserts per thread (dft = 100)
+it=10 # Iterations (number of runs)
 secidx=5 # Number of Secondary Indexes
 intcol=5 # Number of INT columns
 charcol=5 # Number of VARCHAR Columns
-queries=5000 # Number of Queries per client
+queries=10000 # Number of Queries per client
 ###############################################################
 if [ ! -f /etc/centos-release ] ; then
 	cecho "$SCRIPTNAME is meant to be run on CentOS system only" $boldyellow
