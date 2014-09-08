@@ -7,6 +7,7 @@ Development is ongoing so please test only on test servers and not production li
 
 *Current Test Suite*
 
+* disk dd, ioping, fio & bandwidth benchmarks
 * OpenSSL system benchmark + Nginx static OpenSSL benchmarks
 * mysqlslap http://dev.mysql.com/doc/refman/5.6/en/mysqlslap.html
 * PHP (php-fpm) Zend/bench.php & Zend/micro_bench.php
