@@ -9,6 +9,7 @@ Development is ongoing so please test only on test servers and not production li
 
 * OpenSSL system benchmark + Nginx static OpenSSL benchmarks
 * mysqlslap http://dev.mysql.com/doc/refman/5.6/en/mysqlslap.html
+* PHP (php-fpm) Zend/bench.php & Zend/micro_bench.php
 * UnixBench 5.1.3
 * ServerBear.com tests (currently disabled by default)
 
@@ -31,3 +32,4 @@ Default log directories include:
 * BENCHDIR='/home/centminmodbench' (source downloads location)
 * LOGDIR='/home/centminmodbench_logs' (benchmark results logs)
 * MYSQLSLAP_DIR='/home/mysqlslap' (mysqlslap results logs)
+* PHPBENCHLOGDIR='/home/phpbench_logs' (PHP-FPM benchmark logs)
