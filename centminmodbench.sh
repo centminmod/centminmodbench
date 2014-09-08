@@ -189,36 +189,12 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 	openssl version
 
 	cecho "-------------------------------------------" $boldgreen
-	cecho "openssl speed rsa4096 -multi ${CPUS}" $boldyellow
-	openssl speed rsa4096 -multi ${CPUS}
+	cecho "openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}" $boldyellow
+	openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}
 
 	cecho "-------------------------------------------" $boldgreen
-	cecho "openssl speed rsa2048 -multi ${CPUS}" $boldyellow
-	openssl speed rsa2048 -multi ${CPUS}
-
-	cecho "-------------------------------------------" $boldgreen
-	cecho "openssl speed ecdsap256 -multi ${CPUS}" $boldyellow
-	openssl speed ecdsap256 -multi ${CPUS}
-
-	cecho "-------------------------------------------" $boldgreen
-	cecho "openssl speed sha256 -multi ${CPUS}" $boldyellow
-	openssl speed sha256 -multi ${CPUS}
-
-	cecho "-------------------------------------------" $boldgreen
-	cecho "openssl speed sha1 -multi ${CPUS}" $boldyellow
-	openssl speed sha1 -multi ${CPUS}
-
-	cecho "-------------------------------------------" $boldgreen
-	cecho "openssl speed rc4 -multi ${CPUS}" $boldyellow
-	openssl speed rc4 -multi ${CPUS}
-
-	cecho "-------------------------------------------" $boldgreen
-	cecho "oopenssl speed -evp aes256 -multi ${CPUS}" $boldyellow
-	openssl speed -evp aes256 -multi ${CPUS}
-
-	cecho "-------------------------------------------" $boldgreen
-	cecho "oopenssl speed -evp aes128 -multi ${CPUS}" $boldyellow
-	openssl speed -evp aes128 -multi ${CPUS}
+	cecho "openssl speed -evp aes256 aes128 -multi ${CPUS}" $boldyellow
+	openssl speed -evp aes256 aes128 -multi ${CPUS}
 
 	if [[ "$OPENSSL_NONSYSTEM" = [yY] ]]; then
 		cecho "-------------------------------------------" $boldgreen
@@ -231,36 +207,12 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl version
 		
 			cecho "-------------------------------------------" $boldgreen
-			cecho "openssl speed rsa4096 -multi ${CPUS}" $boldyellow
-			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed rsa4096 -multi ${CPUS}
-		
-			cecho "-------------------------------------------" $boldgreen
-			cecho "openssl speed rsa2048 -multi ${CPUS}" $boldyellow
-			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed rsa2048 -multi ${CPUS}
-		
-			cecho "-------------------------------------------" $boldgreen
-			cecho "openssl speed ecdsap256 -multi ${CPUS}" $boldyellow
-			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed ecdsap256 -multi ${CPUS}
-	
-			cecho "-------------------------------------------" $boldgreen
-			cecho "openssl speed sha256 -multi ${CPUS}" $boldyellow
-			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed sha256 -multi ${CPUS}
-	
-			cecho "-------------------------------------------" $boldgreen
-			cecho "openssl speed sha1 -multi ${CPUS}" $boldyellow
-			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed sha1 -multi ${CPUS}
-	
-			cecho "-------------------------------------------" $boldgreen
-			cecho "openssl speed rc4 -multi ${CPUS}" $boldyellow
-			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed rc4 -multi ${CPUS}
+			cecho "openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}" $boldyellow
+			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}
 
 			cecho "-------------------------------------------" $boldgreen
-			cecho "oopenssl speed -evp aes256 -multi ${CPUS}" $boldyellow
-			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes256 -multi ${CPUS}
-
-			cecho "-------------------------------------------" $boldgreen
-			cecho "oopenssl speed -evp aes128 -multi ${CPUS}" $boldyellow
-			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes128 -multi ${CPUS}
+			cecho "openssl speed -evp aes256 aes128 -multi ${CPUS}" $boldyellow
+			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes256 aes128 -multi ${CPUS}
 		fi
 	fi
 fi
