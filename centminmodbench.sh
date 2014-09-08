@@ -760,7 +760,7 @@ bandwidthbench() {
 		
 		if [[ "$AUSTRALIA_BANDWIDTHTESTS" = [yY] ]]; then
 		download_benchmark 'iiNet, Perth, WA, Australia' 'http://ftp.iinet.net.au/test100MB.dat'
-		download_benchmark 'MammothVPS, Sydney, Australia' 'http://www.mammothvpscustomer.com/test100MB.dat'
+		# download_benchmark 'MammothVPS, Sydney, Australia' 'http://www.mammothvpscustomer.com/test100MB.dat'
 		fi
 		
 		if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
