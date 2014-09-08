@@ -751,6 +751,21 @@ bandwidthbench() {
 	download_benchmark 'Softlayer, Seattle, WA, USA' 'http://speedtest.sea01.softlayer.com/downloads/test100.zip'
 	download_benchmark 'Softlayer, San Jose, CA, USA' 'http://speedtest.sjc01.softlayer.com/downloads/test100.zip'
 	download_benchmark 'Softlayer, Washington, DC, USA' 'http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
+
+	download_benchmark 'Vultr, Sydney, Australia' 'http://syd-au-ping.vultr.com/vultr.com.100MB.bin'
+	download_benchmark 'Vultr, Tokyo, Japan' 'http://hnd-jp-ping.vultr.com/vultr.com.100MB.bin'
+	download_benchmark 'Vultr, Los Angeles, California' 'http://lax-ca-us-ping.vultr.com/vultr.com.100MB.bin'
+	download_benchmark 'Vultr, Seattle, Washington' 'http://wa-us-ping.vultr.com/vultr.com.100MB.bin'
+	download_benchmark 'Vultr, Dallas, Texas' 'http://tx-us-ping.vultr.com/vultr.com.100MB.bin'
+	download_benchmark 'Vultr, Chicago, Illinois' 'http://il-us-ping.vultr.com/vultr.com.100MB.bin'
+	download_benchmark 'Vultr, Atlanta, Georgia' 'http://ga-us-ping.vultr.com/vultr.com.100MB.bin'
+	download_benchmark 'Vultr, Miami, Florida' 'http://fl-us-ping.vultr.com/vultr.com.100MB.bin'
+	download_benchmark 'Vultr, New York / New Jersey' 'http://nj-us-ping.vultr.com/vultr.com.100MB.bin'
+	download_benchmark 'Vultr, Frankfurt, Germany' 'http://fra-de-ping.vultr.com/vultr.com.100MB.bin'
+	download_benchmark 'Vultr, Amsterdam, Netherlands' 'http://ams-nl-ping.vultr.com/vultr.com.100MB.bin'
+	download_benchmark 'Vultr, London, UK' 'http://lon-gb-ping.vultr.com/vultr.com.100MB.bin'
+	download_benchmark 'Vultr, Paris, France' 'http://par-fr-ping.vultr.com/vultr.com.100MB.bin'
+
 	fi
 }
 
