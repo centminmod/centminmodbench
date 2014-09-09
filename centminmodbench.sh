@@ -838,8 +838,8 @@ bandwidthbench() {
 		fi
 		
 		if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
-		div
-		download_benchmark 'Vultr, Frankfurt, Germany' 'http://fra-de-ping.vultr.com/vultr.com.100MB.bin'
+		# div
+		# download_benchmark 'Vultr, Frankfurt, Germany' 'http://fra-de-ping.vultr.com/vultr.com.100MB.bin'
 		div
 		download_benchmark 'Vultr, Amsterdam, Netherlands' 'http://ams-nl-ping.vultr.com/vultr.com.100MB.bin'
 		div
