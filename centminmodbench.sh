@@ -779,12 +779,12 @@ bandwidthbench() {
 		download_benchmark 'Hetzner, Nuernberg, Germany' 'http://hetzner.de/100MB.iso'
 		fi
 		
-		if [[ "$AUSTRALIA_BANDWIDTHTESTS" = [yY] ]]; then
-		div
-		download_benchmark 'iiNet, Perth, WA, Australia' 'http://ftp.iinet.net.au/test100MB.dat'
+		# if [[ "$AUSTRALIA_BANDWIDTHTESTS" = [yY] ]]; then
+		# div
+		# download_benchmark 'iiNet, Perth, WA, Australia' 'http://ftp.iinet.net.au/test100MB.dat'
 		# div 
 		# download_benchmark 'MammothVPS, Sydney, Australia' 'http://www.mammothvpscustomer.com/test100MB.dat'
-		fi
+		# fi
 		
 		# if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
 		# div 
@@ -936,10 +936,9 @@ ended() {
 	cecho "-------------------------------------------" $boldgreen
 	cecho "$SCRIPTNAME completed" $boldyellow
 	cecho "-------------------------------------------" $boldgreen
-	s
 }
 
-#####################
+########################
 starttime=$(date +%s.%N)
 {
 	bbcodestart
@@ -986,4 +985,21 @@ endtime=$(date +%s.%N)
 INSTALLTIME=$(echo "scale=2;$endtime - $starttime"|bc )
 echo "" >> ${LOGDIR}/centminmodbench_results_${DT}.log
 echo "$SCRIPTNAME Total Run Time: $INSTALLTIME seconds" >> ${LOGDIR}/centminmodbench_results_${DT}.log
+
+########################
+# sanitise output
+s
+cecho "----------------------------------------------------" $boldgreen
+cecho "Sanitising Results..." $boldyellow
+cecho "Generating Public Report Log you can share..." $boldyellow
+cecho "at: ${LOGDIR}/_publicreport_${DT}.log" $boldyellow
+cecho "----------------------------------------------------" $boldgreen
+cecho "View Public Report type in SSH window (copy/paste & run):" $boldyellow
+s
+echo "clear && printf '\e[3J'; cat ${LOGDIR}/_publicreport_${DT}.log"
+cecho "----------------------------------------------------" $boldgreen
+s
+
+cat ${LOGDIR}/centminmodbench_results_${DT}.log | egrep -v '+DT:|+R:|+DTP:|+R1:|+R2:|+R5:|+R6|Forked child|Got:|make: Nothing' | sed -e "s/$HOSTNAME/hostname/g" > ${LOGDIR}/_publicreport_${DT}.log 2>&1
+
 exit
