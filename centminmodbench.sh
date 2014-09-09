@@ -64,15 +64,15 @@ MYSQLDATADIR=$(mysqladmin var | tr -s ' ' | awk -F '| ' '/datadir/ {print $4}')
 # mysqlslap default test settings
 dbname=test # Database Name
 engine=myisam # Storage Engine (myisam or innodb)
-clients=16 # Concurrecy Level (number of clients)
-uniqq=25 # Number of Unique queries to generate (dft = 10)
-uniqwn=25 # Number of Unique Write queries to generate (dft = 10)
+clients=32 # Concurrecy Level (number of clients)
+uniqq=30 # Number of Unique queries to generate (dft = 10)
+uniqwn=30 # Number of Unique Write queries to generate (dft = 10)
 rowinserts=500 # Number of row inserts per thread (dft = 100)
 it=10 # Iterations (number of runs)
 secidx=5 # Number of Secondary Indexes
 intcol=5 # Number of INT columns
 charcol=5 # Number of VARCHAR Columns
-queries=15000 # Number of Queries per client
+queries=20000 # Number of Queries per client
 
 DIR_TMP='/svr-setup'
 PHPBENCHLOGDIR='/home/phpbench_logs'
