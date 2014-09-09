@@ -775,13 +775,13 @@ bandwidthbench() {
 		if [[ "$AUSTRALIA_BANDWIDTHTESTS" = [yY] ]]; then
 		div
 		download_benchmark 'iiNet, Perth, WA, Australia' 'http://ftp.iinet.net.au/test100MB.dat'
-		div# 
-		download_benchmark 'MammothVPS, Sydney, Australia' 'http://www.mammothvpscustomer.com/test100MB.dat'
+		# div 
+		# download_benchmark 'MammothVPS, Sydney, Australia' 'http://www.mammothvpscustomer.com/test100MB.dat'
 		fi
 		
 		# if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
-		div# 
-		download_benchmark 'Leaseweb, Haarlem, NL' 'http://mirror.nl.leaseweb.net/speedtest/100mb.bin'
+		# div 
+		# download_benchmark 'Leaseweb, Haarlem, NL' 'http://mirror.nl.leaseweb.net/speedtest/100mb.bin'
 		# fi
 		
 		if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
