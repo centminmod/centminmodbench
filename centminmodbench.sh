@@ -388,7 +388,7 @@ fi
 				
 		cd UnixBench 
 		mv ../unixbench.patch .	
-		make -j${CPUS}
+		make -j${CPUS} 2>&1
 		patch Run unixbench.patch
 
 		cecho "-------------------------------------------" $boldgreen
