@@ -598,9 +598,10 @@ diskioping() {
 
 	cd $BENCHDIR
 
-        cecho "Download ioping-$IOPING_VERSION.tar.gz ..." $boldyellow
+        # cecho "Download ioping-$IOPING_VERSION.tar.gz ..." $boldyellow
     if [ -s ioping-$IOPING_VERSION.tar.gz ]; then
-        cecho "ioping-$IOPING_VERSION.tar.gz found, skipping download..." $boldgreen
+        # cecho "ioping-$IOPING_VERSION.tar.gz found, skipping download..." $boldgreen
+        s
     else
         wget -cnv --no-check-certificate https://ioping.googlecode.com/files/ioping-$IOPING_VERSION.tar.gz --tries=3
 ERROR=$?
