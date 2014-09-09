@@ -726,6 +726,7 @@ s
 cecho "FIO random writes: " $boldyellow
 ./fio writes.ini
 
+rm sb-io-test 2>/dev/null
 s
 	fi
 }
