@@ -847,6 +847,15 @@ bandwidthbench() {
 		div
 		download_benchmark 'Vultr, Paris, France' 'http://par-fr-ping.vultr.com/vultr.com.100MB.bin'
 		fi
+
+		if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
+		div
+		download_benchmark 'VersaWeb, Las Vegas, Nevada' 'http://199.47.210.50/100mbtest.bin'
+		div
+		download_benchmark 'OVH, BHS, Canada' 'http://bhs.proof.ovh.net/files/100Mio.dat'
+		fi
+
+		
 	fi
 }
 
@@ -926,6 +935,21 @@ pingtests() {
 	div
 	cecho "Pings (par-fr-ping.vultr.com):" $boldyellow
 	ping -c 3 par-fr-ping.vultr.com 2>&1
+
+	s
+	div
+	cecho "Pings (VersaWeb Las Vegas):" $boldyellow
+	ping -c 3 199.47.210.50 2>&1
+
+	s
+	div
+	cecho "Pings (VersaWeb Seattle):" $boldyellow
+	ping -c 3 76.164.234.1 2>&1
+
+	s
+	div
+	cecho "Pings (OVH Canada):" $boldyellow
+	ping -c 3 bhs.proof.ovh.net 2>&1
 
 	s
 	fi
