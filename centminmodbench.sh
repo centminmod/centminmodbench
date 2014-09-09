@@ -261,6 +261,7 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 	openssl speed -evp aes128 -multi ${CPUS}
 
 	if [[ "$OPENSSL_NONSYSTEM" = [yY] ]]; then
+		if [ -f /etc/centminmod-release ]; then
 		s
 		cecho "-------------------------------------------" $boldgreen
 		cecho "Centmin Mod Nginx static OpenSSL Benchmark" $boldyellow
@@ -268,7 +269,7 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 		s
 		# not needed as testing Centmin Mod Nginx static OpenSSL version
 		# openssldownload
-		if [ -f /svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl ]; then
+			if [ -f /svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl ]; then
 			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl version
 		
 			cecho "-------------------------------------------" $boldgreen
@@ -282,6 +283,7 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 			cecho "-------------------------------------------" $boldgreen
 			cecho "openssl speed -evp aes128 -multi ${CPUS}" $boldyellow
 			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes128 -multi ${CPUS}
+			fi
 		fi
 	fi
 fi
@@ -456,8 +458,8 @@ phpi() {
 	CPUNAME=$(cat /proc/cpuinfo | grep "model name" | cut -d ":" -f2 | tr -s " " | head -n 1)
 	CPUCOUNT=$(cat /proc/cpuinfo | grep "model name" | cut -d ":" -f2 | wc -l)
 	echo "CPU: $CPUCOUNT x$CPUNAME"
-	cat /etc/redhat-release && uname -m
-	echo "Centmin Mod $(cat /etc/centminmod-release)"
+	# cat /etc/redhat-release && uname -m
+	# echo "Centmin Mod $(cat /etc/centminmod-release)"
 	free -ml
 	
 	
@@ -975,13 +977,13 @@ starttime=$(date +%s.%N)
 	pingtests
 	opensslbench
 	mysqlslapper
-
-	phpi
-	restartphp
-	fbench
-	restartphp
-	fmicrobench
-	
+	if [ -f /etc/centminmod-release ]; then
+		phpi
+		restartphp
+		fbench
+		restartphp
+		fmicrobench
+	fi
 	ubench
 	
 	if [[ "$1" = 'vultr' ]]; then
