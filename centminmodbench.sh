@@ -303,18 +303,22 @@ baseinfo() {
 	cat /etc/centminmod-release
 	s
 	
+	div
 	lscpu
 	s
 
+	div
 	lscpu -e
 	s
 	
 	# cat /proc/cpuinfo
 	# s
 	
+	div
 	free -ml
 	s
 	
+	div
 	df -h
 	s
 }
@@ -335,9 +339,9 @@ mysqlslapper() {
 		CSVFILE=""
 	fi
 	
-	cecho "mysqlslap --auto-generate-sql --auto-generate-sql-add-autoincrement --auto-generate-sql-secondary-indexes=$secidx --number-int-cols=$intcol --number-char-cols=$charcol --number-of-queries=$queries --auto-generate-sql-unique-query-number=$uniqq --auto-generate-sql-unique-write-number=$uniqwn --auto-generate-sql-write-number=$rowinserts --concurrency=$clients --iterations=$it --engine=$engine -vv $CSVFILE" $boldyellow
+	cecho "mysqlslap --auto-generate-sql --auto-generate-sql-add-autoincrement --auto-generate-sql-secondary-indexes=$secidx --number-int-cols=$intcol --number-char-cols=$charcol --number-of-queries=$queries --auto-generate-sql-unique-query-number=$uniqq --auto-generate-sql-unique-write-number=$uniqwn --auto-generate-sql-write-number=$rowinserts --concurrency=$clients --iterations=$it --engine=$engine $CSVFILE" $boldyellow
 
-	mysqlslap --auto-generate-sql --auto-generate-sql-add-autoincrement --auto-generate-sql-secondary-indexes=$secidx --number-int-cols=$intcol --number-char-cols=$charcol --number-of-queries=$queries --auto-generate-sql-unique-query-number=$uniqq --auto-generate-sql-unique-write-number=$uniqwn --auto-generate-sql-write-number=$rowinserts --concurrency=$clients --iterations=$it --engine=$engine -vv $CSVFILE
+	mysqlslap --auto-generate-sql --auto-generate-sql-add-autoincrement --auto-generate-sql-secondary-indexes=$secidx --number-int-cols=$intcol --number-char-cols=$charcol --number-of-queries=$queries --auto-generate-sql-unique-query-number=$uniqq --auto-generate-sql-unique-write-number=$uniqwn --auto-generate-sql-write-number=$rowinserts --concurrency=$clients --iterations=$it --engine=$engine $CSVFILE
 	
 	if [[ "$MYSQLSLAP_SAVECSV" = [yY] ]]
 		then echo -e "\nls -lahrt ${MYSQLSLAP_DIR}/"
@@ -361,7 +365,8 @@ ubench()
 
         cecho "Download UnixBench${UNIXBENCH_VER}.tgz ..." $boldyellow
     if [ -s UnixBench${UNIXBENCH_VER}.tgz ]; then
-        cecho "UnixBench${UNIXBENCH_VER}.tgz found, skipping download..." $boldgreen
+        # cecho "UnixBench${UNIXBENCH_VER}.tgz found, skipping download..." $boldgreen
+        s
     else
         wget -cnv https://byte-unixbench.googlecode.com/files/UnixBench${UNIXBENCH_VER}.tgz --tries=3
 ERROR=$?
@@ -649,9 +654,10 @@ diskfio() {
 
 	cd $BENCHDIR
 
-        cecho "Download fio-$FIO_VERSION.tar.gz ..." $boldyellow
+        # cecho "Download fio-$FIO_VERSION.tar.gz ..." $boldyellow
     if [ -s fio-$FIO_VERSION.tar.gz ]; then
-        cecho "fio-$FIO_VERSION.tar.gz found, skipping download..." $boldgreen
+        # cecho "fio-$FIO_VERSION.tar.gz found, skipping download..." $boldgreen
+        s
     else
         wget -cnv --no-check-certificate https://github.com/Crowd9/Benchmark/raw/master/fio-$FIO_VERSION.tar.gz --tries=3
 ERROR=$?
@@ -732,7 +738,7 @@ s
 }
 
 download_benchmark() {
-  cecho "Benchmarking download from $1 ($2)" $boldyellow
+  cecho "Download from $1 ($2)" $boldyellow
   DOWNLOAD_SPEED=`wget -O /dev/null $2 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}'`
   # cecho "Got $DOWNLOAD_SPEED" $boldyellow
   cecho "Download $1: $DOWNLOAD_SPEED" $boldyellow 2>&1 
