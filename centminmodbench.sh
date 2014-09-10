@@ -1252,21 +1252,40 @@ starttime=$(date +%s.%N)
 	bbcodestart
 	byline
 	baseinfo
+	bbcodeend
+
+	bbcodestart
 	diskioping
 	diskdd
 	diskfio
+	bbcodeend
+	
+	bbcodestart
 	bandwidthbench
 	pingtests
+	bbcodeend
+	
+	bbcodestart
 	opensslbench
+	bbcodeend
+	
+	bbcodestart
 	mysqlslapper
+	bbcodeend
+	
 	if [ -f /etc/centminmod-release ]; then
+		bbcodestart
 		phpi
 		restartphp
 		fbench
 		restartphp
 		fmicrobench
+		bbcodeend
 	fi
+		
+	bbcodestart
 	ubench
+	bbcodeend
 	
 	if [[ "$1" = 'vultr' ]]; then
 		sbvultr
@@ -1285,7 +1304,7 @@ starttime=$(date +%s.%N)
 	fi
 
 	ended
-	bbcodeend
+	
 } 2>&1 | tee ${LOGDIR}/centminmodbench_results_${DT}.log
 
 endtime=$(date +%s.%N)
