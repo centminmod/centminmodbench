@@ -1308,6 +1308,6 @@ echo "clear && printf '\e[3J'; cat ${LOGDIR}/_publicreport_${DT}.log"
 cecho "----------------------------------------------------" $boldgreen
 s
 
-cat ${LOGDIR}/centminmodbench_results_${DT}.log | egrep -v '+DT:|+R:|+DTP:|+R1:|+R2:|+R5:|+R6|Forked child|Got:|make: Nothing' | sed -e "s/$HOSTNAME/hostname/g" > ${LOGDIR}/_publicreport_${DT}.log 2>&1
+cat ${LOGDIR}/centminmodbench_results_${DT}.log | egrep -v 'ccache gcc|+DT:|+R:|+DTP:|+R1:|+R2:|+R5:|+R6|Forked child|Got:|make: Nothing' | sed -e "s/$HOSTNAME/hostname/g" > ${LOGDIR}/_publicreport_${DT}.log 2>&1
 
 exit
