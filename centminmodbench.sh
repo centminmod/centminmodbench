@@ -1106,7 +1106,7 @@ tar xzf lbzip2-2.5.tar.gz
 cd lbzip2-2.5
 ./configure 2>&1
 make -j${CPUS} 2>&1
-make install
+make install 2>&1
 
 fi
 
@@ -1129,7 +1129,7 @@ tar xzf lzip-1.16.tar.gz
 cd lzip-1.16
 ./configure 2>&1
 make -j${CPUS} 2>&1
-make install
+make install 2>&1
 
 fi
 
@@ -1159,7 +1159,7 @@ tar xzf lzlib-1.6.tar.gz
 cd lzlib-1.6
 ./configure 2>&1
 make -j${CPUS} 2>&1
-make install
+make install 2>&1
 
 cd ../
 
@@ -1167,7 +1167,7 @@ tar xzf plzip-1.1.tar.gz
 cd plzip-1.1
 ./configure 2>&1
 make -j${CPUS} 2>&1
-make install
+make install 2>&1
 
 fi
 
@@ -1191,7 +1191,31 @@ tar xf z922.tar.tar
 cd p7zip_9.22
 ./install.sh 2>&1
 make -j${CPUS} 2>&1
-make install
+make install 2>&1
+
+fi
+
+}
+
+funct_xzinstall() {
+
+if [ ! -f /usr/bin/xz ]; then
+
+cd $SRCDIR
+
+if [ -s xz-5.0.5.tar.gz ]; then
+  cecho "xz-5.0.5.tar.gz [found]" $boldyellow
+  else
+  cecho "Error: xz-5.0.5.tar.gz not found!!!download now......" $boldyellow
+  wget -q http://tukaani.org/xz/xz-5.0.5.tar.gz --tries=3
+fi
+
+tar xzf xz-5.0.5.tar.gz
+cd xz-5.0.5
+# bash autogen.sh 2>&1
+./configure 2>&1
+make -j${CPUS} 2>&1
+make install 2>&1
 
 fi
 
@@ -1216,6 +1240,8 @@ compressinstall() {
 		funct_plzipinstall
 		div
 		funct_p7zipinstall
+		div
+		funct_xzinstall
 		s
 	fi
 }
