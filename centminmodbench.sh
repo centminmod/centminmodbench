@@ -30,6 +30,7 @@ RUN_DISKDD='y'
 RUN_DISKIOPING='y'
 RUN_DISKFIO='y'
 RUN_BANDWIDTHBENCH='y'
+RUN_VULTRTESTS='y'
 EUROPE_BANDWIDTHTESTS='y'
 ASIA_BANDWIDTHTESTS='y'
 AUSTRALIA_BANDWIDTHTESTS='y'
@@ -50,6 +51,81 @@ RUNS='3'
 
 IOPING_VERSION=0.6
 FIO_VERSION=2.0.9
+
+########################
+# compression
+
+# Max Compression level to test up to 
+# values between 1 (lowest) to 9 (highest)
+COMPLEVEL='5'
+
+# Number of cpu threads for compression
+CPUNO='4'
+
+# Number of cpu threads for decompression
+# some apps use alot of memory for decompression
+# reducing cpu threads for decompression will lower
+# max resource usage i.e. for lbzip2
+DCPUNO='2'
+REDUCETHREADS='y'
+
+if [ $REDUCETHREADS == 'y' ]; then
+DCOMPTHREADS=" -n$DCPUNO"
+else
+DCOMPTHREADS=''
+fi
+
+# where to download binaries for install
+SRCDIR='/srv-setup'
+
+GZIPTEST='y'
+BZIP2TEST='y'
+PIGZTEST='y'
+PBZIP2TEST='y'
+LBZIP2TEST='n'
+LZIPTEST='y'
+PLZIPTEST='y'
+P7ZIPTEST='y'
+ZIPTEST='y'
+
+# Enable or disable custom block size
+# for pigz
+PIGZBLKSIZE='n'
+if [ "$PIGZBLKSIZE" == 'y' ]; then
+	# default is 128KB
+	PIGZBLOCKSIZE=' -b 128'
+else
+	PIGZBLOCKSIZE=''
+fi
+
+# Enable or disable custom block size
+# for pbzip2
+PBZIP2BLKSIZE='n'
+if [ "$PBZIP2BLKSIZE" == 'y' ]; then
+	# default is 9 = 9x100K = 900K
+	PBZIP2BLOCKSIZE=' -b3'
+else
+	PBZIP2BLOCKSIZE=''
+fi
+
+# not working
+LBZIP2BLKSIZE='n'
+if [ "$LBZIP2BLKSIZE" == 'y' ]; then
+	# default is 9 = 9x100K = 900K
+	LBZIP2BLOCKSIZE=' -b3'
+else
+	LBZIP2BLOCKSIZE=''
+fi
+
+# Enable or disable custom block size
+# for plzip
+PLZIPBLKSIZE='n'
+if [ "$PLZIPBLKSIZE" == 'y' ]; then
+	# default is ???k
+	PLZIPBLOCKSIZE=' -B 512k'
+else
+	PLZIPBLOCKSIZE=''
+fi
 ###############################################################
 DT=`date +"%d%m%y-%H%M%S"`
 OPENSSL_LINKFILE="openssl-${OPENSSL_VERSION}.tar.gz"
@@ -812,44 +888,45 @@ bandwidthbench() {
 		download_benchmark 'Softlayer, Washington, DC, USA' 'http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
 		fi
 		
-		if [[ "$AUSTRALIA_BANDWIDTHTESTS" = [yY] ]]; then
-		div
-		download_benchmark 'Vultr, Sydney, Australia' 'http://syd-au-ping.vultr.com/vultr.com.100MB.bin'
-		fi
-		
-		if [[ "$ASIA_BANDWIDTHTESTS" = [yY] ]]; then
-		div
-		download_benchmark 'Vultr, Tokyo, Japan' 'http://hnd-jp-ping.vultr.com/vultr.com.100MB.bin'
-		fi
-		
-		if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
-		div
-		download_benchmark 'Vultr, Los Angeles, California' 'http://lax-ca-us-ping.vultr.com/vultr.com.100MB.bin'
-		div
-		download_benchmark 'Vultr, Seattle, Washington' 'http://wa-us-ping.vultr.com/vultr.com.100MB.bin'
-		div
-		download_benchmark 'Vultr, Dallas, Texas' 'http://tx-us-ping.vultr.com/vultr.com.100MB.bin'
-		div
-		download_benchmark 'Vultr, Chicago, Illinois' 'http://il-us-ping.vultr.com/vultr.com.100MB.bin'
-		div
-		download_benchmark 'Vultr, Atlanta, Georgia' 'http://ga-us-ping.vultr.com/vultr.com.100MB.bin'
-		div
-		download_benchmark 'Vultr, Miami, Florida' 'http://fl-us-ping.vultr.com/vultr.com.100MB.bin'
-		div
-		download_benchmark 'Vultr, New York / New Jersey' 'http://nj-us-ping.vultr.com/vultr.com.100MB.bin'
-		fi
-		
-		if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
-		# div
-		# download_benchmark 'Vultr, Frankfurt, Germany' 'http://fra-de-ping.vultr.com/vultr.com.100MB.bin'
-		div
-		download_benchmark 'Vultr, Amsterdam, Netherlands' 'http://ams-nl-ping.vultr.com/vultr.com.100MB.bin'
-		div
-		download_benchmark 'Vultr, London, UK' 'http://lon-gb-ping.vultr.com/vultr.com.100MB.bin'
-		div
-		download_benchmark 'Vultr, Paris, France' 'http://par-fr-ping.vultr.com/vultr.com.100MB.bin'
-		fi
-
+		if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
+			if [[ "$AUSTRALIA_BANDWIDTHTESTS" = [yY] ]]; then
+			div
+			download_benchmark 'Vultr, Sydney, Australia' 'http://syd-au-ping.vultr.com/vultr.com.100MB.bin'
+			fi
+			
+			if [[ "$ASIA_BANDWIDTHTESTS" = [yY] ]]; then
+			div
+			download_benchmark 'Vultr, Tokyo, Japan' 'http://hnd-jp-ping.vultr.com/vultr.com.100MB.bin'
+			fi
+			
+			if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
+			div
+			download_benchmark 'Vultr, Los Angeles, California' 'http://lax-ca-us-ping.vultr.com/vultr.com.100MB.bin'
+			div
+			download_benchmark 'Vultr, Seattle, Washington' 'http://wa-us-ping.vultr.com/vultr.com.100MB.bin'
+			div
+			download_benchmark 'Vultr, Dallas, Texas' 'http://tx-us-ping.vultr.com/vultr.com.100MB.bin'
+			div
+			download_benchmark 'Vultr, Chicago, Illinois' 'http://il-us-ping.vultr.com/vultr.com.100MB.bin'
+			div
+			download_benchmark 'Vultr, Atlanta, Georgia' 'http://ga-us-ping.vultr.com/vultr.com.100MB.bin'
+			div
+			download_benchmark 'Vultr, Miami, Florida' 'http://fl-us-ping.vultr.com/vultr.com.100MB.bin'
+			div
+			download_benchmark 'Vultr, New York / New Jersey' 'http://nj-us-ping.vultr.com/vultr.com.100MB.bin'
+			fi
+			
+			if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
+			# div
+			# download_benchmark 'Vultr, Frankfurt, Germany' 'http://fra-de-ping.vultr.com/vultr.com.100MB.bin'
+			div
+			download_benchmark 'Vultr, Amsterdam, Netherlands' 'http://ams-nl-ping.vultr.com/vultr.com.100MB.bin'
+			div
+			download_benchmark 'Vultr, London, UK' 'http://lon-gb-ping.vultr.com/vultr.com.100MB.bin'
+			div
+			download_benchmark 'Vultr, Paris, France' 'http://par-fr-ping.vultr.com/vultr.com.100MB.bin'
+			fi
+		fi # vultr
 		if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
 		div
 		download_benchmark 'VersaWeb, Las Vegas, Nevada' 'http://199.47.210.50/100mbtest.bin'
@@ -962,6 +1039,185 @@ ended() {
 	cecho "-------------------------------------------" $boldgreen
 	cecho "$SCRIPTNAME completed" $boldyellow
 	cecho "-------------------------------------------" $boldgreen
+}
+########################
+# compression
+
+funct_pigzinstall() {
+
+if [ ! -f /usr/bin/pigz ]; then
+
+cd $SRCDIR
+
+if [ -s pigz-2.3.tar.gz ]; then
+  cecho "pigz-2.3.tar.gz [found]" $boldyellow
+  else
+  cecho "Error: pigz-2.3.tar.gz not found!!!download now......" $boldyellow
+  wget -q --no-check-certificate https://github.com/madler/pigz/tarball/v2.3 -O  pigz-2.3.tar.gz --tries=3
+fi
+
+tar xzf pigz-2.3.tar.gz
+#cd pigz-2.3
+cd madler-pigz*
+make -j${CPUS} 2>&1
+cp pigz unpigz /usr/bin
+ls -lh /usr/bin | grep pigz
+
+fi
+
+}
+
+funct_pbzip2install() {
+
+if [ ! -f /usr/bin/pbzip2 ]; then
+
+cd $SRCDIR
+
+if [ -s pbzip2-1.1.8.tar.gz ]; then
+  cecho "pbzip2-1.1.8.tar.gz [found]" $boldyellow
+  else
+  cecho "Error: pbzip2-1.1.8.tar.gz not found!!!download now......" $boldyellow
+  wget -q http://compression.ca/pbzip2/pbzip2-1.1.8.tar.gz --tries=3
+fi
+
+tar xzf pbzip2-1.1.8.tar.gz
+cd pbzip2-1.1.8
+make -j${CPUS} 2>&1
+cp pbzip2 /usr/bin
+
+fi
+
+}
+
+funct_lbzip2install() {
+
+if [ ! -f /usr/local/bin/lbzip2 ]; then
+
+cd $SRCDIR
+
+if [ -s lbzip2-2.5.tar.gz ]; then
+  cecho "lbzip2-2.5.tar.gz [found]" $boldyellow
+  else
+  cecho "Error: lbzip2-2.5.tar.gz not found!!!download now......" $boldyellow
+  wget -q --no-check-certificate https://github.com/downloads/kjn/lbzip2/lbzip2-2.5.tar.gz --tries=3
+fi
+
+tar xzf lbzip2-2.5.tar.gz
+cd lbzip2-2.5
+./configure 2>&1
+make -j${CPUS} 2>&1
+make install
+
+fi
+
+}
+
+funct_lzipinstall() {
+
+if [ ! -f /usr/local/bin/lzip ]; then
+
+cd $SRCDIR
+
+if [ -s lzip-1.16.tar.gz ]; then
+  cecho "lzip-1.16.tar.gz [found]" $boldyellow
+  else
+  cecho "Error: lzip-1.16.tar.gz not found!!!download now......" $boldyellow
+  wget -q http://download.savannah.gnu.org/releases/lzip/lzip-1.16.tar.gz --tries=3
+fi
+
+tar xzf lzip-1.16.tar.gz
+cd lzip-1.16
+./configure 2>&1
+make -j${CPUS} 2>&1
+make install
+
+fi
+
+}
+
+funct_plzipinstall() {
+
+if [ ! -f /usr/local/bin/plzip ]; then
+
+cd $SRCDIR
+
+if [ -s lzlib-1.6.tar.gz ]; then
+  cecho "lzlib-1.6.tar.gz [found]" $boldyellow
+  else
+  cecho "Error: lzlib-1.6.tar.gz not found!!!download now......" $boldyellow
+  wget -q http://download.savannah.gnu.org/releases/lzip/lzlib-1.6.tar.gz --tries=3
+fi
+
+if [ -s plzip-1.1.tar.gz ]; then
+  cecho "plzip-1.1.tar.gz [found]" $boldyellow
+  else
+  cecho "Error: plzip-1.1.tar.gz not found!!!download now......" $boldyellow
+  wget -q http://download.savannah.gnu.org/releases/lzip/plzip-1.1.tar.gz --tries=3
+fi
+
+tar xzf lzlib-1.6.tar.gz
+cd lzlib-1.6
+./configure 2>&1
+make -j${CPUS} 2>&1
+make install
+
+cd ../
+
+tar xzf plzip-1.1.tar.gz
+cd plzip-1.1
+./configure 2>&1
+make -j${CPUS} 2>&1
+make install
+
+fi
+
+}
+
+funct_p7zipinstall() {
+
+if [ ! -f /usr/local/bin/7za ]; then
+
+cd $SRCDIR
+
+if [ -s z922.tar.bz2 ]; then
+  cecho "z922.tar.bz2 [found]" $boldyellow
+  else
+  cecho "Error: z922.tar.bz2 not found!!!download now......" $boldyellow
+  wget -q http://aarnet.dl.sourceforge.net/project/p7zip/p7zip/9.20.1/z922.tar.bz2 --tries=3
+fi
+
+bzip2 -d z922.tar.bz2
+tar xf z922.tar.tar
+cd p7zip_9.22
+./install.sh 2>&1
+make -j${CPUS} 2>&1
+make install
+
+fi
+
+}
+
+compressinstall() {
+	if [ -f /etc/centminmod-release ]; then
+		s
+		cecho "-------------------------------------------" $boldgreen
+		cecho "Install Compression Tools..." $boldyellow
+		cecho "-------------------------------------------" $boldgreen
+		s
+		div
+		funct_pigzinstall
+		div
+		funct_pbzip2install
+		div
+		funct_lbzip2install
+		div
+		funct_lzipinstall
+		div
+		funct_plzipinstall
+		div
+		funct_p7zipinstall
+		s
+	fi
 }
 
 ########################
