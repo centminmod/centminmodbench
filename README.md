@@ -49,6 +49,7 @@ Variables you can alter within centminmodbench.sh. Note the bandwidth tests can 
     RUN_DISKIOPING='y'
     RUN_DISKFIO='y'
     RUN_BANDWIDTHBENCH='y'
+    RUN_VULTRTESTS='y'
     EUROPE_BANDWIDTHTESTS='y'
     ASIA_BANDWIDTHTESTS='y'
     AUSTRALIA_BANDWIDTHTESTS='y'
