@@ -29,6 +29,10 @@ To run script locally in SSH window as root user type:
 
     /root/tools/centminmodbench.sh
 
+To update script
+
+    wget -O /root/tools/centminmodbench.sh https://github.com/centminmod/centminmodbench/raw/master/centminmodbench.sh
+
 Default log directories include:
 
 * BENCHDIR='/home/centminmodbench' (source downloads location)
