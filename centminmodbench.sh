@@ -835,71 +835,28 @@ bandwidthbench() {
 		download_benchmark 'Cachefly' 'http://cachefly.cachefly.net/100mb.test'
 		
 		if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
+		s
+		cecho "-------------------------------------------" $boldgreen
+		cecho "USA bandwidth tests..." $boldyellow
+		cecho "-------------------------------------------" $boldgreen
+		s
 		div
 		download_benchmark 'Linode, Atlanta, GA, USA' 'http://speedtest.atlanta.linode.com/100MB-atlanta.bin'
 		div
 		download_benchmark 'Linode, Dallas, TX, USA' 'http://speedtest.dallas.linode.com/100MB-dallas.bin'
-		fi
-
-		if [[ "$ASIA_BANDWIDTHTESTS" = [yY] ]]; then
-		div
-		download_benchmark 'Linode, Tokyo, JP' 'http://speedtest.tokyo.linode.com/100MB-tokyo.bin'
-		fi
-		
-		if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
-		div
-		download_benchmark 'Linode, London, UK' 'http://speedtest.london.linode.com/100MB-london.bin'
-		div
-		download_benchmark 'OVH, Paris, France' 'http://proof.ovh.net/files/100Mio.dat'
-		div
-		download_benchmark 'SmartDC, Rotterdam, Netherlands' 'http://mirror.i3d.net/100mb.bin'
-		# div
-		# download_benchmark 'Hetzner, Nuernberg, Germany' 'http://hetzner.de/100MB.iso'
-		fi
-		
-		# if [[ "$AUSTRALIA_BANDWIDTHTESTS" = [yY] ]]; then
-		# div
-		# download_benchmark 'iiNet, Perth, WA, Australia' 'http://ftp.iinet.net.au/test100MB.dat'
-		# div 
-		# download_benchmark 'MammothVPS, Sydney, Australia' 'http://www.mammothvpscustomer.com/test100MB.dat'
-		# fi
-		
-		# if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
-		# div 
-		# download_benchmark 'Leaseweb, Haarlem, NL' 'http://mirror.nl.leaseweb.net/speedtest/100mb.bin'
-		# fi
-		
-		if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
 		div
 		download_benchmark 'Leaseweb, Manassas, VA, USA' 'http://mirror.us.leaseweb.net/speedtest/100mb.bin'
-		fi
-		
-		if [[ "$ASIA_BANDWIDTHTESTS" = [yY] ]]; then
-		div
-		download_benchmark 'Softlayer, Singapore' 'http://speedtest.sng01.softlayer.com/downloads/test100.zip'
-		fi
-		
-		if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
 		div
 		download_benchmark 'Softlayer, Seattle, WA, USA' 'http://speedtest.sea01.softlayer.com/downloads/test100.zip'
 		div
 		download_benchmark 'Softlayer, San Jose, CA, USA' 'http://speedtest.sjc01.softlayer.com/downloads/test100.zip'
 		div
 		download_benchmark 'Softlayer, Washington, DC, USA' 'http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
-		fi
-		
-		if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
-			if [[ "$AUSTRALIA_BANDWIDTHTESTS" = [yY] ]]; then
-			div
-			download_benchmark 'Vultr, Sydney, Australia' 'http://syd-au-ping.vultr.com/vultr.com.100MB.bin'
-			fi
-			
-			if [[ "$ASIA_BANDWIDTHTESTS" = [yY] ]]; then
-			div
-			download_benchmark 'Vultr, Tokyo, Japan' 'http://hnd-jp-ping.vultr.com/vultr.com.100MB.bin'
-			fi
-			
-			if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
+		div
+		download_benchmark 'VersaWeb, Las Vegas, Nevada' 'http://199.47.210.50/100mbtest.bin'
+		div
+		download_benchmark 'OVH, BHS, Canada' 'http://bhs.proof.ovh.net/files/100Mio.dat'
+			if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
 			div
 			download_benchmark 'Vultr, Los Angeles, California' 'http://lax-ca-us-ping.vultr.com/vultr.com.100MB.bin'
 			div
@@ -915,10 +872,37 @@ bandwidthbench() {
 			div
 			download_benchmark 'Vultr, New York / New Jersey' 'http://nj-us-ping.vultr.com/vultr.com.100MB.bin'
 			fi
-			
-			if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
-			# div
-			# download_benchmark 'Vultr, Frankfurt, Germany' 'http://fra-de-ping.vultr.com/vultr.com.100MB.bin'
+		fi
+
+		if [[ "$ASIA_BANDWIDTHTESTS" = [yY] ]]; then
+		s
+		cecho "-------------------------------------------" $boldgreen
+		cecho "Asia bandwidth tests..." $boldyellow
+		cecho "-------------------------------------------" $boldgreen
+		s
+		div
+		download_benchmark 'Linode, Tokyo, JP' 'http://speedtest.tokyo.linode.com/100MB-tokyo.bin'
+		div
+		download_benchmark 'Softlayer, Singapore' 'http://speedtest.sng01.softlayer.com/downloads/test100.zip'
+			if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
+			div
+			download_benchmark 'Vultr, Tokyo, Japan' 'http://hnd-jp-ping.vultr.com/vultr.com.100MB.bin'
+			fi
+		fi
+		
+		if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
+		s
+		cecho "-------------------------------------------" $boldgreen
+		cecho "Europe bandwidth tests..." $boldyellow
+		cecho "-------------------------------------------" $boldgreen
+		s
+		div
+		download_benchmark 'Linode, London, UK' 'http://speedtest.london.linode.com/100MB-london.bin'
+		div
+		download_benchmark 'OVH, Paris, France' 'http://proof.ovh.net/files/100Mio.dat'
+		div
+		download_benchmark 'SmartDC, Rotterdam, Netherlands' 'http://mirror.i3d.net/100mb.bin'
+			if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
 			div
 			download_benchmark 'Vultr, Amsterdam, Netherlands' 'http://ams-nl-ping.vultr.com/vultr.com.100MB.bin'
 			div
@@ -926,15 +910,20 @@ bandwidthbench() {
 			div
 			download_benchmark 'Vultr, Paris, France' 'http://par-fr-ping.vultr.com/vultr.com.100MB.bin'
 			fi
-		fi # vultr
-		if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
-		div
-		download_benchmark 'VersaWeb, Las Vegas, Nevada' 'http://199.47.210.50/100mbtest.bin'
-		div
-		download_benchmark 'OVH, BHS, Canada' 'http://bhs.proof.ovh.net/files/100Mio.dat'
 		fi
-
-		
+			
+		if [[ "$AUSTRALIA_BANDWIDTHTESTS" = [yY] ]]; then
+		s
+		cecho "-------------------------------------------" $boldgreen
+		cecho "Australia bandwidth tests..." $boldyellow
+		cecho "-------------------------------------------" $boldgreen
+		s
+			if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
+			div
+			download_benchmark 'Vultr, Sydney, Australia' 'http://syd-au-ping.vultr.com/vultr.com.100MB.bin'
+			fi
+		fi
+			
 	fi
 }
 
