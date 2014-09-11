@@ -1267,6 +1267,22 @@ compressinstall() {
 }
 
 ########################
+
+if [[ "$1" = cleanup ]]; then
+  rm -rf /home/centminmodbench
+  rm -rf /home/centminmodbench_logs
+  rm -rf /home/mysqlslap
+  rm -rf /home/phpbench_logs
+  s
+  div
+  cecho "cleaned up folders and logs" $boldyellow
+  cecho "manually remove the file to complete process:" $boldyellow
+  cecho "/root/tools/centminmodbench.sh" $boldyellow
+  div
+  exit
+  s
+fi
+
 starttime=$(date +%s.%N)
 {
 	bbcodestart
