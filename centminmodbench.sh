@@ -130,7 +130,6 @@ fi
 DT=`date +"%d%m%y-%H%M%S"`
 OPENSSL_LINKFILE="openssl-${OPENSSL_VERSION}.tar.gz"
 OPENSSL_LINK="http://www.openssl.org/source/${OPENSSL_LINKFILE}"
-CPUS=$(nproc)
 BENCHDIR='/home/centminmodbench'
 LOGDIR='/home/centminmodbench_logs'
 
@@ -164,6 +163,12 @@ PROCESSNAME='php-fpm'
 
 IOPING_DIR="${BENCHDIR}/ioping-${IOPING_VERSION}"
 FIO_DIR="${BENCHDIR}/fio-${FIO_VERSION}"
+
+if [ -f /proc/user_beancounters ]; then
+	CPUS=$(grep "processor" /proc/cpuinfo |wc -l)
+else
+	CPUS=$(nproc)
+fi
 ###############################################################
 if [ ! -f /etc/centos-release ] ; then
 	cecho "$SCRIPTNAME is meant to be run on CentOS system only" $boldyellow
@@ -382,12 +387,20 @@ baseinfo() {
 	s
 	
 	div
-	lscpu
+	if [ ! -f /proc/user_beancounters ]; then
+		lscpu
+	else
+		CPUNAME=$(cat /proc/cpuinfo | grep "model name" | cut -d ":" -f2 | tr -s " " | head -n 1)
+		CPUCOUNT=$(cat /proc/cpuinfo | grep "model name" | cut -d ":" -f2 | wc -l)
+		echo "CPU: $CPUCOUNT x$CPUNAME"
+	fi
 	s
 
+	if [ ! -f /proc/user_beancounters ]; then
 	div
 	lscpu -e
 	s
+	fi
 	
 	# cat /proc/cpuinfo
 	# s
