@@ -33,6 +33,18 @@ To update script
 
     wget -O /root/tools/centminmodbench.sh https://github.com/centminmod/centminmodbench/raw/master/centminmodbench.sh
 
+To remove centminmodbench.sh and log files
+
+    /root/tools/centminmodbench.sh cleanup
+
+Or manually remove the following directories and file
+
+    /home/centminmodbench
+    /home/centminmodbench_logs
+    /home/mysqlslap
+    /home/phpbench_logs
+    /root/tools/centminmodbench.sh
+
 Default log directories include:
 
 * BENCHDIR='/home/centminmodbench' (source downloads location)
