@@ -206,6 +206,10 @@ fi
 if [[ "$DEBUG" = [yY] ]]; then
 	RUN_BANDWIDTHBENCH='n'
 fi
+
+# determine Centmin Mod Nginx static compiled
+# OpenSSL version
+OPENSSL_VERCHECK=$(nginx -V 2>&1 | grep -Eo "$OPENSSL_VERSION")
 ###############################################################
 # Setup Colours
 black='\E[30;40m'
@@ -240,6 +244,18 @@ return
 }
 ###############################################################
 # functions
+
+bbcodestart() {
+	if [[ "$BBCODE" = [yY] ]]; then
+		echo "[CODE]"
+	fi
+}
+
+bbcodeend() {
+	if [[ "$BBCODE" = [yY] ]]; then
+		echo "[/CODE]"
+	fi
+}
 
 div() {
 	cecho "----------------------------------------------" $boldgreen
@@ -323,6 +339,7 @@ echo ""
 
 opensslbench() {
 if [[ "$OPENSSLBENCH" = [yY] ]]; then
+	bbcodestart
 	cecho "-------------------------------------------" $boldgreen
 	cecho "OpenSSL System Benchmark" $boldyellow
 	cecho "-------------------------------------------" $boldgreen
@@ -342,7 +359,7 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 	openssl speed -evp aes128 -multi ${CPUS}
 
 	if [[ "$OPENSSL_NONSYSTEM" = [yY] ]]; then
-		if [ -f /etc/centminmod-release ]; then
+		if [[ -f /etc/centminmod-release && "$OPENSSL_VERCHECK" ]]; then
 		s
 		cecho "-------------------------------------------" $boldgreen
 		cecho "Centmin Mod Nginx static OpenSSL Benchmark" $boldyellow
@@ -367,6 +384,7 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 			fi
 		fi
 	fi
+	bbcodeend
 fi
 }
 
@@ -416,6 +434,7 @@ baseinfo() {
 }
 
 mysqlslapper() {
+	bbcodestart
 	cecho "-------------------------------------------" $boldgreen
 	cecho "Running mysqlslap" $boldyellow
 	cecho "-------------------------------------------" $boldgreen
@@ -443,6 +462,7 @@ mysqlslapper() {
 	if [[ -d "${MYSQLDATADIR}test" ]]; then
 		echo Y | mysqladmin drop $dbname
 	fi
+	bbcodeend
 }
 
 # UnixBench 5.1.3
@@ -505,18 +525,6 @@ fi
 	fi
 }
 
-bbcodestart() {
-	if [[ "$BBCODE" = [yY] ]]; then
-		echo "[CODE]"
-	fi
-}
-
-bbcodeend() {
-	if [[ "$BBCODE" = [yY] ]]; then
-		echo "[/CODE]"
-	fi
-}
-
 cleanmem() {
 	if [ ! -f /proc/user_beancounters ]; then
 		sync && echo 3 > /proc/sys/vm/drop_caches > /dev/null
@@ -540,8 +548,6 @@ restartphp() {
 
 phpi() {
 	{
-	
-
 	cecho "-------------------------------------------" $boldgreen
 	cecho "System PHP Info" $boldyellow
 	cecho "-------------------------------------------" $boldgreen
@@ -657,6 +663,7 @@ fmicrobench() {
 diskdd() {
 
 	if [[ "$RUN_DISKDD" = [yY] ]]; then
+	bbcodestart
 	cecho "-------------------------------------------" $boldgreen
 	cecho "disk DD tests" $boldyellow
 	cecho "-------------------------------------------" $boldgreen
@@ -679,12 +686,14 @@ diskdd() {
 
 	rm sb-io-test 2>/dev/null
 	# cd ..
+	bbcodeend
 	fi
 }
 
 diskioping() {
 
 	if [[ "$RUN_DISKIOPING" = [yY] ]]; then
+	bbcodestart
 	cecho "-------------------------------------------" $boldgreen
 	cecho "disk ioping tests" $boldyellow
 	cecho "-------------------------------------------" $boldgreen
@@ -738,10 +747,12 @@ fi
 	./ioping -RC .
 	s
 	fi
+	bbcodeend
 }
 
 diskfio() {
 	if [[ "$RUN_DISKFIO" = [yY] ]]; then
+	bbcodestart
 	cecho "-------------------------------------------" $boldgreen
 	cecho "disk FIO tests" $boldyellow
 	cecho "-------------------------------------------" $boldgreen
@@ -829,6 +840,7 @@ cecho "FIO random writes: " $boldyellow
 
 rm sb-io-test 2>/dev/null
 s
+	bbcodeend
 	fi
 }
 
@@ -841,6 +853,7 @@ download_benchmark() {
 
 bandwidthbench() {
 	if [[ "$RUN_BANDWIDTHBENCH" = [yY] ]]; then
+	bbcodestart
 	s
 	cecho "-------------------------------------------" $boldgreen
 	cecho "Running bandwidth benchmark..." $boldyellow
@@ -939,12 +952,13 @@ bandwidthbench() {
 			download_benchmark 'Vultr, Sydney, Australia' 'http://syd-au-ping.vultr.com/vultr.com.100MB.bin'
 			fi
 		fi
-			
+		bbcodeend	
 	fi
 }
 
 pingtests() {
 	if [[ "$RUN_PINGTESTS" = [yY] ]]; then
+	bbcodestart
 	s
 	cecho "-------------------------------------------" $boldgreen
 	cecho "Running ping tests..." $boldyellow
@@ -1036,6 +1050,7 @@ pingtests() {
 	ping -c 3 bhs.proof.ovh.net 2>&1
 
 	s
+	bbcodeend
 	fi
 }
 
@@ -1258,26 +1273,18 @@ starttime=$(date +%s.%N)
 	byline
 	baseinfo
 	bbcodeend
-
-	bbcodestart
+	
 	diskioping
 	diskdd
 	diskfio
-	bbcodeend
 	
-	bbcodestart
 	bandwidthbench
 	pingtests
-	bbcodeend
-	
-	bbcodestart
+		
 	opensslbench
-	bbcodeend
-	
-	bbcodestart
+		
 	mysqlslapper
-	bbcodeend
-	
+		
 	if [ -f /etc/centminmod-release ]; then
 		bbcodestart
 		phpi
