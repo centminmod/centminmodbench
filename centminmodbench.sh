@@ -393,6 +393,7 @@ baseinfo() {
 		CPUNAME=$(cat /proc/cpuinfo | grep "model name" | cut -d ":" -f2 | tr -s " " | head -n 1)
 		CPUCOUNT=$(cat /proc/cpuinfo | grep "model name" | cut -d ":" -f2 | wc -l)
 		echo "CPU: $CPUCOUNT x$CPUNAME"
+		uname -m
 	fi
 	s
 
