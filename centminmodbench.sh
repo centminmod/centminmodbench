@@ -449,6 +449,7 @@ mysqlslapper() {
 ubench()
 {
 	if [[ "$RUN_UNIXBENCH" = [yY] ]]; then
+		bbcodestart
 		cecho "-------------------------------------------" $boldgreen
 		cecho "Building UnixBench" $boldyellow
 		cecho "-------------------------------------------" $boldgreen
@@ -500,6 +501,7 @@ fi
 		cd $BENCHDIR
 		# rm -rf UnixBench* unixbench.patch
 		rm -rf UnixBench
+		bbcodeend
 	fi
 }
 
@@ -1286,10 +1288,8 @@ starttime=$(date +%s.%N)
 		bbcodeend
 	fi
 		
-	bbcodestart
 	ubench
-	bbcodeend
-	
+		
 	if [[ "$1" = 'vultr' ]]; then
 		sbvultr
 	fi
