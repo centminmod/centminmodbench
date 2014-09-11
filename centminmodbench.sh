@@ -14,7 +14,10 @@
 # https://github.com/STH-Dev/linux-bench
 ###############################################################
 SCRIPTNAME=centminmodbench.sh
-VER=0.0.1
+SCRIPTAUTHOR='George Liu (eva2000)'
+SCRIPTSITE='http://centminmod.com'
+SCRIPTGITHUB='https://github.com/centminmod/centminmodbench'
+VER=0.1
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
@@ -267,7 +270,10 @@ s() {
 
 byline() {
 	cecho "-------------------------------------------" $boldgreen
-	cecho "$SCRIPTNAME $VER (centminmod.com)" $boldyellow
+	cecho "$SCRIPTNAME $VER" $boldyellow
+	cecho "$SCRIPTGITHUB" $boldyellow
+	cecho "written by: $SCRIPTAUTHOR" $boldyellow
+	cecho "$SCRIPTSITE" $boldyellow
 	cecho "-------------------------------------------" $boldgreen
 	s
 }
