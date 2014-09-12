@@ -1,5 +1,6 @@
 centminmodbench.sh
 ===============
+centminmodbench.sh Github short url link: http://bench.centminmod.com
 
 Custom system benchmark script for Centmin Mod LEMP web stack users. 
 
