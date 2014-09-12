@@ -84,7 +84,7 @@ mkdir -p /root/tools
 cd /root/tools
 wget -O centminmodbench.sh https://github.com/centminmod/centminmodbench/raw/master/centminmodbench.sh
 chmod +x centminmodbench.sh
-sed -i 's/RUN_UNIXBENCH='n'/RUN_UNIXBENCH='y'/g' centminmodbench.sh
+sed -i "s/RUN_UNIXBENCH='n'/RUN_UNIXBENCH='y'/g" centminmodbench.sh
 ./centminmodbench.sh
 
 }
