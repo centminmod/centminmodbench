@@ -12,7 +12,8 @@ Development is ongoing so please test only on test servers and not production li
 * mysqlslap http://dev.mysql.com/doc/refman/5.6/en/mysqlslap.html
 * PHP (php-fpm) Zend/bench.php & Zend/micro_bench.php
 * UnixBench 5.1.3 (currently disabled by default)
-* ServerBear.com tests (currently disabled by default)
+* ServerBear.com tests (currently disabled by default / not yet developed)
+* compression/decompression tests (not yet developed)
 
 To run type in SSH window as root user:
 
