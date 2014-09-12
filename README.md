@@ -54,7 +54,7 @@ Default log directories include:
 * MYSQLSLAP_DIR='/home/mysqlslap' (mysqlslap results logs)
 * PHPBENCHLOGDIR='/home/phpbench_logs' (PHP-FPM benchmark logs)
 
-Variables you can alter within centminmodbench.sh. Note the bandwidth tests can be set regionally as well, so if you have no need for Asia tests, you can turn the Asian specific bandwidth tests off etc. UnixBench is turned off by default during testing of this script as it adds up to 30 minutes to test runs as seen at https://community.centminmod.com/threads/centminmodbench-sh-benchmark-script-for-centmin-mod-lemp-servers.1298/#post-5880.
+Variables you can alter within centminmodbench.sh. Note the bandwidth tests can be set regionally as well, so if you have no need for Asia tests, you can turn the Asian specific bandwidth tests off etc. UnixBench is turned off by default during testing of this script as it adds up to 30-60 minutes to test runs as seen at https://community.centminmod.com/threads/centminmodbench-sh-benchmark-script-for-centmin-mod-lemp-servers.1298/#post-5880.
 
     SEVERBEAR='n'
     OPENSSLBENCH='y'
