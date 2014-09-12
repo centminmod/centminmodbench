@@ -2,6 +2,7 @@
 ###############################################################
 # centminmodbench.sh
 # https://github.com/centminmod/centminmodbench
+# short url link: http://bench.centminmod.com
 # benchmark script for centminmod.com users
 #
 # merges several existing benchmark scripts I wrote already
@@ -16,7 +17,7 @@
 SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
-SCRIPTGITHUB='https://github.com/centminmod/centminmodbench'
+SCRIPTGITHUB='http://bench.centminmod.com'
 VER=0.1
 ###############################################################
 EMAIL='youremail@yourdomain.com'
