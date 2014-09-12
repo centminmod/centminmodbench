@@ -21,6 +21,7 @@ VER=0.1
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
+AUTOREPORT='y'
 
 SEVERBEAR='n'
 OPENSSLBENCH='y'
@@ -1345,20 +1346,32 @@ INSTALLTIME=$(echo "scale=2;$endtime - $starttime"|bc )
 echo "" >> ${LOGDIR}/centminmodbench_results_${DT}.log
 echo "$SCRIPTNAME Total Run Time: $INSTALLTIME seconds" >> ${LOGDIR}/centminmodbench_results_${DT}.log
 
-########################
-# sanitise output
-s
-cecho "----------------------------------------------------" $boldgreen
-cecho "Sanitising Results..." $boldyellow
-cecho "Generating Public Report Log you can share..." $boldyellow
-cecho "at: ${LOGDIR}/_publicreport_${DT}.log" $boldyellow
-cecho "----------------------------------------------------" $boldgreen
-cecho "View Public Report type in SSH window (copy/paste & run):" $boldyellow
-s
-echo "clear && printf '\e[3J'; cat ${LOGDIR}/_publicreport_${DT}.log"
-cecho "----------------------------------------------------" $boldgreen
-s
+if [[ "$AUTOREPORT" != [yY] ]]; then
+	########################
+	# sanitise output
+	s
+	cecho "----------------------------------------------------" $boldgreen
+	cecho "Sanitising Results..." $boldyellow
+	cecho "Generating Public Report Log you can share..." $boldyellow
+	cecho "at: ${LOGDIR}/_publicreport_${DT}.log" $boldyellow
+	cecho "----------------------------------------------------" $boldgreen
+	cecho "View Public Report type in SSH window (copy/paste & run):" $boldyellow
+	s
+	echo "clear && printf '\e[3J'; cat ${LOGDIR}/_publicreport_${DT}.log"
+	cecho "----------------------------------------------------" $boldgreen
+	s
 
-cat ${LOGDIR}/centminmodbench_results_${DT}.log | egrep -v ' CC |ccache gcc|+DT:|+R:|+DTP:|+R1:|+R2:|+R5:|+R6|Forked child|Got:|make: Nothing|DEP .depend' | sed -e "s/$HOSTNAME/hostname/g" > ${LOGDIR}/_publicreport_${DT}.log 2>&1
+	cat ${LOGDIR}/centminmodbench_results_${DT}.log | egrep -v ' CC |ccache gcc|+DT:|+R:|+DTP:|+R1:|+R2:|+R5:|+R6|Forked child|Got:|make: Nothing|DEP .depend' | sed -e "s/$HOSTNAME/hostname/g" > ${LOGDIR}/_publicreport_${DT}.log 2>&1
+else
+	cat ${LOGDIR}/centminmodbench_results_${DT}.log | egrep -v ' CC |ccache gcc|+DT:|+R:|+DTP:|+R1:|+R2:|+R5:|+R6|Forked child|Got:|make: Nothing|DEP .depend' | sed -e "s/$HOSTNAME/hostname/g" > ${LOGDIR}/_publicreport_${DT}.log 2>&1
+
+	clear && printf '\e[3J'; cat ${LOGDIR}/_publicreport_${DT}.log
+	s
+	cecho "----------------------------------------------------" $boldgreen
+	cecho "Generated Public Report Log you can share..." $boldyellow
+	cecho "at: ${LOGDIR}/_publicreport_${DT}.log" $boldyellow
+	cecho "----------------------------------------------------" $boldgreen
+	s
+fi
 
 exit
