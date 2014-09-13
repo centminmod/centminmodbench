@@ -82,3 +82,7 @@ Google Spreadsheet Template
 To tabulate your own results, I created a Google Spreadsheet template you can download and customise for your own usage. It's currently prefilled with columns for 3 clouding hosting providers, DigitalOcean, Linode and Vultr.
 
 https://docs.google.com/spreadsheets/d/19jxH4xsrWihW9nhm2pAoRa9W1g5WQfJaM8WW4-25PeI/edit?usp=sharing
+
+DigitalOcean vs Linode vs Vultr Benchmarks
+===============
+Using centminmodbench.sh, I tested 48GB RAM, 16 CPU core VPS servers for DigitalOcean, Linode and Vultr and posted results at https://community.centminmod.com/threads/digitalocean-vs-linode-vs-vultr-48gb-16-cpus-centminmodbench-sh-results.1389/
