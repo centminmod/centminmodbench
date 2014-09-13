@@ -75,3 +75,10 @@ Variables you can alter within centminmodbench.sh. Note the bandwidth tests can 
     RUN_PINGTESTS='y'
     RUN_UNIXBENCH='n'
     UNIXBENCH_VER='5.1.3'
+
+Google Spreadsheet Template
+===============
+
+To tabulate your own results, I created a Google Spreadsheet template you can download and customise for your own usage. It's currently prefilled with columns for 3 clouding hosting providers, DigitalOcean, Linode and Vultr.
+
+https://docs.google.com/spreadsheets/d/19jxH4xsrWihW9nhm2pAoRa9W1g5WQfJaM8WW4-25PeI/edit?usp=sharing
