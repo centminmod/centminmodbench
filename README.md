@@ -86,3 +86,7 @@ https://docs.google.com/spreadsheets/d/19jxH4xsrWihW9nhm2pAoRa9W1g5WQfJaM8WW4-25
 DigitalOcean vs Linode vs Vultr Benchmarks
 ===============
 Using centminmodbench.sh, I tested 48GB RAM, 16 CPU core VPS servers for DigitalOcean, Linode and Vultr and posted results at https://community.centminmod.com/threads/digitalocean-vs-linode-vs-vultr-48gb-16-cpus-centminmodbench-sh-results.1389/
+
+Dedicated Server Benchmarks
+===============
+Some sample centminmodbench.sh results from dedicated servers at https://community.centminmod.com/threads/centminmodbench-sh-for-dedicated-servers.1394/
