@@ -1362,9 +1362,9 @@ if [[ "$AUTOREPORT" != [yY] ]]; then
 	cecho "----------------------------------------------------" $boldgreen
 	s
 
-	cat ${LOGDIR}/centminmodbench_results_${DT}.log | egrep -v ' CC |ccache gcc|+DT:|+R:|+DTP:|+R1:|+R2:|+R5:|+R6|Forked child|Got:|make: Nothing|DEP .depend' | sed -e "s/$HOSTNAME/hostname/g" > ${LOGDIR}/_publicreport_${DT}.log 2>&1
+	cat ${LOGDIR}/centminmodbench_results_${DT}.log | egrep -v ' CC |ccache gcc|+DT:|+R:|+DTP:|+R1:|+R2:|+R5:|+R6|Forked child|Got:|make: Nothing|DEP .depend' | sed -e "s/$HOSTNAME/hostname/g" | perl -pe 's/\x1b.*?[mGKH]//g' > ${LOGDIR}/_publicreport_${DT}.log 2>&1
 else
-	cat ${LOGDIR}/centminmodbench_results_${DT}.log | egrep -v ' CC |ccache gcc|+DT:|+R:|+DTP:|+R1:|+R2:|+R5:|+R6|Forked child|Got:|make: Nothing|DEP .depend' | sed -e "s/$HOSTNAME/hostname/g" > ${LOGDIR}/_publicreport_${DT}.log 2>&1
+	cat ${LOGDIR}/centminmodbench_results_${DT}.log | egrep -v ' CC |ccache gcc|+DT:|+R:|+DTP:|+R1:|+R2:|+R5:|+R6|Forked child|Got:|make: Nothing|DEP .depend' | sed -e "s/$HOSTNAME/hostname/g" | perl -pe 's/\x1b.*?[mGKH]//g' > ${LOGDIR}/_publicreport_${DT}.log 2>&1
 
 	clear && printf '\e[3J'; cat ${LOGDIR}/_publicreport_${DT}.log
 	s
