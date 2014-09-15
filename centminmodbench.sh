@@ -443,9 +443,11 @@ baseinfo() {
 	cat /etc/redhat-release
 	s
 	
+	if [ -f /etc/centminmod-releas ]; then
 	echo -n "Centmin Mod "
 	cat /etc/centminmod-release 2>&1 >/dev/null
 	s
+	fi
 	
 	div
 	if [ ! -f /proc/user_beancounters ]; then
