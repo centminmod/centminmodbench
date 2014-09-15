@@ -200,23 +200,30 @@ if [ ! -d "$PHPBENCHLOGDIR" ]; then
 fi
 
 if [[ ! -f /usr/bin/wget ]]; then
-	cecho "installing required yum package..." $boldyellow
+	cecho "installing required yum package (wget) ..." $boldyellow
 	yum -q -y install wget
 fi
 
 if [[ ! -f /usr/bin/nproc ]]; then
-	cecho "installing required yum package..." $boldyellow
+	cecho "installing required yum package (nproc) ..." $boldyellow
 	yum -q -y install coreutils
 fi
 
-if [[ ! -f /usr/bin/lscpu ]]; then
-	cecho "installing required yum package..." $boldyellow
-	yum -q -y install util-linux-ng
+if [ ! -f /proc/user_beancounters ]; then
+	if [[ ! -f /usr/bin/lscpu ]]; then
+		cecho "installing required yum package (lscpu) ..." $boldyellow
+		yum -q -y install util-linux-ng
+	fi
 fi
 
 if [[ ! -f /usr/sbin/mtr ]]; then
-	cecho "installing required yum package..." $boldyellow
+	cecho "installing required yum package (mtr) ..." $boldyellow
 	yum -q -y install mtr
+fi
+
+if [[ ! -f /usr/bin/pigz || ! -f /usr/bin/lbzip2 ]]; then
+	cecho "installing required yum package (pigz / lbzip2) ..." $boldyellow
+	yum -q -y install pigz lbzip2
 fi
 
 if [[ "$DEBUG" = [yY] ]]; then
