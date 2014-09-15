@@ -18,19 +18,18 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.1
+VER=0.2
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
 AUTOREPORT='y'
 
+OPENSSL_VERSION='1.0.1i'
+MYSQLSLAP_SAVECSV='n'
+
 SEVERBEAR='n'
 OPENSSLBENCH='y'
 OPENSSL_NONSYSTEM='y'
-OPENSSL_VERSION='1.0.1i'
-
-MYSQLSLAP_SAVECSV='n'
-
 RUN_DISKDD='y'
 RUN_DISKIOPING='y'
 RUN_DISKFIO='y'
@@ -41,7 +40,11 @@ ASIA_BANDWIDTHTESTS='y'
 AUSTRALIA_BANDWIDTHTESTS='y'
 USA_BANDWIDTHTESTS='y'
 RUN_PINGTESTS='y'
+RUN_MYSQLSLAP='y'
+RUN_PHPTESTS='y'
 RUN_UNIXBENCH='n'
+RUN_MTRTESTS='y'
+MTR_PACKETS='10'
 UNIXBENCH_VER='5.1.3'
 
 SHOWPHPSTATS='n'
@@ -206,6 +209,10 @@ fi
 
 if [[ ! -f /usr/bin/lscpu ]]; then
 	yum -q -y install util-linux-ng
+fi
+
+if [[ ! -f /usr/sbin/mtr ]]; then
+	yum -q -y install mtr
 fi
 
 if [[ "$DEBUG" = [yY] ]]; then
@@ -442,6 +449,7 @@ baseinfo() {
 }
 
 mysqlslapper() {
+if [[ "$RUN_MYSQLSLAP" = [yY] ]]; then
 	bbcodestart
 	cecho "-------------------------------------------" $boldgreen
 	cecho "Running mysqlslap" $boldyellow
@@ -471,6 +479,7 @@ mysqlslapper() {
 		echo Y | mysqladmin drop $dbname
 	fi
 	bbcodeend
+fi
 }
 
 # UnixBench 5.1.3
@@ -1062,6 +1071,106 @@ pingtests() {
 	fi
 }
 
+# add MTR tests
+# https://www.linode.com/docs/networking/diagnosing-network-issues-with-mtr
+mtrtests() {
+	if [[ "$RUN_MTRTESTS" = [yY] ]]; then
+	bbcodestart
+	s
+	cecho "-------------------------------------------" $boldgreen
+	cecho "Running mtr tests..." $boldyellow
+	cecho "-------------------------------------------" $boldgreen
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} cachefly.cachefly.net" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} cachefly.cachefly.net 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} syd-au-ping.vultr.com" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} syd-au-ping.vultr.com 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} hnd-jp-ping.vultr.com" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} hnd-jp-ping.vultr.com 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} lax-ca-us-ping.vultr.com" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} lax-ca-us-ping.vultr.com 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} wa-us-ping.vultr.com" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} wa-us-ping.vultr.com 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} tx-us-ping.vultr.com" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} tx-us-ping.vultr.com 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} il-us-ping.vultr.com" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} il-us-ping.vultr.com 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} ga-us-ping.vultr.com" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} ga-us-ping.vultr.com 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} fl-us-ping.vultr.com" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} fl-us-ping.vultr.com 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} nj-us-ping.vultr.com" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} nj-us-ping.vultr.com 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} fra-de-ping.vultr.com" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} fra-de-ping.vultr.com 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} ams-nl-ping.vultr.com" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} ams-nl-ping.vultr.com 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} lon-gb-ping.vultr.com" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} lon-gb-ping.vultr.com 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} par-fr-ping.vultr.com" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} par-fr-ping.vultr.com 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} VersaWeb Las Vegas" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} 199.47.2${MTR_PACKETS}.50 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} VersaWeb Seattle" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} 76.164.234.1 2>&1
+
+	s
+	div
+	cecho "mtr --report --report-cycles=${MTR_PACKETS} OVH Canada" $boldyellow
+	mtr --report --report-cycles=${MTR_PACKETS} bhs.proof.ovh.net 2>&1
+
+	s
+	bbcodeend
+	fi
+}
+
 ended() {
 	s
 	cecho "-------------------------------------------" $boldgreen
@@ -1304,12 +1413,14 @@ starttime=$(date +%s.%N)
 	
 	bandwidthbench
 	pingtests
+	mtrtests
 		
 	opensslbench
 		
 	mysqlslapper
 		
 	if [ -f /etc/centminmod-release ]; then
+		if [[ "$RUN_PHPTESTS" = [yY] ]]; then
 		bbcodestart
 		phpi
 		restartphp
@@ -1317,6 +1428,7 @@ starttime=$(date +%s.%N)
 		restartphp
 		fmicrobench
 		bbcodeend
+		fi
 	fi
 		
 	ubench
