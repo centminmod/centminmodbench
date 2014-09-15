@@ -443,7 +443,7 @@ baseinfo() {
 	cat /etc/redhat-release
 	s
 	
-	if [ -f /etc/centminmod-releas ]; then
+	if [ -f /etc/centminmod-release ]; then
 	echo -n "Centmin Mod "
 	cat /etc/centminmod-release 2>&1 >/dev/null
 	s
