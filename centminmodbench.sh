@@ -200,18 +200,22 @@ if [ ! -d "$PHPBENCHLOGDIR" ]; then
 fi
 
 if [[ ! -f /usr/bin/wget ]]; then
+	cecho "installing required yum package..." $boldyellow
 	yum -q -y install wget
 fi
 
 if [[ ! -f /usr/bin/nproc ]]; then
+	cecho "installing required yum package..." $boldyellow
 	yum -q -y install coreutils
 fi
 
 if [[ ! -f /usr/bin/lscpu ]]; then
+	cecho "installing required yum package..." $boldyellow
 	yum -q -y install util-linux-ng
 fi
 
 if [[ ! -f /usr/sbin/mtr ]]; then
+	cecho "installing required yum package..." $boldyellow
 	yum -q -y install mtr
 fi
 
@@ -1399,6 +1403,8 @@ if [[ "$1" = cleanup ]]; then
   exit
   s
 fi
+
+# cecho "starting..." $boldyellow
 
 starttime=$(date +%s.%N)
 {
