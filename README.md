@@ -8,7 +8,7 @@ Development is ongoing so please test only on test servers and not production li
 
 *Current Test Suite*
 
-* disk dd, ioping, fio, ping & bandwidth benchmarks
+* disk dd, ioping, fio, ping, mtr & bandwidth benchmarks
 * OpenSSL system benchmark + Nginx static OpenSSL benchmarks
 * mysqlslap http://dev.mysql.com/doc/refman/5.6/en/mysqlslap.html
 * PHP (php-fpm) Zend/bench.php & Zend/micro_bench.php
@@ -59,10 +59,6 @@ Variables you can alter within centminmodbench.sh. Note the bandwidth tests can 
     SEVERBEAR='n'
     OPENSSLBENCH='y'
     OPENSSL_NONSYSTEM='y'
-    OPENSSL_VERSION='1.0.1i'
-    
-    MYSQLSLAP_SAVECSV='n'
-    
     RUN_DISKDD='y'
     RUN_DISKIOPING='y'
     RUN_DISKFIO='y'
@@ -73,7 +69,11 @@ Variables you can alter within centminmodbench.sh. Note the bandwidth tests can 
     AUSTRALIA_BANDWIDTHTESTS='y'
     USA_BANDWIDTHTESTS='y'
     RUN_PINGTESTS='y'
+    RUN_MYSQLSLAP='y'
+    RUN_PHPTESTS='y'
     RUN_UNIXBENCH='n'
+    RUN_MTRTESTS='y'
+    MTR_PACKETS='10'
     UNIXBENCH_VER='5.1.3'
 
 Google Spreadsheet Template
