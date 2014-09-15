@@ -221,9 +221,11 @@ if [[ ! -f /usr/sbin/mtr ]]; then
 	yum -q -y install mtr
 fi
 
-if [[ ! -f /usr/bin/pigz || ! -f /usr/bin/lbzip2 ]]; then
-	cecho "installing required yum package (pigz / lbzip2) ..." $boldyellow
-	yum -q -y install pigz lbzip2
+if [ -f /etc/yum.repos.d/epel.repo ]; then
+	if [[ ! -f /usr/bin/pigz || ! -f /usr/bin/lbzip2 ]]; then
+		cecho "installing required yum package (pigz / lbzip2) ..." $boldyellow
+		yum -q -y install pigz lbzip2
+	fi
 fi
 
 if [[ "$DEBUG" = [yY] ]]; then
