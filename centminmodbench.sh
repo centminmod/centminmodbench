@@ -23,6 +23,7 @@ VER=0.2
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
 AUTOREPORT='y'
+TESTFILE='/home/gziptest/imdb.sql'
 
 OPENSSL_VERSION='1.0.1i'
 MYSQLSLAP_SAVECSV='n'
@@ -65,10 +66,20 @@ FIO_VERSION=2.0.9
 
 # Max Compression level to test up to 
 # values between 1 (lowest) to 9 (highest)
-COMPLEVEL='5'
+COMPLEVEL='3'
 
 # Number of cpu threads for compression
 CPUNO='4'
+
+# sleep delay between runs after calling cleanmem
+# echo 3 > /proc/sys/vm/drop_caches
+# sleep 3
+SLEEP='7'
+
+# Whether test output times the decompression tests as well. 
+# If set to 'n' then only the last compression test will show timed
+# decompression test
+DECOMPTIMED='y'
 
 # Number of cpu threads for decompression
 # some apps use alot of memory for decompression
@@ -83,18 +94,10 @@ else
 DCOMPTHREADS=''
 fi
 
-# where to download binaries for install
-SRCDIR='/srv-setup'
-
 GZIPTEST='y'
-BZIP2TEST='y'
+BZIPTEST='y'
 PIGZTEST='y'
-PBZIP2TEST='y'
-LBZIP2TEST='n'
-LZIPTEST='y'
-PLZIPTEST='y'
-P7ZIPTEST='y'
-ZIPTEST='y'
+LBZIPTEST='y'
 
 # Enable or disable custom block size
 # for pigz
@@ -140,6 +143,8 @@ OPENSSL_LINKFILE="openssl-${OPENSSL_VERSION}.tar.gz"
 OPENSSL_LINK="http://www.openssl.org/source/${OPENSSL_LINKFILE}"
 BENCHDIR='/home/centminmodbench'
 LOGDIR='/home/centminmodbench_logs'
+# where to download compression binaries for install
+SRCDIR="$BENCHDIR"
 
 MYSQLSLAP_DIR='/home/mysqlslap'
 MYSQLDATADIR=$(mysqladmin var | tr -s ' ' | awk -F '| ' '/datadir/ {print $4}')
@@ -185,6 +190,10 @@ fi
 
 if [ ! -d "$BENCHDIR" ]; then
 	mkdir -p $BENCHDIR
+fi
+
+if [ ! -d /home/gziptest ]; then
+	mkdir -p /home/gziptest
 fi
 
 if [ ! -d "$LOGDIR" ]; then
@@ -558,6 +567,7 @@ fi
 cleanmem() {
 	if [ ! -f /proc/user_beancounters ]; then
 		sync && echo 3 > /proc/sys/vm/drop_caches > /dev/null
+		sleep $SLEEP
 	fi
 }
 
@@ -1396,6 +1406,194 @@ compressinstall() {
 	fi
 }
 
+
+################################
+funct_levelgzip() {
+
+APP='gzip'
+
+if [ -f $TESTFILE.gz ]; then
+echo "detected already compressed target file: $TESTFILE.gz"
+echo "decompress before doing compression tests"
+echo "$APP -d $TESTFILE.gz"
+$APP -d $TESTFILE.gz
+cleanmem
+# echo "aborting script... please rerun"
+# exit
+else
+
+echo "### $APP compression/decompression test"
+for i in $(seq 1 $COMPLEVEL) ; do
+  echo "------------------------------------------------------------------------------"
+  echo " [compress lvl: $i ] $APP --rsyncable -$i $TESTFILE"
+  echo -n " [compress stats:] "
+  /usr/bin/time --format='real: %es cpu: %P maxmem: %M KB cswaits: %w' $APP --rsyncable -$i $TESTFILE
+
+COMPSIZE=`ls -lak $TESTFILE.gz | awk '{ print $5 }'`
+LSFILE=`ls -lak $TESTFILE.gz | awk '{ print $9 }'`
+COMPPERC=`echo $((${COMPSIZE}*100/${TESTFILESIZE}))`
+  echo " compression ratio: ${COMPPERC}% $COMPSIZE / $TESTFILESIZE KB"
+
+if [[ "$i" = "$COMPLEVEL" || "$DECOMPTIMED" = 'y' ]]; then
+cleanmem
+  echo "------------------------------------------------------------------------------"
+  echo " [decompress] $APP -d $TESTFILE.gz"
+  echo -n " [decompress stats:] "
+  /usr/bin/time --format='real: %es cpu: %P maxmem: %M KB cswaits: %w' $APP -d $TESTFILE.gz
+
+else
+$APP -d $TESTFILE.gz
+fi
+
+cleanmem
+
+done
+
+fi
+
+}
+
+################################
+funct_levelbzip2() {
+
+APP='bzip2'
+
+if [ -f $TESTFILE.bz2 ]; then
+echo "detected already compressed target file: $TESTFILE.bz2"
+echo "decompress before doing compression tests"
+echo "$APP -df $TESTFILE.bz2"
+$APP -df $TESTFILE.bz2
+cleanmem
+# echo "aborting script... please rerun"
+# exit
+else
+
+echo "### $APP compression/decompression test"
+for i in $(seq 1 $COMPLEVEL) ; do
+  echo "------------------------------------------------------------------------------"
+  echo " [compress lvl: $i ] $APP -$i $TESTFILE"
+  echo -n " [compress stats:] "
+  /usr/bin/time --format='real: %es cpu: %P maxmem: %M KB cswaits: %w' $APP -$i $TESTFILE
+
+COMPSIZE=`ls -lak $TESTFILE.bz2 | awk '{ print $5 }'`
+LSFILE=`ls -lak $TESTFILE.bz2 | awk '{ print $9 }'`
+COMPPERC=`echo $((${COMPSIZE}*100/${TESTFILESIZE}))`
+  echo " compression ratio: ${COMPPERC}% $COMPSIZE / $TESTFILESIZE KB"
+
+if [[ "$i" = "$COMPLEVEL" || "$DECOMPTIMED" = 'y' ]]; then
+cleanmem
+  echo "------------------------------------------------------------------------------"
+  echo " [decompress] $APP -d $TESTFILE.bz2"
+  echo -n " [decompress stats:] "
+  /usr/bin/time --format='real: %es cpu: %P maxmem: %M KB cswaits: %w' $APP -d $TESTFILE.bz2
+
+else
+$APP -d $TESTFILE.bz2
+fi
+
+cleanmem
+
+done
+
+fi
+
+}
+
+################################
+funct_levelpigz() {
+
+APP='pigz'
+
+if [ -f $TESTFILE.gz ]; then
+echo "detected already compressed target file: $TESTFILE.gz"
+echo "decompress before doing compression tests"
+echo "$APP -d $TESTFILE.gz"
+$APP -d $TESTFILE.gz
+cleanmem
+# echo "aborting script... please rerun"
+# exit
+else
+
+echo "### $APP compression/decompression test"
+for i in $(seq 1 $COMPLEVEL) ; do
+  echo "------------------------------------------------------------------------------"
+  echo " [compress lvl: $i ] $APP -R -${i}$PIGZBLOCKSIZE $TESTFILE"
+  echo -n " [compress stats:] "
+  /usr/bin/time --format='real: %es cpu: %P maxmem: %M KB cswaits: %w' $APP -R -${i}$PIGZBLOCKSIZE $TESTFILE
+
+COMPSIZE=`ls -lak $TESTFILE.gz | awk '{ print $5 }'`
+LSFILE=`ls -lak $TESTFILE.gz | awk '{ print $9 }'`
+COMPPERC=`echo $((${COMPSIZE}*100/${TESTFILESIZE}))`
+  echo " compression ratio: ${COMPPERC}% $COMPSIZE / $TESTFILESIZE KB"
+
+if [[ "$i" = "$COMPLEVEL" || "$DECOMPTIMED" = 'y' ]]; then
+cleanmem
+  echo "------------------------------------------------------------------------------"
+  echo " [decompress] $APP -d $TESTFILE.gz"
+  echo -n " [decompress stats:] "
+  /usr/bin/time --format='real: %es cpu: %P maxmem: %M KB cswaits: %w' $APP -d $TESTFILE.gz
+
+else
+$APP -d $TESTFILE.gz
+fi
+
+cleanmem
+
+done
+
+fi
+
+}
+
+################################
+funct_levellbzip2() {
+
+APP='lbzip2'
+
+if [ -f $TESTFILE.bz2 ]; then
+echo "detected already compressed target file: $TESTFILE.bz2"
+echo "decompress before doing compression tests"
+echo "$APP -d $TESTFILE.bz2"
+$APP -d $TESTFILE.bz2
+cleanmem
+# echo "aborting script... please rerun"
+# exit
+else
+
+echo "### $APP compression/decompression test"
+for i in $(seq 1 $COMPLEVEL) ; do
+  echo "------------------------------------------------------------------------------"
+  echo " [compress lvl: $i ] $APP -${i}$LBZIP2BLOCKSIZE $TESTFILE"
+  echo -n " [compress stats:] "
+  /usr/bin/time --format='real: %es cpu: %P maxmem: %M KB cswaits: %w' $APP -${i}$LBZIP2BLOCKSIZE $TESTFILE
+
+COMPSIZE=`ls -lak $TESTFILE.bz2 | awk '{ print $5 }'`
+LSFILE=`ls -lak $TESTFILE.bz2 | awk '{ print $9 }'`
+COMPPERC=`echo $((${COMPSIZE}*100/${TESTFILESIZE}))`
+  echo " compression ratio: ${COMPPERC}% $COMPSIZE / $TESTFILESIZE KB"
+
+if [[ "$i" = "$COMPLEVEL" || "$DECOMPTIMED" = 'y' ]]; then
+cleanmem
+  echo "------------------------------------------------------------------------------"
+  echo " [decompress] $APP -d$DCOMPTHREADS $TESTFILE.bz2"
+  echo -n " [decompress stats:] "
+  /usr/bin/time --format='real: %es cpu: %P maxmem: %M KB cswaits: %w' $APP -d$DCOMPTHREADS $TESTFILE.bz2
+
+  rm -rf $TESTFILE.bz2
+
+else
+$APP -d$DCOMPTHREADS $TESTFILE.bz2
+  rm -rf $TESTFILE.bz2
+fi
+
+cleanmem
+
+done
+
+fi
+
+}
+
 ########################
 
 if [[ "$1" = cleanup ]]; then
@@ -1403,6 +1601,7 @@ if [[ "$1" = cleanup ]]; then
   rm -rf /home/centminmodbench_logs
   rm -rf /home/mysqlslap
   rm -rf /home/phpbench_logs
+  rm -rf /home/gziptest
   s
   div
   cecho "cleaned up folders and logs" $boldyellow
