@@ -49,7 +49,7 @@ MTR_PACKETS='10'
 UNIXBENCH_VER='5.1.3'
 
 SHOWPHPSTATS='n'
-PHPVER=$(php -v | awk -F " " '{print $2}' | head -n1)
+PHPVER=$(php -v 2>&1 | awk -F " " '{print $2}' | head -n1)
 
 # Print output in a forum friendly [CODE] tag format
 BBCODE='y'
@@ -147,7 +147,7 @@ LOGDIR='/home/centminmodbench_logs'
 SRCDIR="$BENCHDIR"
 
 MYSQLSLAP_DIR='/home/mysqlslap'
-MYSQLDATADIR=$(mysqladmin var | tr -s ' ' | awk -F '| ' '/datadir/ {print $4}')
+MYSQLDATADIR=$(mysqladmin var 2>&1 | tr -s ' ' | awk -F '| ' '/datadir/ {print $4}')
 
 # mysqlslap default test settings
 dbname=test # Database Name
@@ -183,68 +183,6 @@ else
 	CPUS=$(nproc)
 fi
 ###############################################################
-if [ ! -f /etc/centos-release ] ; then
-	cecho "$SCRIPTNAME is meant to be run on CentOS system only" $boldyellow
-	exit
-fi
-
-if [ ! -d "$BENCHDIR" ]; then
-	mkdir -p $BENCHDIR
-fi
-
-if [ ! -d /home/gziptest ]; then
-	mkdir -p /home/gziptest
-fi
-
-if [ ! -d "$LOGDIR" ]; then
-	mkdir -p $LOGDIR
-fi
-
-if [[ ! -d ${MYSQLSLAP_DIR} ]]; then 
-	mkdir -p ${MYSQLSLAP_DIR}
-fi
-
-if [ ! -d "$PHPBENCHLOGDIR" ]; then
-	mkdir -p $PHPBENCHLOGDIR
-fi
-
-if [[ ! -f /usr/bin/wget ]]; then
-	cecho "installing required yum package (wget) ..." $boldyellow
-	yum -q -y install wget
-fi
-
-if [[ ! -f /usr/bin/nproc ]]; then
-	cecho "installing required yum package (nproc) ..." $boldyellow
-	yum -q -y install coreutils
-fi
-
-if [ ! -f /proc/user_beancounters ]; then
-	if [[ ! -f /usr/bin/lscpu ]]; then
-		cecho "installing required yum package (lscpu) ..." $boldyellow
-		yum -q -y install util-linux-ng
-	fi
-fi
-
-if [[ ! -f /usr/sbin/mtr ]]; then
-	cecho "installing required yum package (mtr) ..." $boldyellow
-	yum -q -y install mtr
-fi
-
-if [ -f /etc/yum.repos.d/epel.repo ]; then
-	if [[ ! -f /usr/bin/pigz || ! -f /usr/bin/lbzip2 ]]; then
-		cecho "installing required yum package (pigz / lbzip2) ..." $boldyellow
-		yum -q -y install pigz lbzip2
-	fi
-fi
-
-if [[ "$DEBUG" = [yY] ]]; then
-	RUN_BANDWIDTHBENCH='n'
-fi
-
-# determine Centmin Mod Nginx static compiled
-# OpenSSL version
-OPENSSL_VERCHECK=$(nginx -V 2>&1 | grep -Eo "$OPENSSL_VERSION")
-###############################################################
 # Setup Colours
 black='\E[30;40m'
 red='\E[31;40m'
@@ -276,6 +214,83 @@ color=$2
 echo -e "$color$message" ; $Reset
 return
 }
+###############################################################
+
+if [ ! -f /etc/centos-release ] ; then
+	cecho "$SCRIPTNAME is meant to be run on CentOS system only" $boldyellow
+	exit
+fi
+
+if [ ! -d "$BENCHDIR" ]; then
+	mkdir -p $BENCHDIR
+fi
+
+if [ ! -d /home/gziptest ]; then
+	mkdir -p /home/gziptest
+fi
+
+if [ ! -d "$LOGDIR" ]; then
+	mkdir -p $LOGDIR
+fi
+
+if [[ ! -d ${MYSQLSLAP_DIR} ]]; then 
+	mkdir -p ${MYSQLSLAP_DIR}
+fi
+
+if [ ! -d "$PHPBENCHLOGDIR" ]; then
+	mkdir -p $PHPBENCHLOGDIR
+fi
+
+if [[ ! -f /usr/bin/cc || ! -f /usr/bin/gcc ]]; then
+	cecho "installing required yum package (cc / gcc) ..." $boldyellow
+	yum -q -y install cc gcc
+fi
+
+if [[ ! -f /usr/bin/wget ]]; then
+	cecho "installing required yum package (wget) ..." $boldyellow
+	yum -q -y install wget
+fi
+
+if [[ ! -f /usr/bin/nproc ]]; then
+	cecho "installing required yum package (nproc) ..." $boldyellow
+	yum -q -y install coreutils
+fi
+
+if [ ! -f /proc/user_beancounters ]; then
+	if [[ ! -f /usr/bin/lscpu ]]; then
+		cecho "installing required yum package (lscpu) ..." $boldyellow
+		yum -q -y install util-linux-ng
+	fi
+fi
+
+if [[ ! -f /usr/include/libaio.h ]]; then
+	cecho "installing required yum package (libaio libaio-devel) ..." $boldyellow
+	yum -q -y install libaio libaio-devel
+fi
+
+if [[ ! -f /usr/sbin/mtr ]]; then
+	cecho "installing required yum package (mtr) ..." $boldyellow
+	yum -q -y install mtr
+fi
+
+if [ -f /etc/yum.repos.d/epel.repo ]; then
+	if [[ ! -f /usr/bin/pigz || ! -f /usr/bin/lbzip2 ]]; then
+		cecho "installing required yum package (pigz / lbzip2) ..." $boldyellow
+		yum -q -y install pigz lbzip2
+	fi
+fi
+
+if [[ "$DEBUG" = [yY] ]]; then
+	RUN_BANDWIDTHBENCH='n'
+fi
+
+if [[ ! -f /usr/bin/mysqlslap ]]; then
+	RUN_MYSQLSLAP='n'
+fi
+
+# determine Centmin Mod Nginx static compiled
+# OpenSSL version
+OPENSSL_VERCHECK=$(nginx -V 2>&1 | grep -Eo "$OPENSSL_VERSION")
 ###############################################################
 # functions
 
@@ -438,7 +453,7 @@ baseinfo() {
 	s
 	
 	echo -n "Centmin Mod "
-	cat /etc/centminmod-release
+	cat /etc/centminmod-release 2>&1 >/dev/null
 	s
 	
 	div
