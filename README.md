@@ -40,7 +40,7 @@ If you don't want SSH session's connection drop out to abort your benchmark run 
     yum -y install screen
     screen -S bench /root/tools/centminmodbench.sh
 
-If your SSH session drops out, the script is still running via the screen session called bench. You can use this command to via available sessions:
+If your SSH session drops out, the script is still running via the screen session called bench. You can use this command to view available sessions:
 
      screen -ls
 
