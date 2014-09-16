@@ -34,7 +34,6 @@ OPENSSL_NONSYSTEM='y'
 RUN_DISKDD='y'
 RUN_DISKIOPING='y'
 RUN_DISKFIO='y'
-RUN_AXELBENCH='y'
 RUN_BANDWIDTHBENCH='y'
 RUN_VULTRTESTS='y'
 EUROPE_BANDWIDTHTESTS='y'
@@ -1614,123 +1613,6 @@ fi
 
 ########################
 
-axel_benchmark() {
-  cecho "Axel Download from $1 ($2)" $boldyellow
-  SFILENAME=$(echo ${2##*/})
-  DOWNLOAD_SPEED=$(axel -a $2 2>&1 | awk '/Downloaded/ {speed=$7 $8} END {gsub(/\(|\)|KB\/s/,"",speed); print speed}')
-  SPEEDMB=$(echo "scale=2;${DOWNLOAD_SPEED}/1024" | bc)
-  cecho "Axel Download $1: $SPEEDMB" $boldyellow 2>&1
-  rm -rf $SFILENAME
-}
-
-
-axelbench() {
-  if [[ "$RUN_AXELBENCH" = [yY] ]; then
-  bbcodestart
-  s
-  cecho "-------------------------------------------" $boldgreen
-  cecho "Running Axel multi-threaded bandwidth benchmark..." $boldyellow
-  cecho "-------------------------------------------" $boldgreen
-  s
-  
-    div
-    axel_benchmark 'Cachefly' 'http://cachefly.cachefly.net/100mb.test'
-    
-    if [[ "$USA_BANDWIDTHTESTS" = [yY] ]]; then
-    s
-    cecho "-------------------------------------------" $boldgreen
-    cecho "USA bandwidth tests..." $boldyellow
-    cecho "-------------------------------------------" $boldgreen
-    s
-    div
-    axel_benchmark 'Linode, Atlanta, GA, USA' 'http://speedtest.atlanta.linode.com/100MB-atlanta.bin'
-    div
-    axel_benchmark 'Linode, Dallas, TX, USA' 'http://speedtest.dallas.linode.com/100MB-dallas.bin'
-    div
-    axel_benchmark 'Leaseweb, Manassas, VA, USA' 'http://mirror.us.leaseweb.net/speedtest/100mb.bin'
-    div
-    axel_benchmark 'Softlayer, Seattle, WA, USA' 'http://speedtest.sea01.softlayer.com/downloads/test100.zip'
-    div
-    axel_benchmark 'Softlayer, San Jose, CA, USA' 'http://speedtest.sjc01.softlayer.com/downloads/test100.zip'
-    div
-    axel_benchmark 'Softlayer, Washington, DC, USA' 'http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
-    div
-    axel_benchmark 'VersaWeb, Las Vegas, Nevada' 'http://199.47.210.50/100mbtest.bin'
-    div
-    axel_benchmark 'OVH, BHS, Canada' 'http://bhs.proof.ovh.net/files/100Mio.dat'
-      if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
-      div
-      axel_benchmark 'Vultr, Los Angeles, California' 'http://lax-ca-us-ping.vultr.com/vultr.com.100MB.bin'
-      div
-      axel_benchmark 'Vultr, Seattle, Washington' 'http://wa-us-ping.vultr.com/vultr.com.100MB.bin'
-      div
-      axel_benchmark 'Vultr, Dallas, Texas' 'http://tx-us-ping.vultr.com/vultr.com.100MB.bin'
-      div
-      axel_benchmark 'Vultr, Chicago, Illinois' 'http://il-us-ping.vultr.com/vultr.com.100MB.bin'
-      div
-      axel_benchmark 'Vultr, Atlanta, Georgia' 'http://ga-us-ping.vultr.com/vultr.com.100MB.bin'
-      div
-      axel_benchmark 'Vultr, Miami, Florida' 'http://fl-us-ping.vultr.com/vultr.com.100MB.bin'
-      div
-      axel_benchmark 'Vultr, New York / New Jersey' 'http://nj-us-ping.vultr.com/vultr.com.100MB.bin'
-      fi
-    fi
-
-    if [[ "$ASIA_BANDWIDTHTESTS" = [yY] ]]; then
-    s
-    cecho "-------------------------------------------" $boldgreen
-    cecho "Asia bandwidth tests..." $boldyellow
-    cecho "-------------------------------------------" $boldgreen
-    s
-    div
-    axel_benchmark 'Linode, Tokyo, JP' 'http://speedtest.tokyo.linode.com/100MB-tokyo.bin'
-    div
-    axel_benchmark 'Softlayer, Singapore' 'http://speedtest.sng01.softlayer.com/downloads/test100.zip'
-      if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
-      div
-      axel_benchmark 'Vultr, Tokyo, Japan' 'http://hnd-jp-ping.vultr.com/vultr.com.100MB.bin'
-      fi
-    fi
-    
-    if [[ "$EUROPE_BANDWIDTHTESTS" = [yY] ]]; then
-    s
-    cecho "-------------------------------------------" $boldgreen
-    cecho "Europe bandwidth tests..." $boldyellow
-    cecho "-------------------------------------------" $boldgreen
-    s
-    div
-    axel_benchmark 'Linode, London, UK' 'http://speedtest.london.linode.com/100MB-london.bin'
-    div
-    axel_benchmark 'OVH, Paris, France' 'http://proof.ovh.net/files/100Mio.dat'
-    div
-    axel_benchmark 'SmartDC, Rotterdam, Netherlands' 'http://mirror.i3d.net/100mb.bin'
-      if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
-      div
-      axel_benchmark 'Vultr, Amsterdam, Netherlands' 'http://ams-nl-ping.vultr.com/vultr.com.100MB.bin'
-      div
-      axel_benchmark 'Vultr, London, UK' 'http://lon-gb-ping.vultr.com/vultr.com.100MB.bin'
-      div
-      axel_benchmark 'Vultr, Paris, France' 'http://par-fr-ping.vultr.com/vultr.com.100MB.bin'
-      fi
-    fi
-      
-    if [[ "$AUSTRALIA_BANDWIDTHTESTS" = [yY] ]]; then
-    s
-    cecho "-------------------------------------------" $boldgreen
-    cecho "Australia bandwidth tests..." $boldyellow
-    cecho "-------------------------------------------" $boldgreen
-    s
-      if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
-      div
-      axel_benchmark 'Vultr, Sydney, Australia' 'http://syd-au-ping.vultr.com/vultr.com.100MB.bin'
-      fi
-    fi
-    bbcodeend 
-  fi
-}
-
-########################
-
 if [[ "$1" = cleanup ]]; then
   rm -rf /home/centminmodbench
   rm -rf /home/centminmodbench_logs
@@ -1761,11 +1643,6 @@ starttime=$(date +%s.%N)
 	diskfio
 	
 	bandwidthbench
-
-	if [ -f /etc/centminmod-release ]; then
-		axelbench
-	fi
-
 	pingtests
 	mtrtests
 		
