@@ -8,10 +8,14 @@ Development is ongoing so please test only on test servers and not production li
 
 *Current Test Suite*
 
-* disk dd, ioping, fio, ping, mtr & bandwidth benchmarks
-* OpenSSL system benchmark + Nginx static OpenSSL benchmarks
+* disk dd, ioping, fio
+* ping, mtr 
+* single threaded wget bandwidth benchmarks
+* parallel multi threaded axel bandwidth benchmarks [Centmin Mod stack only]
+* OpenSSL system benchmark 
+* Nginx static OpenSSL benchmarks  [Centmin Mod stack only]
 * mysqlslap http://dev.mysql.com/doc/refman/5.6/en/mysqlslap.html
-* PHP (php-fpm) Zend/bench.php & Zend/micro_bench.php
+* PHP (php-fpm) Zend/bench.php & Zend/micro_bench.php [Centmin Mod stack only]
 * UnixBench 5.1.3 (currently disabled by default)
 * ServerBear.com tests (currently disabled by default / not yet developed)
 * compression/decompression tests (not yet developed)
@@ -62,6 +66,7 @@ Variables you can alter within centminmodbench.sh. Note the bandwidth tests can 
     RUN_DISKDD='y'
     RUN_DISKIOPING='y'
     RUN_DISKFIO='y'
+    RUN_AXELBENCH='y'
     RUN_BANDWIDTHBENCH='y'
     RUN_VULTRTESTS='y'
     EUROPE_BANDWIDTHTESTS='y'
