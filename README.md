@@ -38,7 +38,9 @@ To run script locally in SSH window as root user type:
 If you don't want SSH session's connection drop out to abort your benchmark run you can run the script via screen window by installing screen via YUM and then launch centminmodbench.sh via screen
 
     yum -y install screen
-    screen -S bench /root/tools/centminmodbench.sh
+    screen -dmS bench 
+    screen -r bench
+    /root/tools/centminmodbench.sh
 
 If your SSH session drops out, the script is still running via the screen session called bench. You can use this command to view available sessions:
 
