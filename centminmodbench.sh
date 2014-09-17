@@ -18,7 +18,7 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.2
+VER=0.3
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
@@ -1127,6 +1127,56 @@ mtrtests() {
 	cecho "mtr --report --report-cycles=${MTR_PACKETS} cachefly.cachefly.net" $boldyellow
 	mtr --report --report-cycles=${MTR_PACKETS} cachefly.cachefly.net 2>&1
 
+    s
+    div
+    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.atlanta.linode.com" $boldyellow
+    mtr --report --report-cycles=${MTR_PACKETS} speedtest.atlanta.linode.com 2>&1
+    
+    s
+    div
+    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.dallas.linode.com" $boldyellow
+    mtr --report --report-cycles=${MTR_PACKETS} speedtest.dallas.linode.com 2>&1
+    
+    s
+    div
+    cecho "mtr --report --report-cycles=${MTR_PACKETS} mirror.us.leaseweb.net" $boldyellow
+    mtr --report --report-cycles=${MTR_PACKETS} mirror.us.leaseweb.net 2>&1
+    
+    s
+    div
+    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.sea01.softlayer.com" $boldyellow
+    mtr --report --report-cycles=${MTR_PACKETS} speedtest.sea01.softlayer.com 2>&1
+    
+    s
+    div
+    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.sjc01.softlayer.com" $boldyellow
+    mtr --report --report-cycles=${MTR_PACKETS} speedtest.sjc01.softlayer.com 2>&1
+    
+    s
+    div
+    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.wdc01.softlayer.com" $boldyellow
+    mtr --report --report-cycles=${MTR_PACKETS} speedtest.wdc01.softlayer.com 2>&1
+    
+    s
+    div
+    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.tokyo.linode.com" $boldyellow
+    mtr --report --report-cycles=${MTR_PACKETS} speedtest.tokyo.linode.com 2>&1
+    
+    s
+    div
+    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.sng01.softlayer.com" $boldyellow
+    mtr --report --report-cycles=${MTR_PACKETS} speedtest.sng01.softlayer.com 2>&1
+    
+    s
+    div
+    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.london.linode.com" $boldyellow
+    mtr --report --report-cycles=${MTR_PACKETS} speedtest.london.linode.com 2>&1
+    
+    s
+    div
+    cecho "mtr --report --report-cycles=${MTR_PACKETS} mirror.i3d.net" $boldyellow
+    mtr --report --report-cycles=${MTR_PACKETS} mirror.i3d.net 2>&1
+    
 	s
 	div
 	cecho "mtr --report --report-cycles=${MTR_PACKETS} syd-au-ping.vultr.com" $boldyellow
@@ -1195,7 +1245,7 @@ mtrtests() {
 	s
 	div
 	cecho "mtr --report --report-cycles=${MTR_PACKETS} VersaWeb Las Vegas" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} 199.47.2${MTR_PACKETS}.50 2>&1
+	mtr --report --report-cycles=${MTR_PACKETS} 199.47.210.50 2>&1
 
 	s
 	div
