@@ -53,6 +53,7 @@ MTR_PACKETS='10'
 RUN_ENTROPYTEST='y'
 ENTROPY_RUNS='4'
 ENTROPYSLEEP=10
+RUN_RNGTEST='n'
 UNIXBENCH_VER='5.1.3'
 
 SHOWPHPSTATS='n'
@@ -287,6 +288,11 @@ if [ -f /etc/yum.repos.d/epel.repo ]; then
 	fi
 fi
 
+if [[ ! -f /usr/bin/rngtest ]]; then
+	cecho "installing required yum package (rng-tools) ..." $boldyellow
+	yum -q -y install rng-tools
+fi
+
 if [[ "$DEBUG" = [yY] ]]; then
 	RUN_BANDWIDTHBENCH='n'
 fi
@@ -407,6 +413,11 @@ if [[ "$RUN_ENTROPYTEST" = [yY] ]]; then
 		echo -n "entropy_avail: "; cat /proc/sys/kernel/random/entropy_avail
 		sleep $ENTROPYSLEEP
 	done
+	if [[ "$RUN_RNGTEST" = [yY] ]]; then
+		s
+		cat /dev/random | rngtest -c 1000
+		s
+	fi
 	bbcodeend
 fi
 }

@@ -14,6 +14,7 @@ Development is ongoing so please test only on test servers and not production li
 * parallel multi threaded axel bandwidth benchmarks [Centmin Mod stack only]
 * OpenSSL system benchmark 
 * test system entropy_avail (entropy pool availability - closer to 4096 bits = better randomness and SSL related performance vs closer to 0 kernel block at generating random data = poorer SSL performance) [mentioned](https://community.centminmod.com/threads/centmin-mod-nginx-vhost-spdy-ssl-generator-testing.990/)
+* rngtest suite - check the randomness of data (currently disabled by default / not yet developed)
 * Nginx static OpenSSL benchmarks  [Centmin Mod stack only]
 * mysqlslap http://dev.mysql.com/doc/refman/5.6/en/mysqlslap.html
 * PHP (php-fpm) Zend/bench.php & Zend/micro_bench.php [Centmin Mod stack only]
