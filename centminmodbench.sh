@@ -11,6 +11,9 @@
 # disk dd, ioping and fio test parameters match those used
 # for serverbear.com benchmark runs so they are comparable
 #
+# add check for system entropy 
+# http://crypto.stackexchange.com/questions/12571/good-entropy-source-for-generating-openssl-keys
+#
 # inspired by STH Linux benchmark script 
 # https://github.com/STH-Dev/linux-bench
 ###############################################################
@@ -18,7 +21,7 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.3
+VER=0.4
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
@@ -47,6 +50,9 @@ RUN_PHPTESTS='y'
 RUN_UNIXBENCH='n'
 RUN_MTRTESTS='y'
 MTR_PACKETS='10'
+RUN_ENTROPYTEST='y'
+ENTROPY_RUNS='4'
+ENTROPYSLEEP=10
 UNIXBENCH_VER='5.1.3'
 
 SHOWPHPSTATS='n'
@@ -388,6 +394,21 @@ else
 echo ""
 	fi
 
+}
+
+entropycheck() {
+if [[ "$RUN_ENTROPYTEST" = [yY] ]]; then
+	bbcodestart
+	cecho "-------------------------------------------" $boldgreen
+	cecho "Check system entropy pool availability" $boldyellow
+	cecho "-------------------------------------------" $boldgreen
+	s
+	for ((i = 0 ; i < $ENTROPY_RUNS ; i++)); do
+		echo -n "entropy_avail: "; cat /proc/sys/kernel/random/entropy_avail
+		sleep $ENTROPYSLEEP
+	done
+	bbcodeend
+fi
 }
 
 opensslbench() {
@@ -1818,7 +1839,8 @@ starttime=$(date +%s.%N)
 
 	pingtests
 	mtrtests
-		
+	
+	entropycheck
 	opensslbench
 		
 	mysqlslapper
