@@ -109,7 +109,7 @@ Google Spreadsheet Template
 
 To tabulate your own results, I created a Google Spreadsheet template you can download and customise for your own usage. It's currently prefilled with columns for 3 clouding hosting providers, DigitalOcean, Linode and Vultr.
 
-https://docs.google.com/spreadsheets/d/1m0rYC5wOi1l4AAme8wbSmieLv6CVNAmvY3o0UisGa2c/edit?usp=sharing
+https://docs.google.com/spreadsheets/d/1DnL5hzG4MrfDj10T5fiLLxnw0YKbbFrTVACy5xtW_H4/edit?usp=sharing
 
 DigitalOcean vs Linode vs Vultr Benchmarks
 ===============
