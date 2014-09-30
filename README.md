@@ -10,6 +10,7 @@ Development is ongoing so please test only on test servers and not production li
 
 * disk dd, ioping, fio
 * ping, mtr 
+* memory bandwidth testing tmpfs ramdisk with disk dd and ioping
 * single threaded wget bandwidth benchmarks
 * parallel multi threaded axel bandwidth benchmarks [Centmin Mod stack only]
 * OpenSSL system benchmark 

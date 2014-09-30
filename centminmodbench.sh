@@ -21,7 +21,7 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.4
+VER=0.5
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
@@ -37,6 +37,9 @@ OPENSSL_NONSYSTEM='y'
 RUN_DISKDD='y'
 RUN_DISKIOPING='y'
 RUN_DISKFIO='y'
+RUN_RAMDISKDD='y'
+RUN_RAMDISKIOPING='y'
+RUN_RAMDISKFIO='n' # disabled as tmpfs not support direct=1/buffered=0
 RUN_AXELBENCH='y'
 RUN_BANDWIDTHBENCH='y'
 RUN_VULTRTESTS='y'
@@ -150,6 +153,7 @@ DT=`date +"%d%m%y-%H%M%S"`
 OPENSSL_LINKFILE="openssl-${OPENSSL_VERSION}.tar.gz"
 OPENSSL_LINK="http://www.openssl.org/source/${OPENSSL_LINKFILE}"
 BENCHDIR='/home/centminmodbench'
+RAMDISK_DIR='/ramdisk0'
 LOGDIR='/home/centminmodbench_logs'
 # where to download compression binaries for install
 SRCDIR="$BENCHDIR"
@@ -306,6 +310,198 @@ fi
 OPENSSL_VERCHECK=$(nginx -V 2>&1 | grep -Eo "$OPENSSL_VERSION")
 ###############################################################
 # functions
+
+ramdisktest() {
+	if [[ "$RUN_RAMDISKDD" = [yY] ]]; then
+
+		if [[ "$(grep -qs ${RAMDISK_DIR} /proc/mounts)" ]]; then
+			umount -l ${RAMDISK_DIR} 2>&1
+			rm -rf ${RAMDISK_DIR}
+		fi
+
+	mkdir -p ${RAMDISK_DIR}
+	mount -t tmpfs -o rw,size=160M tmpfs ${RAMDISK_DIR}
+	cd ${RAMDISK_DIR}
+
+	bbcodestart
+	cecho "-------------------------------------------" $boldgreen
+	cecho "ramdisk DD tests - memory bandwidth" $boldyellow
+	cecho "-------------------------------------------" $boldgreen
+
+	s
+	cecho "dd if=/dev/zero of=sb-io-test bs=128k count=1k conv=fdatasync"	$boldyellow
+	dd if=/dev/zero of=sb-io-test bs=128k count=1k conv=fdatasync
+	
+	s
+	cecho "dd if=/dev/zero of=sb-io-test bs=8k count=16k conv=fdatasync" $boldyellow
+	dd if=/dev/zero of=sb-io-test bs=8k count=16k conv=fdatasync
+
+	s	
+	cecho "dd if=/dev/zero of=sb-io-test bs=128k count=1k oflag=dsync" $boldyellow
+	dd if=/dev/zero of=sb-io-test bs=128k count=1k oflag=dsync
+	
+	s
+	cecho "dd if=/dev/zero of=sb-io-test bs=8k count=16k oflag=dsync" $boldyellow
+	dd if=/dev/zero of=sb-io-test bs=8k count=16k oflag=dsync
+
+	rm -rf sb-io-test 2>/dev/null
+	# cd ..
+	bbcodeend
+	fi
+
+	if [[ "$RUN_RAMDISKIOPING" = [yY] ]]; then
+	bbcodestart
+	cecho "-------------------------------------------" $boldgreen
+	cecho "ramdisk ioping tests - memory bandwidth" $boldyellow
+	cecho "-------------------------------------------" $boldgreen
+	s
+
+	cd ${RAMDISK_DIR}
+	
+        # cecho "Download ioping-$IOPING_VERSION.tar.gz ..." $boldyellow
+    if [ -s ioping-$IOPING_VERSION.tar.gz ]; then
+        # cecho "ioping-$IOPING_VERSION.tar.gz found, skipping download..." $boldgreen
+        s
+    else
+        wget -cnv --no-check-certificate https://ioping.googlecode.com/files/ioping-$IOPING_VERSION.tar.gz --tries=3
+ERROR=$?
+	if [[ "$ERROR" != '0' ]]; then
+	cecho "Error: ioping-$IOPING_VERSION.tar.gz download failed." $boldgreen
+	exit #$ERROR
+else 
+         cecho "Download done." $boldyellow
+	fi
+    fi
+
+if [ ! -d ioping-$IOPING_VERSION ]; then
+	tar xzf ioping-$IOPING_VERSION.tar.gz
+	ERROR=$?
+	if [[ "$ERROR" != '0' ]]; then
+		cecho "Error: ioping-$IOPING_VERSION.tar.gz extraction failed." $boldgreen
+		exit #$ERROR
+	else 
+         cecho "ioping-$IOPING_VERSION.tar.gz valid file." $boldyellow
+		echo ""
+	fi
+fi
+
+	cd ${RAMDISK_DIR}/ioping-0.6
+
+	cecho "Running IOPing I/O ramdisk benchmark..." $boldyellow
+	if [ ! -f ioping ]; then
+		make -j${CPUS} 2>&1
+	fi
+	s
+	cecho "IOPing I/O: ./ioping -c 10 ." $boldyellow
+	./ioping -c 10 .
+	s
+	cecho "IOPing seek rate: ./ioping -R ." $boldyellow
+	./ioping -R .
+	s
+	cecho "IOPing sequential: ./ioping -RL ." $boldyellow
+	./ioping -RL .
+	s
+	cecho "IOPing cached: ./ioping -RC ." $boldyellow
+	./ioping -RC .
+	s
+	bbcodeend
+	fi
+
+	if [[ "$RUN_RAMDISKFIO" = [yY] ]]; then
+	bbcodestart
+	cecho "-------------------------------------------" $boldgreen
+	cecho "ramdisk FIO tests - memory bandwidth" $boldyellow
+	cecho "-------------------------------------------" $boldgreen
+	s
+
+	cd ${RAMDISK_DIR}
+
+        # cecho "Download fio-$FIO_VERSION.tar.gz ..." $boldyellow
+    if [ -s fio-$FIO_VERSION.tar.gz ]; then
+        # cecho "fio-$FIO_VERSION.tar.gz found, skipping download..." $boldgreen
+        s
+    else
+        wget -cnv --no-check-certificate https://github.com/Crowd9/Benchmark/raw/master/fio-$FIO_VERSION.tar.gz --tries=3
+ERROR=$?
+	if [[ "$ERROR" != '0' ]]; then
+	cecho "Error: fio-$FIO_VERSION.tar.gz download failed." $boldgreen
+	exit #$ERROR
+else 
+         cecho "Download done." $boldyellow
+	fi
+    fi
+
+if [ ! -d fio-$FIO_VERSION ]; then
+	tar xzf fio-$FIO_VERSION.tar.gz
+	ERROR=$?
+	if [[ "$ERROR" != '0' ]]; then
+		cecho "Error: fio-$FIO_VERSION.tar.gz extraction failed." $boldgreen
+		exit #$ERROR
+	else 
+         cecho "fio-$FIO_VERSION.tar.gz valid file." $boldyellow
+		echo ""
+	fi
+fi
+
+cat > ${RAMDISK_DIR}/fio-2.0.9/reads.ini << EOF
+[global]
+randrepeat=1
+ioengine=libaio
+bs=4k
+ba=4k
+size=128M
+direct=1
+gtod_reduce=1
+norandommap
+iodepth=64
+numjobs=1
+
+[randomreads]
+startdelay=0
+filename=sb-io-test
+readwrite=randread
+EOF
+
+cat > ${RAMDISK_DIR}/fio-2.0.9/writes.ini << EOF
+[global]
+randrepeat=1
+ioengine=libaio
+bs=4k
+ba=4k
+size=128M
+direct=1
+gtod_reduce=1
+norandommap
+iodepth=64
+numjobs=1
+
+[randomwrites]
+startdelay=0
+filename=sb-io-test
+readwrite=randwrite
+EOF
+
+cecho "Running FIO ramdisk benchmark..." $boldyellow
+s
+cd ${RAMDISK_DIR}/fio-2.0.9/
+make -j${CPUS} 2>&1
+
+s
+cecho "FIO ramdisk random reads: " $boldyellow
+./fio reads.ini
+
+s
+cecho "FIO ramdisk random writes: " $boldyellow
+./fio writes.ini
+
+rm sb-io-test 2>/dev/null
+s
+	bbcodeend
+	fi
+	
+	umount -l ${RAMDISK_DIR}
+	rm -rf ${RAMDISK_DIR}
+}
 
 bbcodestart() {
 	if [[ "$BBCODE" = [yY] ]]; then
@@ -774,7 +970,7 @@ diskdd() {
 	cecho "dd if=/dev/zero of=sb-io-test bs=64k count=16k oflag=dsync" $boldyellow
 	dd if=/dev/zero of=sb-io-test bs=64k count=16k oflag=dsync
 
-	rm sb-io-test 2>/dev/null
+	rm -rf sb-io-test 2>/dev/null
 	# cd ..
 	bbcodeend
 	fi
@@ -836,8 +1032,8 @@ fi
 	cecho "IOPing cached: ./ioping -RC ." $boldyellow
 	./ioping -RC .
 	s
-	fi
 	bbcodeend
+	fi	
 }
 
 diskfio() {
@@ -928,7 +1124,7 @@ s
 cecho "FIO random writes: " $boldyellow
 ./fio writes.ini
 
-rm sb-io-test 2>/dev/null
+rm -rf sb-io-test 2>/dev/null
 s
 	bbcodeend
 	fi
@@ -1841,6 +2037,7 @@ starttime=$(date +%s.%N)
 	diskioping
 	diskdd
 	diskfio
+	ramdisktest
 	
 	bandwidthbench
 
