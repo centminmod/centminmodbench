@@ -1,5 +1,7 @@
 centminmodbench.sh
 ===============
+
+[![Join the chat at https://gitter.im/centminmod/centminmodbench](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/centminmod/centminmodbench?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 centminmodbench.sh Github short url link: http://bench.centminmod.com
 
 Custom system benchmark script for Centmin Mod LEMP web stack users. 
