@@ -188,7 +188,20 @@ EOF
 	php --ri redis
 
 }
+
+redisinfo() {
+	echo 
+	echo "install redisinfo.sh"
+	mkdir -p /root/tools
+	cd /root/tools
+	rm -rf redisinfo.sh
+	wget --no-check-certificate -cnv -O redisinfo.sh https://gist.githubusercontent.com/centminmod/e304bb0d80571c566f24/raw/redisinfo.sh
+	chmod +x redisinfo.sh
+	echo "installed /root/tools/redisinfo.sh"
+	echo
+}
 ######################################################
 require
 memtierinstall
 phpredis
+redisinfo
