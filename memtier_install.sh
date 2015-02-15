@@ -9,8 +9,10 @@
 DT=`date +"%d%m%y-%H%M%S"`
 LIBEVENT_VERSION='2.0.21'
 MEMTIER_VER='1.2.3'
+PHPREDIS_VER='2.2.7'
 
 DIR_TMP=/svr-setup
+CONFIGSCANDIR='/etc/centminmod/php.d'
 LIBEVENTLINKFILE="release-${LIBEVENT_VERSION}-stable.tar.gz"
 LIBEVENTLINK="https://github.com/libevent/libevent/archive/${LIBEVENTLINKFILE}"
 ######################################################
@@ -147,6 +149,45 @@ memtierinstall() {
 	echo
 
 }
+
+phpredis() {
+	echo
+	echo "install phpredis PHP extension"
+	cd $DIR_TMP
+	wget --no-check-certificate -cnv -O phpredis-${PHPREDIS_VER}.tar.gz https://github.com/phpredis/phpredis/archive/${PHPREDIS_VER}.tar.gz
+	tar xvf phpredis-${PHPREDIS_VER}.tar.gz
+	cd phpredis-${PHPREDIS_VER}
+	make clean
+	/usr/local/bin/phpize
+	if [[ -z "$(php --ri igbinary 2>&1 | grep 'not present')" ]]; then
+		./configure --with-php-config=/usr/local/bin/php-config --enable-redis-igbinary
+	else
+		./configure --with-php-config=/usr/local/bin/php-config
+	fi
+	make -j2
+	make install
+
+	PHPEXTDIRD=`cat /usr/local/bin/php-config | awk '/^extension_dir/ {extdir=$1} END {gsub(/\047|extension_dir|=|)/,"",extdir); print extdir}'`
+	touch ${CONFIGSCANDIR}/phpredis.ini
+ 
+cat > "${CONFIGSCANDIR}/phpredis.ini" <<EOF
+extension=${PHPEXTDIRD}/redis.so
+EOF
+	
+	echo
+	cat ${CONFIGSCANDIR}/phpredis.ini
+
+	echo
+	service php-fpm restart
+
+	echo "php --ini"
+	php --ini
+
+	echo "php --ri redis"
+	php --ri redis
+
+}
 ######################################################
 require
 memtierinstall
+phpredis
