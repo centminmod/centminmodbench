@@ -82,6 +82,7 @@ require() {
 		echo
 		echo "redis defaults"
 		cat /etc/redis.conf | egrep '^appendfsync |^appendonly |^port |^tcp-backlog|^bind|^tcp-keepalive|^requirepass |^# 	maxclients'
+		redis-cli INFO KEYSPACE
 	
 		sed -i 's/tcp-backlog 511/tcp-backlog 8000/' /etc/redis.conf
 		sed -i 's/appendonly no/appendonly yes/' /etc/redis.conf
