@@ -140,10 +140,10 @@ memtierinstall() {
 	echo "example benchmark parameters"
 	echo
 	echo "memcached_text memtier_benchmark"
-	echo "memtier_benchmark -P memcache_text -s 127.0.0.1 -p 11211 --random-data --data-size-range=4-204 --data-size-pattern=S --key-minimum=200 --key-maximum=400 --key-pattern=G:G --key-stddev=10 --key-median=300 2>&1 > memtier_benchmark.log"
+	echo "memtier_benchmark -P memcache_text -s 127.0.0.1 -p 11211 --random-data --data-size-range=4-204 --data-size-pattern=S --key-minimum=200 --key-maximum=400 --key-pattern=G:G --key-stddev=10 --key-median=300 2>&1 > memtier_benchmark.log; head -8 memtier_benchmark.log"
 	echo ""
 	echo "redis memtier_benchmark"
-	echo "memtier_benchmark -P redis -s 127.0.0.1 -p 6379 --random-data --data-size-range=4-204 --data-size-pattern=S --key-minimum=200 --key-maximum=400 --key-pattern=G:G --key-stddev=10 --key-median=300 2>&1 > memtier_benchmark.redis.log"
+	echo "memtier_benchmark -P redis -s 127.0.0.1 -p 6379 --random-data --data-size-range=4-204 --data-size-pattern=S --key-minimum=200 --key-maximum=400 --key-pattern=G:G --key-stddev=10 --key-median=300 2>&1 > memtier_benchmark.redis.log; head -8 memtier_benchmark.redis.log"
 	echo
 
 }
