@@ -135,6 +135,7 @@ memtierinstall() {
 	./configure
 	make -j2
 	make install
+	ln -s /usr/local/bin/memtier_benchmark /usr/bin/memtier_benchmark
 	echo
 	memtier_benchmark --version | head -n1
 	echo
