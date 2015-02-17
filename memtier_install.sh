@@ -127,12 +127,21 @@ require() {
 twemperfinstall() {
 	echo
 	echo "install twemperf"
+
+	cd $DIR_TMP
+	wget -cnv http://ftp.gnu.org/gnu/autoconf/autoconf-latest.tar.gz
+	tar xvzf autoconf-latest.tar.gz
+	cd autoconf-2.6*
+	./configure
+	make -j2
+	make install
+
 	cd $DIR_TMP
 	wget --no-check-certificate -cnv -O ${TWEMPERF_LINKFILE} ${TWEMPERF_LINK} --tries=3
 	tar xzf ${TWEMPERF_LINKFILE}
 	cd twemperf-${TWEMPERF_VER}
 	make clean
-	autoreconf -fvi
+	/usr/local/bin/autoreconf -fvi
 	./configure
 	make -j2
 	make install
