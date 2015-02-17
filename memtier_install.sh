@@ -148,7 +148,7 @@ twemperfinstall() {
 	echo "via uniform distribution in the interval of [1,16) bytes"
 	echo "mcperf -s 127.0.0.1 -p 11211 --linger=0 --timeout=5 --conn-rate=1000 --call-rate=1000 --num-calls=10 --num-conns=1000 --sizes=u1,16"	
 	echo
-	echo "mcperf -s 127.0.0.1 -p 11211 --num-conns=100 --conn-rate=1000 --sizes=0.01 --num-calls=10000"
+	echo "mcperf -s 127.0.0.1 -p 11211 --num-conns=1000 --conn-rate=25000 --sizes=0.01 --num-calls=10"
 }
 
 memtierinstall() {
