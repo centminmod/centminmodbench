@@ -8,6 +8,7 @@
 #############
 DT=`date +"%d%m%y-%H%M%S"`
 LIBEVENT_VERSION='2.0.21'
+TWEMPERF_VER='0.1.1'
 MEMTIER_VER='1.2.3'
 PHPREDIS_VER='2.2.7'
 
@@ -15,6 +16,8 @@ DIR_TMP=/svr-setup
 CONFIGSCANDIR='/etc/centminmod/php.d'
 LIBEVENTLINKFILE="release-${LIBEVENT_VERSION}-stable.tar.gz"
 LIBEVENTLINK="https://github.com/libevent/libevent/archive/${LIBEVENTLINKFILE}"
+TWEMPERF_LINKFILE="twemperf-${TWEMPERF_VER}.tar.gz"
+TWEMPERF_LINK="https://github.com/twitter/twemperf/archive/v${TWEMPERF_VER}.tar.gz"
 ######################################################
 # functions
 #############
@@ -109,7 +112,7 @@ require() {
     cd $DIR_TMP
     rm -rf release-${LIBEVENT_VERSION}-stable
     rm -rf libevent-release-${LIBEVENT_VERSION}-stable
-    wget --no-check-certificate -cnv $LIBEVENTLINK
+    wget --no-check-certificate -cnv $LIBEVENTLINK --tries=3
     tar xfz release-${LIBEVENT_VERSION}-stable.tar.gz
     cd libevent-release-${LIBEVENT_VERSION}-stable
     make clean
@@ -121,12 +124,39 @@ require() {
 	ldconfig
 }
 
+twemperfinstall() {
+	echo
+	echo "install twemperf"
+	cd $DIR_TMP
+	wget --no-check-certificate -cnv -O ${TWEMPERF_LINKFILE} ${TWEMPERF_LINK} --tries=3
+	tar xzf ${TWEMPERF_LINKFILE}
+	cd twemperf-${TWEMPERF_VER}
+	make clean
+	autoreconf -fvi
+	./configure
+	make -j2
+	make install
+	echo
+	echo "mcperf -V"
+	mcperf -V
+	echo
+	echo "example benchmark parameters"
+	echo
+	echo "1000 connections to memcached server 127.0.0.1 11211"
+	echo "connections rate = 1000 conns/sec and per connection"
+	echo "sends 10 'set' requests at 1000 reqs/sec with item sizes"
+	echo "via uniform distribution in the interval of [1,16) bytes"
+	echo "mcperf -s 127.0.0.1 -p 11211 --linger=0 --timeout=5 --conn-rate=1000 --call-rate=1000 --num-calls=10 --num-conns=1000 --sizes=u1,16"	
+	echo
+	echo "mcperf -s 127.0.0.1 -p 11211 --num-conns=100 --conn-rate=1000 --sizes=0.01 --num-calls=10000"
+}
+
 memtierinstall() {
 	echo
 	echo "install memtier_benchmark"
 	cd $DIR_TMP
 	rm -rf memtier*
-	wget --no-check-certificate -cnv -O memtier-${MEMTIER_VER}.tar.gz https://github.com/RedisLabs/memtier_benchmark/archive/${MEMTIER_VER}.tar.gz
+	wget --no-check-certificate -cnv -O memtier-${MEMTIER_VER}.tar.gz https://github.com/RedisLabs/memtier_benchmark/archive/${MEMTIER_VER}.tar.gz --tries=3
 	tar xzf memtier-${MEMTIER_VER}.tar.gz
 	cd memtier_benchmark-${MEMTIER_VER}
 	autoreconf -ivf
@@ -156,7 +186,7 @@ phpredis() {
 	echo
 	echo "install phpredis PHP extension"
 	cd $DIR_TMP
-	wget --no-check-certificate -cnv -O phpredis-${PHPREDIS_VER}.tar.gz https://github.com/phpredis/phpredis/archive/${PHPREDIS_VER}.tar.gz
+	wget --no-check-certificate -cnv -O phpredis-${PHPREDIS_VER}.tar.gz https://github.com/phpredis/phpredis/archive/${PHPREDIS_VER}.tar.gz --tries=3
 	tar xvf phpredis-${PHPREDIS_VER}.tar.gz
 	cd phpredis-${PHPREDIS_VER}
 	make clean
@@ -196,7 +226,7 @@ redisinfo() {
 	mkdir -p /root/tools
 	cd /root/tools
 	rm -rf redisinfo.sh
-	wget --no-check-certificate -cnv -O redisinfo.sh https://gist.githubusercontent.com/centminmod/e304bb0d80571c566f24/raw/redisinfo.sh
+	wget --no-check-certificate -cnv -O redisinfo.sh https://gist.githubusercontent.com/centminmod/e304bb0d80571c566f24/raw/redisinfo.sh --tries=3
 	chmod +x redisinfo.sh
 	echo "installed /root/tools/redisinfo.sh"
 	echo
@@ -204,5 +234,6 @@ redisinfo() {
 ######################################################
 require
 memtierinstall
+twemperfinstall
 phpredis
 redisinfo
