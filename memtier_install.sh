@@ -49,7 +49,7 @@ if [ ! -f /etc/yum.repos.d/remi.repo ]; then
 	if [[ "$CENTOSVER" = '6' ]]; then
 		REMIFILE="remi-release-6.rpm"
 		REMI="http://rpms.famillecollet.com/enterprise/${REMIFILE}"
-	elif [[ "$CENTOSVER" = '6' ]]; then
+	elif [[ "$CENTOSVER" = '7' ]]; then
 		REMIFILE="remi-release-7.rpm"
 		REMI="http://rpms.famillecollet.com/enterprise/${REMIFILE}"
 	fi
