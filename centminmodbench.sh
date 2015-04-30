@@ -245,13 +245,19 @@ if [ ! -d "$LOGDIR" ]; then
 	mkdir -p $LOGDIR
 fi
 
-if [[ ! -d ${MYSQLSLAP_DIR} ]]; then 
+if [[ ! -d "${MYSQLSLAP_DIR}" ]]; then 
 	mkdir -p ${MYSQLSLAP_DIR}
 fi
 
 if [ ! -d "$PHPBENCHLOGDIR" ]; then
 	mkdir -p $PHPBENCHLOGDIR
 fi
+
+echo
+echo "installing required packages..."
+yum -y -q install nano bc unzip mtr util-linux-ng coreutils gcc cc libaio libaio-devel wget pigz lbzip2 rng-tools screen perl-Test-Simple perl-ExtUtils-MakeMaker perl-Time-HiRes perl-libwww-perl perl-Crypt-SSLeay perl-Net-SSLeay perl-LWP-Protocol-https patch
+echo "required packages installed"
+echo
 
 if [[ ! -f /usr/bin/cc || ! -f /usr/bin/gcc ]]; then
 	cecho "installing required yum package (cc / gcc) ..." $boldyellow
