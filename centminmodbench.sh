@@ -314,6 +314,9 @@ fi
 # determine Centmin Mod Nginx static compiled
 # OpenSSL version
 OPENSSL_VERCHECK=$(nginx -V 2>&1 | grep -Eo "$OPENSSL_VERSION")
+
+# determine if LibreSSL static compiled
+LIBRESSL_VERCHECK=$(nginx -V 2>&1 | grep -Eo "LibreSSL")
 ###############################################################
 # functions
 
@@ -646,7 +649,7 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 	openssl speed -evp aes128 -multi ${CPUS}
 
 	if [[ "$OPENSSL_NONSYSTEM" = [yY] ]]; then
-		if [[ -f /etc/centminmod-release && "$OPENSSL_VERCHECK" ]]; then
+		if [[ -f /etc/centminmod-release && "$OPENSSL_VERCHECK" ]] || [[ -f /etc/centminmod-release && "$LIBRESSL_VERCHECK" ]]; then
 		s
 		cecho "-------------------------------------------" $boldgreen
 		if [ -f /opt/libressl/bin/openssl ]; then
