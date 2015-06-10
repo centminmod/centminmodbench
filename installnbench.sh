@@ -4,7 +4,7 @@
 # when ran with command
 # curl -sL https://github.com/centminmod/centminmodbench/raw/master/installnbench.sh | bash
 # runs 2 tasks
-# 1) install latest Centmin Mod .08 beta01 LEMP stack
+# 1) install latest Centmin Mod .08 beta LEMP stack
 # 2) installs and runs centminmodbench.sh (UnixBench enabled)
 ######################################################
 # variables
@@ -61,14 +61,14 @@ benchninstall() {
 s
 div
 cecho "2 tasks will be performaned which can take up to 45-90 mins" $boldyellow
-cecho "1). install latest Centmin Mod .08 beta01 LEMP stack ~15-30 mins" $boldyellow
+cecho "1). install latest Centmin Mod .08 beta LEMP stack ~15-30 mins" $boldyellow
 cecho "2). installs & runs centminmodbench.sh (UnixBench enabled) ~30-60 mins" $boldyellow
 div
 s
 
 s
 div
-cecho "installing Centmin Mod .08 beta01 LEMP stack" $boldyellow
+cecho "installing Centmin Mod .08 beta LEMP stack" $boldyellow
 cecho "will take ~15-30 minutes" $boldyellow
 div
 s
