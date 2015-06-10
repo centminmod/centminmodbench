@@ -21,7 +21,7 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.5
+VER=0.6
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
@@ -649,25 +649,43 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 		if [[ -f /etc/centminmod-release && "$OPENSSL_VERCHECK" ]]; then
 		s
 		cecho "-------------------------------------------" $boldgreen
-		cecho "Centmin Mod Nginx static OpenSSL Benchmark" $boldyellow
+		if [ -f /opt/libressl/bin/openssl ]; then
+			cecho "Centmin Mod Nginx static LibreSSL Benchmark" $boldyellow
+		else
+			cecho "Centmin Mod Nginx static OpenSSL Benchmark" $boldyellow			
+		fi
 		cecho "-------------------------------------------" $boldgreen
 		s
 		# not needed as testing Centmin Mod Nginx static OpenSSL version
 		# openssldownload
 			if [ -f /svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl ]; then
-			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl version
-		
-			cecho "-------------------------------------------" $boldgreen
-			cecho "openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}" $boldyellow
-			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}
-
-			cecho "-------------------------------------------" $boldgreen
-			cecho "openssl speed -evp aes256 -multi ${CPUS}" $boldyellow
-			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes256 -multi ${CPUS}
-		
-			cecho "-------------------------------------------" $boldgreen
-			cecho "openssl speed -evp aes128 -multi ${CPUS}" $boldyellow
-			/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes128 -multi ${CPUS}
+				/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl version
+			
+				cecho "-------------------------------------------" $boldgreen
+				cecho "openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}" $boldyellow
+				/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}
+	
+				cecho "-------------------------------------------" $boldgreen
+				cecho "openssl speed -evp aes256 -multi ${CPUS}" $boldyellow
+				/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes256 -multi ${CPUS}
+			
+				cecho "-------------------------------------------" $boldgreen
+				cecho "openssl speed -evp aes128 -multi ${CPUS}" $boldyellow
+				/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes128 -multi ${CPUS}
+			elif [ -f /opt/libressl/bin/openssl ]; then
+				/opt/libressl/bin/openssl version
+			
+				cecho "-------------------------------------------" $boldgreen
+				cecho "openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}" $boldyellow
+				/opt/libressl/bin/openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}
+	
+				cecho "-------------------------------------------" $boldgreen
+				cecho "openssl speed -evp aes256 -multi ${CPUS}" $boldyellow
+				/opt/libressl/bin/openssl speed -evp aes256 -multi ${CPUS}
+			
+				cecho "-------------------------------------------" $boldgreen
+				cecho "openssl speed -evp aes128 -multi ${CPUS}" $boldyellow
+				/opt/libressl/bin/openssl speed -evp aes128 -multi ${CPUS}			
 			fi
 		fi
 	fi
