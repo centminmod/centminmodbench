@@ -28,7 +28,7 @@ DEBUG='n'
 AUTOREPORT='y'
 TESTFILE='/home/gziptest/imdb.sql'
 
-OPENSSL_VERSION='1.0.2c'
+OPENSSL_VERSION='1.0.2d'
 MYSQLSLAP_SAVECSV='n'
 
 SEVERBEAR='n'
@@ -1379,138 +1379,138 @@ mtrtests() {
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} cachefly.cachefly.net" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} cachefly.cachefly.net 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} cachefly.cachefly.net" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} cachefly.cachefly.net 2>&1
 
     s
     div
-    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.atlanta.linode.com" $boldyellow
-    mtr --report --report-cycles=${MTR_PACKETS} speedtest.atlanta.linode.com 2>&1
+    cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.atlanta.linode.com" $boldyellow
+    mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.atlanta.linode.com 2>&1
     
     s
     div
-    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.dallas.linode.com" $boldyellow
-    mtr --report --report-cycles=${MTR_PACKETS} speedtest.dallas.linode.com 2>&1
+    cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.dallas.linode.com" $boldyellow
+    mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.dallas.linode.com 2>&1
     
     s
     div
-    cecho "mtr --report --report-cycles=${MTR_PACKETS} mirror.us.leaseweb.net" $boldyellow
-    mtr --report --report-cycles=${MTR_PACKETS} mirror.us.leaseweb.net 2>&1
+    cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} mirror.us.leaseweb.net" $boldyellow
+    mtr --report -w 200 --report-cycles=${MTR_PACKETS} mirror.us.leaseweb.net 2>&1
     
     s
     div
-    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.sea01.softlayer.com" $boldyellow
-    mtr --report --report-cycles=${MTR_PACKETS} speedtest.sea01.softlayer.com 2>&1
+    cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.sea01.softlayer.com" $boldyellow
+    mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.sea01.softlayer.com 2>&1
     
     s
     div
-    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.sjc01.softlayer.com" $boldyellow
-    mtr --report --report-cycles=${MTR_PACKETS} speedtest.sjc01.softlayer.com 2>&1
+    cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.sjc01.softlayer.com" $boldyellow
+    mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.sjc01.softlayer.com 2>&1
     
     s
     div
-    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.wdc01.softlayer.com" $boldyellow
-    mtr --report --report-cycles=${MTR_PACKETS} speedtest.wdc01.softlayer.com 2>&1
+    cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.wdc01.softlayer.com" $boldyellow
+    mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.wdc01.softlayer.com 2>&1
     
     s
     div
-    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.tokyo.linode.com" $boldyellow
-    mtr --report --report-cycles=${MTR_PACKETS} speedtest.tokyo.linode.com 2>&1
+    cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.tokyo.linode.com" $boldyellow
+    mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.tokyo.linode.com 2>&1
     
     s
     div
-    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.sng01.softlayer.com" $boldyellow
-    mtr --report --report-cycles=${MTR_PACKETS} speedtest.sng01.softlayer.com 2>&1
+    cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.sng01.softlayer.com" $boldyellow
+    mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.sng01.softlayer.com 2>&1
     
     s
     div
-    cecho "mtr --report --report-cycles=${MTR_PACKETS} speedtest.london.linode.com" $boldyellow
-    mtr --report --report-cycles=${MTR_PACKETS} speedtest.london.linode.com 2>&1
+    cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.london.linode.com" $boldyellow
+    mtr --report -w 200 --report-cycles=${MTR_PACKETS} speedtest.london.linode.com 2>&1
     
     s
     div
-    cecho "mtr --report --report-cycles=${MTR_PACKETS} mirror.i3d.net" $boldyellow
-    mtr --report --report-cycles=${MTR_PACKETS} mirror.i3d.net 2>&1
+    cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} mirror.i3d.net" $boldyellow
+    mtr --report -w 200 --report-cycles=${MTR_PACKETS} mirror.i3d.net 2>&1
     
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} syd-au-ping.vultr.com" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} syd-au-ping.vultr.com 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} syd-au-ping.vultr.com" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} syd-au-ping.vultr.com 2>&1
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} hnd-jp-ping.vultr.com" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} hnd-jp-ping.vultr.com 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} hnd-jp-ping.vultr.com" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} hnd-jp-ping.vultr.com 2>&1
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} lax-ca-us-ping.vultr.com" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} lax-ca-us-ping.vultr.com 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} lax-ca-us-ping.vultr.com" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} lax-ca-us-ping.vultr.com 2>&1
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} wa-us-ping.vultr.com" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} wa-us-ping.vultr.com 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} wa-us-ping.vultr.com" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} wa-us-ping.vultr.com 2>&1
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} tx-us-ping.vultr.com" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} tx-us-ping.vultr.com 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} tx-us-ping.vultr.com" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} tx-us-ping.vultr.com 2>&1
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} il-us-ping.vultr.com" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} il-us-ping.vultr.com 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} il-us-ping.vultr.com" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} il-us-ping.vultr.com 2>&1
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} ga-us-ping.vultr.com" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} ga-us-ping.vultr.com 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} ga-us-ping.vultr.com" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} ga-us-ping.vultr.com 2>&1
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} fl-us-ping.vultr.com" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} fl-us-ping.vultr.com 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} fl-us-ping.vultr.com" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} fl-us-ping.vultr.com 2>&1
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} nj-us-ping.vultr.com" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} nj-us-ping.vultr.com 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} nj-us-ping.vultr.com" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} nj-us-ping.vultr.com 2>&1
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} fra-de-ping.vultr.com" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} fra-de-ping.vultr.com 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} fra-de-ping.vultr.com" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} fra-de-ping.vultr.com 2>&1
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} ams-nl-ping.vultr.com" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} ams-nl-ping.vultr.com 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} ams-nl-ping.vultr.com" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} ams-nl-ping.vultr.com 2>&1
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} lon-gb-ping.vultr.com" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} lon-gb-ping.vultr.com 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} lon-gb-ping.vultr.com" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} lon-gb-ping.vultr.com 2>&1
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} par-fr-ping.vultr.com" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} par-fr-ping.vultr.com 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} par-fr-ping.vultr.com" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} par-fr-ping.vultr.com 2>&1
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} VersaWeb Las Vegas" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} 199.47.210.50 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} VersaWeb Las Vegas" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} 199.47.210.50 2>&1
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} VersaWeb Seattle" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} 76.164.234.1 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} VersaWeb Seattle" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} 76.164.234.1 2>&1
 
 	s
 	div
-	cecho "mtr --report --report-cycles=${MTR_PACKETS} OVH Canada" $boldyellow
-	mtr --report --report-cycles=${MTR_PACKETS} bhs.proof.ovh.net 2>&1
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} OVH Canada" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} bhs.proof.ovh.net 2>&1
 
 	s
 	bbcodeend
