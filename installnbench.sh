@@ -68,11 +68,11 @@ s
 
 s
 div
-cecho "installing Centmin Mod .08 beta LEMP stack" $boldyellow
+cecho "installing Centmin Mod .08 stable LEMP stack" $boldyellow
 cecho "will take ~15-30 minutes" $boldyellow
 div
 s
-curl -sL https://gist.github.com/centminmod/dbe765784e03bc4b0d40/raw/installer.sh | bash
+curl -sL https://raw.githubusercontent.com/centminmod/centminmod/123.08stable/installer.sh | bash
 
 s
 div
