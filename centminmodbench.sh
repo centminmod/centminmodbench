@@ -716,12 +716,20 @@ baseinfo() {
 	
 	div
 	if [ ! -f /proc/user_beancounters ]; then
+		CPUFLAGS=$(cat /proc/cpuinfo | grep '^flags' | cut -d: -f2 | awk 'NR==1')
 		lscpu
+		echo
+		echo "CPU Flags"
+		echo "$CPUFLAGS"		
 	else
 		CPUNAME=$(cat /proc/cpuinfo | grep "model name" | cut -d ":" -f2 | tr -s " " | head -n 1)
 		CPUCOUNT=$(cat /proc/cpuinfo | grep "model name" | cut -d ":" -f2 | wc -l)
+		CPUFLAGS=$(cat /proc/cpuinfo | grep '^flags' | cut -d: -f2 | awk 'NR==1')
 		echo "CPU: $CPUCOUNT x$CPUNAME"
 		uname -m
+		echo
+		echo "CPU Flags"
+		echo "$CPUFLAGS"
 	fi
 	s
 
