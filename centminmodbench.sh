@@ -28,7 +28,7 @@ DEBUG='n'
 AUTOREPORT='y'
 TESTFILE='/home/gziptest/imdb.sql'
 
-OPENSSL_VERSION='1.0.2d'
+OPENSSL_VERSION='1.0.2e'
 MYSQLSLAP_SAVECSV='n'
 
 SEVERBEAR='n'
@@ -72,6 +72,7 @@ RUNS='3'
 IOPING_VERSION=0.6
 FIO_VERSION=2.0.9
 
+AXELBIN=$(which axel)
 ########################
 # compression
 
@@ -1930,7 +1931,7 @@ fi
 axel_benchmark() {
   cecho "Axel Download from $1 ($2)" $boldyellow
   SFILENAME=$(echo ${2##*/})
-  DOWNLOAD_SPEED=$(axel -a $2 2>&1 | awk '/Downloaded/ {speed=$7 $8} END {gsub(/\(|\)|KB\/s/,"",speed); print speed}')
+  DOWNLOAD_SPEED=$($AXELBIN -a $2 2>&1 | awk '/Downloaded/ {speed=$7 $8} END {gsub(/\(|\)|KB\/s/,"",speed); print speed}')
   SPEEDMB=$(echo "scale=2;${DOWNLOAD_SPEED}/1024" | bc)
   cecho "Axel Download $1: ${SPEEDMB}MB/s" $boldyellow 2>&1
   rm -rf $SFILENAME
