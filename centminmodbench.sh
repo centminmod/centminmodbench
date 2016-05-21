@@ -21,14 +21,14 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.6
+VER=0.7
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
 AUTOREPORT='y'
 TESTFILE='/home/gziptest/imdb.sql'
 
-OPENSSL_VERSION='1.0.2e'
+OPENSSL_VERSION='1.0.2h'
 MYSQLSLAP_SAVECSV='n'
 
 SEVERBEAR='n'
@@ -40,7 +40,7 @@ RUN_DISKFIO='y'
 RUN_RAMDISKDD='y'
 RUN_RAMDISKIOPING='y'
 RUN_RAMDISKFIO='n' # disabled as tmpfs not support direct=1/buffered=0
-RUN_AXELBENCH='n'
+RUN_AXELBENCH='y'
 RUN_BANDWIDTHBENCH='y'
 RUN_VULTRTESTS='y'
 EUROPE_BANDWIDTHTESTS='y'
