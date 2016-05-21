@@ -1204,7 +1204,7 @@ bandwidthbench() {
 		div
 		download_benchmark 'Softlayer, Washington, DC, USA' 'http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
 		div
-		download_benchmark 'VersaWeb, Las Vegas, Nevada' 'http://199.47.210.50/100mbtest.bin'
+		download_benchmark 'VersaWeb, Las Vegas, Nevada' 'http://104.143.15.254/100MB.test'
 		div
 		download_benchmark 'OVH, BHS, Canada' 'http://bhs.proof.ovh.net/files/100Mio.dat'
 			if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
@@ -1359,7 +1359,7 @@ pingtests() {
 	s
 	div
 	cecho "Pings (VersaWeb Las Vegas):" $boldyellow
-	ping -c 3 199.47.210.50 2>&1
+	ping -c 3 104.143.15.254 2>&1
 
 	s
 	div
@@ -1509,7 +1509,7 @@ mtrtests() {
 	s
 	div
 	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} VersaWeb Las Vegas" $boldyellow
-	mtr --report -w 200 --report-cycles=${MTR_PACKETS} 199.47.210.50 2>&1
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} 104.143.15.254 2>&1
 
 	s
 	div
@@ -1969,7 +1969,7 @@ axelbench() {
     div
     axel_benchmark 'Softlayer, Washington, DC, USA' 'http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
     div
-    axel_benchmark 'VersaWeb, Las Vegas, Nevada' 'http://199.47.210.50/100mbtest.bin'
+    axel_benchmark 'VersaWeb, Las Vegas, Nevada' 'http://104.143.15.254/100MB.test'
     div
     axel_benchmark 'OVH, BHS, Canada' 'http://bhs.proof.ovh.net/files/100Mio.dat'
       if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
