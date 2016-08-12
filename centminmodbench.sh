@@ -630,6 +630,7 @@ fi
 
 opensslbench() {
 if [[ "$OPENSSLBENCH" = [yY] ]]; then
+	DETECTOPENSSL_ONEZERO=$(echo $OPENSSL_VERSION  | cut -d . -f1,2)
 	bbcodestart
 	cecho "-------------------------------------------" $boldgreen
 	cecho "OpenSSL System Benchmark" $boldyellow
@@ -668,28 +669,47 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 				cecho "-------------------------------------------" $boldgreen
 				cecho "openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}" $boldyellow
 				/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}
+				sleep 15
 	
 				cecho "-------------------------------------------" $boldgreen
 				cecho "openssl speed -evp aes256 -multi ${CPUS}" $boldyellow
 				/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes256 -multi ${CPUS}
+				sleep 15
 			
 				cecho "-------------------------------------------" $boldgreen
 				cecho "openssl speed -evp aes128 -multi ${CPUS}" $boldyellow
 				/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes128 -multi ${CPUS}
+				sleep 15
+
+				if [[ "$DETECTOPENSSL_ONEZERO" = '1.1' || -f /svr-setup/openssl-${OPENSSL_VERSION}/crypto/chacha20poly1305/chacha20.c ]]; then
+				cecho "-------------------------------------------" $boldgreen
+				cecho "openssl speed -evp chacha -multi ${CPUS}" $boldyellow
+				/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp chacha -multi ${CPUS}
+				# sleep 15
+				fi
+
 			elif [ -f /opt/libressl/bin/openssl ]; then
 				/opt/libressl/bin/openssl version
 			
 				cecho "-------------------------------------------" $boldgreen
 				cecho "openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}" $boldyellow
 				/opt/libressl/bin/openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}
+				sleep 15
 	
 				cecho "-------------------------------------------" $boldgreen
 				cecho "openssl speed -evp aes256 -multi ${CPUS}" $boldyellow
 				/opt/libressl/bin/openssl speed -evp aes256 -multi ${CPUS}
+				sleep 15
 			
 				cecho "-------------------------------------------" $boldgreen
 				cecho "openssl speed -evp aes128 -multi ${CPUS}" $boldyellow
-				/opt/libressl/bin/openssl speed -evp aes128 -multi ${CPUS}			
+				/opt/libressl/bin/openssl speed -evp aes128 -multi ${CPUS}
+				sleep 15
+
+				cecho "-------------------------------------------" $boldgreen
+				cecho "openssl speed -evp chacha -multi ${CPUS}" $boldyellow
+				/opt/libressl/bin/openssl speed -evp chacha -multi ${CPUS}
+				# sleep 15
 			fi
 		fi
 	fi
