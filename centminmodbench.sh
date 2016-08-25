@@ -21,7 +21,7 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.7
+VER=0.8
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
@@ -663,28 +663,33 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 		s
 		# not needed as testing Centmin Mod Nginx static OpenSSL version
 		# openssldownload
-			if [ -f /svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl ]; then
-				/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl version
+			if [ -f /opt/openssl ]; then
+				OPENSSL_BINPATH='/opt/openssl/bin/openssl'
+			elif [ -f "/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl" ]; then
+				OPENSSL_BINPATH="/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl"
+			fi
+			if [ -f $OPENSSL_BINPATH ]; then
+				$OPENSSL_BINPATH version
 			
 				cecho "-------------------------------------------" $boldgreen
 				cecho "openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}" $boldyellow
-				/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}
+				$OPENSSL_BINPATH speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}
 				sleep 15
 	
 				cecho "-------------------------------------------" $boldgreen
 				cecho "openssl speed -evp aes256 -multi ${CPUS}" $boldyellow
-				/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes256 -multi ${CPUS}
+				$OPENSSL_BINPATH speed -evp aes256 -multi ${CPUS}
 				sleep 15
 			
 				cecho "-------------------------------------------" $boldgreen
 				cecho "openssl speed -evp aes128 -multi ${CPUS}" $boldyellow
-				/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp aes128 -multi ${CPUS}
+				$OPENSSL_BINPATH speed -evp aes128 -multi ${CPUS}
 				sleep 15
 
 				if [[ "$DETECTOPENSSL_ONEZERO" = '1.1' || -f /svr-setup/openssl-${OPENSSL_VERSION}/crypto/chacha20poly1305/chacha20.c ]]; then
 				cecho "-------------------------------------------" $boldgreen
 				cecho "openssl speed -evp chacha -multi ${CPUS}" $boldyellow
-				/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl speed -evp chacha -multi ${CPUS}
+				$OPENSSL_BINPATH speed -evp chacha -multi ${CPUS}
 				# sleep 15
 				fi
 
