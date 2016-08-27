@@ -2,14 +2,14 @@
 ######################################################
 # memtier redis/memcached benchmark tool installer for
 # centminmod.com LEMP web stack servers
-# written by George Liu (eva2000) vbtechsupport.com
+# written by George Liu (eva2000) centminmod.com
 ######################################################
 # variables
 #############
 DT=`date +"%d%m%y-%H%M%S"`
 LIBEVENT_VERSION='2.0.21'
 TWEMPERF_VER='0.1.1'
-MEMTIER_VER='1.2.3'
+MEMTIER_VER='1.2.7'
 PHPREDIS_VER='2.2.7'
 
 DIR_TMP=/svr-setup
@@ -87,7 +87,7 @@ require() {
 		cat /etc/redis.conf | egrep '^appendfsync |^appendonly |^port |^tcp-backlog|^bind|^tcp-keepalive|^requirepass |^# 	maxclients'
 		redis-cli INFO KEYSPACE
 	
-		sed -i 's/tcp-backlog 511/tcp-backlog 8000/' /etc/redis.conf
+		sed -i 's/tcp-backlog 511/tcp-backlog 10000/' /etc/redis.conf
 		sed -i 's/appendonly no/appendonly yes/' /etc/redis.conf
 	
 		echo
@@ -108,20 +108,24 @@ require() {
 	fi
 
 	echo
-	echo "install libevent"
-    cd $DIR_TMP
-    rm -rf release-${LIBEVENT_VERSION}-stable
-    rm -rf libevent-release-${LIBEVENT_VERSION}-stable
-    wget --no-check-certificate -cnv $LIBEVENTLINK --tries=3
-    tar xfz release-${LIBEVENT_VERSION}-stable.tar.gz
-    cd libevent-release-${LIBEVENT_VERSION}-stable
-    make clean
-    ./autogen.sh
-    ./configure --prefix=/usr/${LIBDIR}
-    make -j2
-    make install
-    echo "/usr/${LIBDIR}/lib/" > /etc/ld.so.conf.d/libevent-i386.conf
-	ldconfig
+		if [ ! -f "/usr/${LIBDIR}/lib/libevent.a" ]; then
+		echo "install libevent"
+    	cd $DIR_TMP
+    	rm -rf release-${LIBEVENT_VERSION}-stable
+    	rm -rf libevent-release-${LIBEVENT_VERSION}-stable
+    	wget --no-check-certificate -cnv $LIBEVENTLINK --tries=3
+    	tar xfz release-${LIBEVENT_VERSION}-stable.tar.gz
+    	cd libevent-release-${LIBEVENT_VERSION}-stable
+    	make clean
+    	./autogen.sh
+    	./configure --prefix=/usr/${LIBDIR}
+    	make -j2
+    	make install
+    	if [ ! -f /etc/ld.so.conf.d/libevent-i386.conf ]; then
+    		echo "/usr/${LIBDIR}/lib/" > /etc/ld.so.conf.d/libevent-i386.conf
+				ldconfig
+  		fi
+  	fi
 }
 
 twemperfinstall() {
@@ -192,6 +196,7 @@ memtierinstall() {
 }
 
 phpredis() {
+	if [ ! -f "${CONFIGSCANDIR}/phpredis.ini" ]; then
 	echo
 	echo "install phpredis PHP extension"
 	cd $DIR_TMP
@@ -226,6 +231,7 @@ EOF
 
 	echo "php --ri redis"
 	php --ri redis
+	fi
 
 }
 
