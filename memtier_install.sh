@@ -196,7 +196,7 @@ memtierinstall() {
 }
 
 phpredis() {
-	if [ ! -f "${CONFIGSCANDIR}/phpredis.ini" ]; then
+	if [ ! -f "${CONFIGSCANDIR}/redis.ini" ]; then
 	echo
 	echo "install phpredis PHP extension"
 	cd $DIR_TMP
@@ -214,14 +214,14 @@ phpredis() {
 	make install
 
 	PHPEXTDIRD=`cat /usr/local/bin/php-config | awk '/^extension_dir/ {extdir=$1} END {gsub(/\047|extension_dir|=|)/,"",extdir); print extdir}'`
-	touch ${CONFIGSCANDIR}/phpredis.ini
+	touch ${CONFIGSCANDIR}/redis.ini
  
-cat > "${CONFIGSCANDIR}/phpredis.ini" <<EOF
+cat > "${CONFIGSCANDIR}/redis.ini" <<EOF
 extension=${PHPEXTDIRD}/redis.so
 EOF
 	
 	echo
-	cat ${CONFIGSCANDIR}/phpredis.ini
+	cat ${CONFIGSCANDIR}/redis.ini
 
 	echo
 	service php-fpm restart
