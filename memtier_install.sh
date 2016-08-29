@@ -89,6 +89,8 @@ require() {
 	
 		sed -i 's/tcp-backlog 511/tcp-backlog 10000/' /etc/redis.conf
 		sed -i 's/appendonly no/appendonly yes/' /etc/redis.conf
+		sed -i "s/^# unixsocket \/tmp\/redis.sock/unixsocket \/tmp\/redis.sock/" /etc/redis.conf
+		sed -i 's/^# unixsocketperm 700/unixsocketperm 700/' /etc/redis.conf
 	
 		echo
 		echo "redis tweaked"
@@ -188,9 +190,15 @@ memtierinstall() {
 	echo
 	echo "memcached_text memtier_benchmark"
 	echo "memtier_benchmark -P memcache_text -s 127.0.0.1 -p 11211 --random-data --data-size-range=4-204 --data-size-pattern=S --key-minimum=200 --key-maximum=400 --key-pattern=G:G --key-stddev=10 --key-median=300 2>&1 > memtier_benchmark.log; head -8 memtier_benchmark.log"
+	echo
+	echo "memcached_text memtier_benchmark (unix socket)"
+	echo "memtier_benchmark -P memcache_text -S /var/run/memcached/memcached1.sock --random-data --data-size-range=4-204 --data-size-pattern=S --key-minimum=200 --key-maximum=400 --key-pattern=G:G --key-stddev=10 --key-median=300 2>&1 > memtier_benchmark.socket.log; head -8 memtier_benchmark.socket.log"
 	echo ""
 	echo "redis memtier_benchmark"
 	echo "memtier_benchmark -P redis -s 127.0.0.1 -p 6379 --random-data --data-size-range=4-204 --data-size-pattern=S --key-minimum=200 --key-maximum=400 --key-pattern=G:G --key-stddev=10 --key-median=300 2>&1 > memtier_benchmark.redis.log; head -8 memtier_benchmark.redis.log"
+	echo
+	echo "redis memtier_benchmark (unix socket)"
+	echo "memtier_benchmark -P redis -S /tmp/redis.sock --random-data --data-size-range=4-204 --data-size-pattern=S --key-minimum=200 --key-maximum=400 --key-pattern=G:G --key-stddev=10 --key-median=300 2>&1 > memtier_benchmark.redis.socket.log; head -8 memtier_benchmark.redis.socket.log"
 	echo
 
 }
