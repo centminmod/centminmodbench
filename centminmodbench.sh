@@ -21,7 +21,7 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.8
+VER=0.9
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
@@ -69,7 +69,7 @@ BBCODE='y'
 # the results will be averaged over that many runs
 RUNS='3'
 
-IOPING_VERSION=0.6
+IOPING_VERSION=0.8
 FIO_VERSION=2.0.9
 
 AXELBIN=$(which axel)
@@ -373,7 +373,7 @@ ramdisktest() {
         # cecho "ioping-$IOPING_VERSION.tar.gz found, skipping download..." $boldgreen
         s
     else
-        wget -cnv --no-check-certificate https://ioping.googlecode.com/files/ioping-$IOPING_VERSION.tar.gz --tries=3
+        wget -cnv "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/ioping/ioping-$IOPING_VERSION.tar.gz" --tries=3
 ERROR=$?
 	if [[ "$ERROR" != '0' ]]; then
 	cecho "Error: ioping-$IOPING_VERSION.tar.gz download failed." $boldgreen
@@ -395,7 +395,7 @@ if [ ! -d ioping-$IOPING_VERSION ]; then
 	fi
 fi
 
-	cd ${RAMDISK_DIR}/ioping-0.6
+	cd ${RAMDISK_DIR}/ioping-$IOPING_VERSION
 
 	cecho "Running IOPing I/O ramdisk benchmark..." $boldyellow
 	if [ ! -f ioping ]; then
@@ -1053,7 +1053,7 @@ diskioping() {
         # cecho "ioping-$IOPING_VERSION.tar.gz found, skipping download..." $boldgreen
         s
     else
-        wget -cnv --no-check-certificate https://ioping.googlecode.com/files/ioping-$IOPING_VERSION.tar.gz --tries=3
+        wget -cnv "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/ioping/ioping-$IOPING_VERSION.tar.gz" --tries=3
 ERROR=$?
 	if [[ "$ERROR" != '0' ]]; then
 	cecho "Error: ioping-$IOPING_VERSION.tar.gz download failed." $boldgreen
