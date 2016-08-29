@@ -21,7 +21,7 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.9
+VER=0.9.1
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
@@ -1954,12 +1954,15 @@ fi
 ########################
 
 axel_benchmark() {
+  AXELLOG=axel.log
   cecho "Axel Download from $1 ($2)" $boldyellow
   SFILENAME=$(echo ${2##*/})
-  DOWNLOAD_SPEED=$($AXELBIN -a $2 2>&1 | awk '/Downloaded/ {speed=$7 $8} END {gsub(/\(|\)|KB\/s/,"",speed); print speed}')
+  $AXELBIN $2 2>&1 > "$AXELLOG"
+  DOWNLOAD_SPEED=$(awk '/Downloaded/ {speed=$7 $8} END {gsub(/\(|\)|KB\/s/,"",speed); print speed}' "$AXELLOG")
   SPEEDMB=$(echo "scale=2;${DOWNLOAD_SPEED}/1024" | bc)
   cecho "Axel Download $1: ${SPEEDMB}MB/s" $boldyellow 2>&1
   rm -rf $SFILENAME
+  rm -rf "$AXELLOG"
 }
 
 
@@ -2071,11 +2074,12 @@ axelbench() {
 ########################
 
 if [[ "$1" = cleanup ]]; then
-  rm -rf /home/centminmodbench
-  rm -rf /home/centminmodbench_logs
-  rm -rf /home/mysqlslap
-  rm -rf /home/phpbench_logs
-  rm -rf /home/gziptest
+  rm -rf /home/centminmodbench >/dev/null 2>&1
+  rm -rf /home/centminmodbench_logs >/dev/null 2>&1
+  rm -rf /home/mysqlslap >/dev/null 2>&1
+  rm -rf /home/phpbench_logs >/dev/null 2>&1
+  rm -rf /home/gziptest >/dev/null 2>&1
+  rm -rf "$AXELLOG" >/dev/null 2>&1
   s
   div
   cecho "cleaned up folders and logs" $boldyellow
