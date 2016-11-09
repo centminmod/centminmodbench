@@ -21,14 +21,14 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.9.1
+VER=0.9.2
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
 AUTOREPORT='y'
 TESTFILE='/home/gziptest/imdb.sql'
 
-OPENSSL_VERSION='1.0.2h'
+OPENSSL_VERSION='1.0.2j'
 MYSQLSLAP_SAVECSV='n'
 
 SEVERBEAR='n'
@@ -822,35 +822,34 @@ ubench()
 		s
 		cd $BENCHDIR
 
-        cecho "Download UnixBench${UNIXBENCH_VER}.tgz ..." $boldyellow
-    if [ -s UnixBench${UNIXBENCH_VER}.tgz ]; then
-        # cecho "UnixBench${UNIXBENCH_VER}.tgz found, skipping download..." $boldgreen
+        cecho "Download UnixBench-${UNIXBENCH_VER}.tar.gz ..." $boldyellow
+    if [ -s UnixBench-${UNIXBENCH_VER}.tar.gz ]; then
         s
     else
-        wget -cnv https://byte-unixbench.googlecode.com/files/UnixBench${UNIXBENCH_VER}.tgz --tries=3
+    	  wget -cnv https://github.com/kdlucas/byte-unixbench/archive/v5.1.3.tar.gz -O UnixBench-${UNIXBENCH_VER}.tar.gz --tries=3
 ERROR=$?
 	if [[ "$ERROR" != '0' ]]; then
-	cecho "Error: UnixBench${UNIXBENCH_VER}.tgz download failed." $boldgreen
+	cecho "Error: UnixBench-${UNIXBENCH_VER}.tar.gz download failed." $boldgreen
 	exit #$ERROR
 else 
          cecho "Download done." $boldyellow
 	fi
     fi
 
-if [ ! -d UnixBench ]; then
-	tar xzf UnixBench${UNIXBENCH_VER}.tgz
+if [ ! -d "byte-unixbench-${UNIXBENCH_VER}" ]; then
+	tar xzf UnixBench-${UNIXBENCH_VER}.tar.gz
 	ERROR=$?
 	if [[ "$ERROR" != '0' ]]; then
-		cecho "Error: UnixBench${UNIXBENCH_VER}.tgz extraction failed." $boldgreen
+		cecho "Error: UnixBench-${UNIXBENCH_VER}.tar.gz extraction failed." $boldgreen
 		exit #$ERROR
 	else 
-         cecho "UnixBench${UNIXBENCH_VER}.tgz valid file." $boldyellow
+         cecho "UnixBench-${UNIXBENCH_VER}.tar.gz valid file." $boldyellow
 		echo ""
 	fi
 fi
 		wget -cnv https://gist.githubusercontent.com/centminmod/7bea01c6698377d1345a/raw/unixbench.patch
 				
-		cd UnixBench 
+		cd "byte-unixbench-${UNIXBENCH_VER}"
 		mv ../unixbench.patch .	
 		make -j${CPUS} 2>&1
 		patch Run unixbench.patch
@@ -865,8 +864,8 @@ fi
 			./Run dhry2reg whetstone-double syscall pipe context1 spawn execl shell1 shell8 shell16
 		fi
 		cd $BENCHDIR
-		# rm -rf UnixBench* unixbench.patch
-		rm -rf UnixBench
+		# rm -rf "byte-unixbench-${UNIXBENCH_VER}"* unixbench.patch
+		rm -rf "byte-unixbench-${UNIXBENCH_VER}"
 		bbcodeend
 	fi
 }
