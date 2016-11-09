@@ -849,7 +849,7 @@ if [ ! -d "byte-unixbench-${UNIXBENCH_VER}" ]; then
 fi
 		wget -cnv https://gist.githubusercontent.com/centminmod/7bea01c6698377d1345a/raw/unixbench.patch
 				
-		cd "byte-unixbench-${UNIXBENCH_VER}"
+		cd UnixBench
 		mv ../unixbench.patch .	
 		make -j${CPUS} 2>&1
 		patch Run unixbench.patch
@@ -864,8 +864,8 @@ fi
 			./Run dhry2reg whetstone-double syscall pipe context1 spawn execl shell1 shell8 shell16
 		fi
 		cd $BENCHDIR
-		# rm -rf "byte-unixbench-${UNIXBENCH_VER}"* unixbench.patch
-		rm -rf "byte-unixbench-${UNIXBENCH_VER}"
+		# rm -rf UnixBench* unixbench.patch
+		rm -rf UnixBench
 		bbcodeend
 	fi
 }
