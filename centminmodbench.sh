@@ -853,7 +853,7 @@ fi
 		mv ../../unixbench.patch .	
 		make -j${CPUS} 2>&1
 		patch Run unixbench.patch
-		exit
+		# exit
 		cecho "-------------------------------------------" $boldgreen
 		cecho "Running UnixBench" $boldyellow
 		cecho "-------------------------------------------" $boldgreen
