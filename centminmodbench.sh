@@ -21,7 +21,7 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.9.2
+VER=0.9.3
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
@@ -653,22 +653,28 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 	if [[ "$OPENSSL_NONSYSTEM" = [yY] ]]; then
 		if [[ -f /etc/centminmod-release && "$OPENSSL_VERCHECK" ]] || [[ -f /etc/centminmod-release && "$LIBRESSL_VERCHECK" ]]; then
 		s
-		cecho "-------------------------------------------" $boldgreen
-		if [ -f /opt/libressl/bin/openssl ]; then
-			cecho "Centmin Mod Nginx static LibreSSL Benchmark" $boldyellow
-		else
-			cecho "Centmin Mod Nginx static OpenSSL Benchmark" $boldyellow			
-		fi
-		cecho "-------------------------------------------" $boldgreen
-		s
 		# not needed as testing Centmin Mod Nginx static OpenSSL version
 		# openssldownload
-			if [ -f /opt/openssl ]; then
+			if [ -d /opt/openssl ]; then
 				OPENSSL_BINPATH='/opt/openssl/bin/openssl'
 			elif [ -f "/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl" ]; then
 				OPENSSL_BINPATH="/svr-setup/openssl-${OPENSSL_VERSION}/.openssl/bin/openssl"
+			elif [[ ! -d /opt/openssl && ! -f /opt/openssl/bin/openssl ]]; then
+				OPENSSL_BINPATH=""
+			elif [[ ! -d /opt/openssl ]]; then
+				OPENSSL_BINPATH=""
 			fi
-			if [ -f $OPENSSL_BINPATH ]; then
+			if [ -f "$OPENSSL_BINPATH" ]; then
+
+				cecho "-------------------------------------------" $boldgreen
+				if [ -f /opt/libressl/bin/openssl ]; then
+					cecho "Centmin Mod Nginx static LibreSSL Benchmark" $boldyellow
+				else
+					cecho "Centmin Mod Nginx static OpenSSL Benchmark" $boldyellow			
+				fi
+				cecho "-------------------------------------------" $boldgreen
+				s
+
 				$OPENSSL_BINPATH version
 			
 				cecho "-------------------------------------------" $boldgreen
