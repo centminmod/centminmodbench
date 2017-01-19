@@ -21,7 +21,7 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.9.3
+VER=0.9.4
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
@@ -639,8 +639,8 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 	openssl version
 
 	cecho "-------------------------------------------" $boldgreen
-	cecho "openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}" $boldyellow
-	openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}
+	cecho "openssl speed -multi ${CPUS} rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc" $boldyellow
+	openssl speed -multi ${CPUS} rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc
 
 	cecho "-------------------------------------------" $boldgreen
 	cecho "openssl speed -evp aes256 -multi ${CPUS}" $boldyellow
@@ -678,8 +678,8 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 				$OPENSSL_BINPATH version
 			
 				cecho "-------------------------------------------" $boldgreen
-				cecho "openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}" $boldyellow
-				$OPENSSL_BINPATH speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}
+				cecho "openssl speed -multi ${CPUS} rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc" $boldyellow
+				$OPENSSL_BINPATH speed -multi ${CPUS} rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc
 				sleep 15
 	
 				cecho "-------------------------------------------" $boldgreen
@@ -703,8 +703,8 @@ if [[ "$OPENSSLBENCH" = [yY] ]]; then
 				/opt/libressl/bin/openssl version
 			
 				cecho "-------------------------------------------" $boldgreen
-				cecho "openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}" $boldyellow
-				/opt/libressl/bin/openssl speed rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc -multi ${CPUS}
+				cecho "openssl speed -multi ${CPUS} rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc" $boldyellow
+				/opt/libressl/bin/openssl speed -multi ${CPUS} rsa4096 rsa2048 ecdsap256 sha256 sha1 md5 rc4 aes-256-cbc aes-128-cbc
 				sleep 15
 	
 				cecho "-------------------------------------------" $boldgreen
