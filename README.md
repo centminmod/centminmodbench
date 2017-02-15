@@ -34,6 +34,10 @@ If you want to download to server and run in SSH window as root user:
     wget -O centminmodbench.sh https://github.com/centminmod/centminmodbench/raw/master/centminmodbench.sh
     chmod +x centminmodbench.sh
 
+If you want to enable UnixBench
+
+    sed -i "s|RUN_UNIXBENCH=.*|RUN_UNIXBENCH='y'|" /root/tools/centminmodbench.sh
+
 To run script locally in SSH window as root user type:
 
     /root/tools/centminmodbench.sh
