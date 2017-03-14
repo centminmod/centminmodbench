@@ -9,7 +9,7 @@
 DT=`date +"%d%m%y-%H%M%S"`
 LIBEVENT_VERSION='2.0.21'
 TWEMPERF_VER='0.1.1'
-MEMTIER_VER='1.2.7'
+MEMTIER_VER='1.2.8'
 PHPREDIS_VER='2.2.7'
 
 DIR_TMP=/svr-setup
