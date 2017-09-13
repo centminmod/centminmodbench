@@ -21,14 +21,14 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.9.4
+VER=0.9.5
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
 AUTOREPORT='y'
 TESTFILE='/home/gziptest/imdb.sql'
 
-OPENSSL_VERSION='1.0.2j'
+OPENSSL_VERSION='1.0.2l'
 MYSQLSLAP_SAVECSV='n'
 
 SEVERBEAR='n'
@@ -47,6 +47,7 @@ EUROPE_BANDWIDTHTESTS='y'
 ASIA_BANDWIDTHTESTS='y'
 AUSTRALIA_BANDWIDTHTESTS='y'
 USA_BANDWIDTHTESTS='y'
+TENGB_BANDWIDTHTESTS='n'
 RUN_PINGTESTS='y'
 RUN_MYSQLSLAP='y'
 RUN_PHPTESTS='y'
@@ -1253,6 +1254,16 @@ bandwidthbench() {
 			div
 			download_benchmark 'Vultr, New York / New Jersey' 'http://nj-us-ping.vultr.com/vultr.com.100MB.bin'
 			fi
+			if [[ "$TENGB_BANDWIDTHTESTS" = [yY] ]]; then
+			div
+			download_benchmark '10gbps.io, Atlanta' 'http://atl.download.10gbps.io/100mb.bin'
+			div
+			download_benchmark '10gbps.io, Chicago' 'http://chi.download.10gbps.io/100mb.bin'
+			div
+			download_benchmark '10gbps.io, Los Angeles' 'http://lax.download.10gbps.io/100mb.bin'
+			div
+			download_benchmark '10gbps.io, New York' 'http://nyc.download.10gbps.io/100mb.bin'
+			fi
 		fi
 
 		if [[ "$ASIA_BANDWIDTHTESTS" = [yY] ]]; then
@@ -1290,6 +1301,22 @@ bandwidthbench() {
 			download_benchmark 'Vultr, London, UK' 'http://lon-gb-ping.vultr.com/vultr.com.100MB.bin'
 			div
 			download_benchmark 'Vultr, Paris, France' 'http://par-fr-ping.vultr.com/vultr.com.100MB.bin'
+			fi
+			if [[ "$TENGB_BANDWIDTHTESTS" = [yY] ]]; then
+			div
+			download_benchmark '10gbps.io, Amsterdam' 'http://ams.download.10gbps.io/100mb.bin'
+			div
+			download_benchmark '10gbps.io, Frankfurt' 'http://fra.download.10gbps.io/100mb.bin'
+			div
+			download_benchmark '10gbps.io, London' 'http://lon.download.10gbps.io/100mb.bin'
+			div
+			download_benchmark '10gbps.io, Madrid' 'http://mad.download.10gbps.io/100mb.bin'
+			div
+			download_benchmark '10gbps.io, Prague' 'http://prg.download.10gbps.io/100mb.bin'
+			div
+			download_benchmark '10gbps.io, Vienna' 'http://vie.download.10gbps.io/100mb.bin'
+			div
+			download_benchmark '10gbps.io, Stockholm' 'http://sto.download.10gbps.io/100mb.bin'
 			fi
 		fi
 			
@@ -1400,6 +1427,41 @@ pingtests() {
 	div
 	cecho "Pings (OVH Canada):" $boldyellow
 	ping -c 3 bhs.proof.ovh.net 2>&1
+
+	s
+	div
+	cecho "Pings (10gbps.io Frankfurt):" $boldyellow
+	ping -c 3 195.181.174.20 2>&1
+
+	s
+	div
+	cecho "Pings (10gbps.io London):" $boldyellow
+	ping -c 3 185.59.221.20 2>&1
+
+	s
+	div
+	cecho "Pings (10gbps.io Paris):" $boldyellow
+	ping -c 3 185.93.2.193 2>&1
+
+	s
+	div
+	cecho "Pings (10gbps.io Singapore):" $boldyellow
+	ping -c 3 203.174.85.38 2>&1
+
+	s
+	div
+	cecho "Pings (10gbps.io Stockholm):" $boldyellow
+	ping -c 3 185.76.9.10 2>&1
+
+	s
+	div
+	cecho "Pings (10gbps.io Moscow):" $boldyellow
+	ping -c 3 87.245.204.20 2>&1
+
+	s
+	div
+	cecho "Pings (10gbps.io Miami):" $boldyellow
+	ping -c 3 195.181.162.195 2>&1
 
 	s
 	bbcodeend
@@ -1550,6 +1612,41 @@ mtrtests() {
 	div
 	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} OVH Canada" $boldyellow
 	mtr --report -w 200 --report-cycles=${MTR_PACKETS} bhs.proof.ovh.net 2>&1
+
+	s
+	div
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} 10gbps.io Frankfurt:" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} 195.181.174.20 2>&1
+
+	s
+	div
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} 10gbps.io London:" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} 185.59.221.20 2>&1
+
+	s
+	div
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} 10gbps.io Paris:" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} 185.93.2.193 2>&1
+
+	s
+	div
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} 10gbps.io Singapore:" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} 203.174.85.38 2>&1
+
+	s
+	div
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} 10gbps.io Stockholm:" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} 185.76.9.10 2>&1
+
+	s
+	div
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} 10gbps.io Moscow:" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} 87.245.204.20 2>&1
+
+	s
+	div
+	cecho "mtr --report -w 200 --report-cycles=${MTR_PACKETS} 10gbps.io Miami:" $boldyellow
+	mtr --report -w 200 --report-cycles=${MTR_PACKETS} 195.181.162.195 2>&1
 
 	s
 	bbcodeend
@@ -2021,6 +2118,16 @@ axelbench() {
       div
       axel_benchmark 'Vultr, New York / New Jersey' 'http://nj-us-ping.vultr.com/vultr.com.100MB.bin'
       fi
+			if [[ "$TENGB_BANDWIDTHTESTS" = [yY] ]]; then
+			div
+			axel_benchmark '10gbps.io, Atlanta' 'http://atl.download.10gbps.io/100mb.bin'
+			div
+			axel_benchmark '10gbps.io, Chicago' 'http://chi.download.10gbps.io/100mb.bin'
+			div
+			axel_benchmark '10gbps.io, Los Angeles' 'http://lax.download.10gbps.io/100mb.bin'
+			div
+			axel_benchmark '10gbps.io, New York' 'http://nyc.download.10gbps.io/100mb.bin'
+			fi
     fi
 
     if [[ "$ASIA_BANDWIDTHTESTS" = [yY] ]]; then
@@ -2059,6 +2166,22 @@ axelbench() {
       div
       axel_benchmark 'Vultr, Paris, France' 'http://par-fr-ping.vultr.com/vultr.com.100MB.bin'
       fi
+			if [[ "$TENGB_BANDWIDTHTESTS" = [yY] ]]; then
+			div
+			axel_benchmark '10gbps.io, Amsterdam' 'http://ams.download.10gbps.io/100mb.bin'
+			div
+			axel_benchmark '10gbps.io, Frankfurt' 'http://fra.download.10gbps.io/100mb.bin'
+			div
+			axel_benchmark '10gbps.io, London' 'http://lon.download.10gbps.io/100mb.bin'
+			div
+			axel_benchmark '10gbps.io, Madrid' 'http://mad.download.10gbps.io/100mb.bin'
+			div
+			axel_benchmark '10gbps.io, Prague' 'http://prg.download.10gbps.io/100mb.bin'
+			div
+			axel_benchmark '10gbps.io, Vienna' 'http://vie.download.10gbps.io/100mb.bin'
+			div
+			axel_benchmark '10gbps.io, Stockholm' 'http://sto.download.10gbps.io/100mb.bin'
+			fi
     fi
       
     if [[ "$AUSTRALIA_BANDWIDTHTESTS" = [yY] ]]; then
