@@ -1235,7 +1235,7 @@ bandwidthbench() {
 		div
 		download_benchmark 'Softlayer, Washington, DC, USA' 'http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
 		div
-		download_benchmark 'VersaWeb, Las Vegas, Nevada' 'http://104.143.15.254/100MB.test'
+		download_benchmark 'VersaWeb, Las Vegas, Nevada' 'http://lg.las1.as53340.net/100MB.test'
 		div
 		download_benchmark 'OVH, BHS, Canada' 'http://bhs.proof.ovh.net/files/100Mio.dat'
 			if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
@@ -2099,7 +2099,7 @@ axelbench() {
     div
     axel_benchmark 'Softlayer, Washington, DC, USA' 'http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
     div
-    axel_benchmark 'VersaWeb, Las Vegas, Nevada' 'http://104.143.15.254/100MB.test'
+    axel_benchmark 'VersaWeb, Las Vegas, Nevada' 'http://lg.las1.as53340.net/100MB.test'
     div
     axel_benchmark 'OVH, BHS, Canada' 'http://bhs.proof.ovh.net/files/100Mio.dat'
       if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
