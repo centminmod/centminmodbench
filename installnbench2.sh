@@ -2,7 +2,7 @@
 ######################################################
 # written by George Liu (eva2000) centminmod.com
 # when ran with command
-# curl -sL https://github.com/centminmod/centminmodbench/raw/master/installnbench.sh | bash
+# curl -sL https://github.com/centminmod/centminmodbench/raw/master/installnbench2.sh | bash
 # runs 3 tasks
 # 1) install latest Centmin Mod Beta LEMP stack
 # 2) installs and runs centminmodbench.sh (UnixBench enabled)
