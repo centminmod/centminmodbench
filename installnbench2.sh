@@ -3,7 +3,7 @@
 # written by George Liu (eva2000) centminmod.com
 # when ran with command
 # curl -sL https://github.com/centminmod/centminmodbench/raw/master/installnbench2.sh | bash
-# runs 3 tasks
+# runs 5 tasks
 # 1) install latest Centmin Mod Beta LEMP stack
 # 2) installs and runs centminmodbench.sh (UnixBench enabled)
 # 3) install & run zcat/pzcat benchmarks
@@ -63,7 +63,7 @@ benchninstall() {
 
 s
 div
-cecho "4 tasks will be performaned which can take up to 45-90 mins" $boldyellow
+cecho "5 tasks will be performaned which can take up to 45-90 mins" $boldyellow
 cecho "1). install latest Centmin Mod Beta LEMP stack ~15-30 mins" $boldyellow
 cecho "2). installs & runs centminmodbench.sh (UnixBench enabled) ~30-60 mins" $boldyellow
 cecho "3). install & run zcat/pzcat benchmarks" $boldyellow
