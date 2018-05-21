@@ -14,7 +14,8 @@
 #############
 DT=$(date +"%d%m%y-%H%M%S")
 
-
+CMBEMAIL='n'
+CMEBMAIL_ADDR=''
 ###############################################################
 # Setup Colours
 black='\E[30;40m'
@@ -50,6 +51,10 @@ return
 ###############################################################
 # functions
 #############
+
+if [ -f centminmodbench.ini ]; then
+  . centminmodbench.ini
+fi
 
 div() {
 	cecho "----------------------------------------------" $boldgreen
@@ -193,5 +198,9 @@ s
 {
   benchninstall
 } 2>&1 | tee "centminmod-benchmark-all-${DT}.log"
+
+if [[ "$CMBEMAIL" = [yY] ]]; then
+  echo "installnbench2.sh completed for $(hostname -f)" | mail -s "$(hostname -f) installnbench2.sh completed $(date)" $CMEBMAIL_ADDR
+fi
 
 exit
