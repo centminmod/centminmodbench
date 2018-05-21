@@ -125,14 +125,6 @@ echo "yum -y install nghttp2"
 yum -y install nghttp2
 s
 
-echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
-h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
-ngxreload >/dev/null 2>&1
-s
-echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
-h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
-s
-
 echo "setup ECDSA SSL self-signed certificate"
 s
 SELFSIGNEDSSL_C='US'
@@ -160,6 +152,17 @@ cat /usr/local/nginx/conf/ssl_ecc.conf
 sed -i "s|include \/usr\/local\/nginx\/conf\/ssl_include.conf;|\ninclude \/usr\/local\/nginx\/conf\/ssl_include.conf;\ninclude \/usr\/local\/nginx\/conf\/ssl_ecc.conf;|" /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf
 ngxreload >/dev/null 2>&1
 
+s
+echo "h2load --version"
+h2load --version
+s
+echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
+h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
+ngxreload >/dev/null 2>&1
+s
+echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
+h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
+ngxreload >/dev/null 2>&1
 s
 echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
