@@ -3,13 +3,14 @@
 # written by George Liu (eva2000) centminmod.com
 # when ran with command
 # curl -sL https://github.com/centminmod/centminmodbench/raw/master/installnbench.sh | bash
-# runs 2 tasks
-# 1) install latest Centmin Mod .08 beta LEMP stack
+# runs 3 tasks
+# 1) install latest Centmin Mod Beta LEMP stack
 # 2) installs and runs centminmodbench.sh (UnixBench enabled)
+# 3) install & run zcat/pzcat benchmarks
 ######################################################
 # variables
 #############
-DT=`date +"%d%m%y-%H%M%S"`
+DT=$(date +"%d%m%y-%H%M%S")
 
 
 ###############################################################
@@ -60,19 +61,20 @@ benchninstall() {
 
 s
 div
-cecho "2 tasks will be performaned which can take up to 45-90 mins" $boldyellow
-cecho "1). install latest Centmin Mod .08 beta LEMP stack ~15-30 mins" $boldyellow
+cecho "3 tasks will be performaned which can take up to 45-90 mins" $boldyellow
+cecho "1). install latest Centmin Mod Beta LEMP stack ~15-30 mins" $boldyellow
 cecho "2). installs & runs centminmodbench.sh (UnixBench enabled) ~30-60 mins" $boldyellow
+cecho "3). install & run zcat/pzcat benchmarks" $boldyellow
 div
 s
 
 s
 div
-cecho "installing Centmin Mod .08 stable LEMP stack" $boldyellow
+cecho "installing Centmin Mod Beta LEMP stack" $boldyellow
 cecho "will take ~15-30 minutes" $boldyellow
 div
 s
-curl -sL https://raw.githubusercontent.com/centminmod/centminmod/123.08stable/installer.sh | bash
+yum -y update; curl -O https://centminmod.com/betainstaller.sh && chmod 0700 betainstaller.sh && bash betainstaller.sh
 
 s
 div
@@ -86,6 +88,21 @@ wget -O centminmodbench.sh https://github.com/centminmod/centminmodbench/raw/mas
 chmod +x centminmodbench.sh
 sed -i "s/RUN_UNIXBENCH='n'/RUN_UNIXBENCH='y'/g" centminmodbench.sh
 ./centminmodbench.sh
+
+s
+div
+cecho "install & run zcat/pzcat benchmarks" $boldyellow
+cecho "https://community.centminmod.com/threads/14650/" $boldyellow
+div
+s
+mkdir -p /root/tools
+cd /root/tools
+git clone https://github.com/centminmod/fake-access-logs
+cd fake-access-logs
+./test.sh zcat
+if [ "$(nproc)" -ge 2 ]; then
+./test.sh pzcat
+fi
 
 }
 
