@@ -13,6 +13,8 @@ HTTPS_BENCHCLEANUP='y'
 CMBEMAIL='n'
 CMEBMAIL_ADDR=''
 ###############################################################
+vhostname=http2.domain.com
+###############################################################
 # Setup Colours
 black='\E[30;40m'
 red='\E[31;40m'
@@ -67,14 +69,12 @@ s() {
 	echo
 }
 
-https_benchninsmark
-
+https_benchmark() {
 s
 div
-cecho "setup & benchmark nginx http/2 https vhost" $boldyellow
+cecho "setup & benchmark nginx http/2 https vhost: https://$vhostname" $boldyellow
 div
 s
-vhostname=http2.domain.com
 echo "$(curl -4s ipinfo.io/ip) $vhostname" >> /etc/hosts
 s
 echo "nv -d $vhostname -s y -u "ftpu\$(pwgen -1cnys 31)""
@@ -113,29 +113,35 @@ sed -i "s|include \/usr\/local\/nginx\/conf\/ssl_include.conf;|\ninclude \/usr\/
 ngxrestart >/dev/null 2>&1
 
 s
+echo "------------------------------------------------------------------------"
 echo "h2load --version"
 h2load --version
+echo "------------------------------------------------------------------------"
 s
 echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
 ngxrestart >/dev/null 2>&1
+echo "------------------------------------------------------------------------"
 s
 echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
 ngxrestart >/dev/null 2>&1
+echo "------------------------------------------------------------------------"
 s
 echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
 ngxrestart >/dev/null 2>&1
+echo "------------------------------------------------------------------------"
 s
 echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
-
+echo "------------------------------------------------------------------------"
 }
 
 cleanup() {
   if [[ "$HTTPS_BENCHCLEANUP" = [yY] ]]; then
     s
+    echo "clean up https://$vhostname"
     cecho "pure-pw userdel $ftpuser" $boldwhite
     pure-pw userdel $ftpuser
     cecho "rm -rf /usr/local/nginx/conf/conf.d/$vhostname.conf" $boldwhite
