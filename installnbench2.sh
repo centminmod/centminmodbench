@@ -123,7 +123,7 @@ s
 vhostname=http2.domain.com
 echo "$(curl -4s ipinfo.io/ip) $vhostname" >> /etc/hosts
 s
-echo "nv -d $vhostname -s y -u "ftpu\$(pwgen -1cnys 31)""
+echo "nv -d $vhostname -s y -u \"ftpu\$(pwgen -1cnys 31)\""
 nv -d $vhostname -s y -u "ftpu$(pwgen -1cnys 31)"
 s
 
