@@ -158,23 +158,50 @@ sed -i "s|include \/usr\/local\/nginx\/conf\/ssl_include.conf;|\ninclude \/usr\/
 ngxreload >/dev/null 2>&1
 
 s
+echo "------------------------------------------------------------------------"
 echo "h2load --version"
 h2load --version
+echo "------------------------------------------------------------------------"
 s
 echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
-ngxreload >/dev/null 2>&1
+ngxrestart >/dev/null 2>&1
+echo "------------------------------------------------------------------------"
 s
 echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
-ngxreload >/dev/null 2>&1
+ngxrestart >/dev/null 2>&1
+echo "------------------------------------------------------------------------"
 s
 echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
-ngxreload >/dev/null 2>&1
+ngxrestart >/dev/null 2>&1
+echo "------------------------------------------------------------------------"
 s
 echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
+echo "------------------------------------------------------------------------"
+if [[ "$(nginx -V 2>&1 | grep -o 'brotli')" = 'brotli' ]]; then
+s
+echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname"
+h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname
+ngxrestart >/dev/null 2>&1
+echo "------------------------------------------------------------------------"
+s
+echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname"
+h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname
+ngxrestart >/dev/null 2>&1
+echo "------------------------------------------------------------------------"
+s
+echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname"
+h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname
+ngxrestart >/dev/null 2>&1
+echo "------------------------------------------------------------------------"
+s
+echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname"
+h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname
+echo "------------------------------------------------------------------------"
+fi
 
 s
 div
