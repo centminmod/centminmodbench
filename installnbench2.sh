@@ -78,6 +78,7 @@ cecho "installing Centmin Mod Beta LEMP stack" $boldyellow
 cecho "will take ~15-30 minutes" $boldyellow
 div
 s
+echo "yum -y update; curl -O https://centminmod.com/betainstaller.sh && chmod 0700 betainstaller.sh && bash betainstaller.sh"
 yum -y update; curl -O https://centminmod.com/betainstaller.sh && chmod 0700 betainstaller.sh && bash betainstaller.sh
 
 s
@@ -115,46 +116,57 @@ div
 s
 vhostname=http2.domain.com
 echo "$(curl -4s ipinfo.io/ip) $vhostname" >> /etc/hosts
-echo
+s
+echo "nv -d $vhostname -s y -u "ftpu\$(pwgen -1cnys 31)""
 nv -d $vhostname -s y -u "ftpu$(pwgen -1cnys 31)"
-echo
+s
 
+echo "yum -y install nghttp2"
 yum -y install nghttp2
+s
 
-echo
+echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
-ngxreload
-echo
+ngxreload >/dev/null 2>&1
+s
+echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
-echo
+s
 
 echo "setup ECDSA SSL self-signed certificate"
-echo
+s
 SELFSIGNEDSSL_C='US'
 SELFSIGNEDSSL_ST='California'
 SELFSIGNEDSSL_L='Los Angeles'
 SELFSIGNEDSSL_O=''
 SELFSIGNEDSSL_OU=''
-echo
+
 cd /usr/local/nginx/conf/ssl/${vhostname}
 curve=prime256v1
+echo "openssl ecparam -out ${vhostname}-ecc.key -name $curve -genkey"
 openssl ecparam -out ${vhostname}-ecc.key -name $curve -genkey
+echo "openssl req -new -sha256 -key ${vhostname}-ecc.key -nodes -out ${vhostname}-ecc.csr -subj \"/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${vhostname}\""
 openssl req -new -sha256 -key ${vhostname}-ecc.key -nodes -out ${vhostname}-ecc.csr -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${vhostname}"
+echo "openssl x509 -req -days 36500 -sha256 -in ${vhostname}-ecc.csr -signkey ${vhostname}-ecc.key -out ${vhostname}-ecc.crt"
 openssl x509 -req -days 36500 -sha256 -in ${vhostname}-ecc.csr -signkey ${vhostname}-ecc.key -out ${vhostname}-ecc.crt
+s
+ls -lah /usr/local/nginx/conf/ssl/${vhostname}
+s
 
 echo "  ssl_certificate      /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}-ecc.crt;
   ssl_certificate_key  /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}-ecc.key;" > /usr/local/nginx/conf/ssl_ecc.conf
 cat /usr/local/nginx/conf/ssl_ecc.conf
 
 sed -i "s|include \/usr\/local\/nginx\/conf\/ssl_include.conf;|\ninclude \/usr\/local\/nginx\/conf\/ssl_include.conf;\ninclude \/usr\/local\/nginx\/conf\/ssl_ecc.conf;|" /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf
-ngxreload
+ngxreload >/dev/null 2>&1
 
-echo
+s
+echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
-ngxreload
-echo
+ngxreload >/dev/null 2>&1
+s
+echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
-echo
 
 s
 div
@@ -167,9 +179,10 @@ git clone https://github.com/centminmod/centminmod-redis
 cd centminmod-redis
 if [ ! -f /usr/bin/redis-server ]; then ./redis-install.sh install; fi
 service redis restart
-echo
+s
+echo "/usr/bin/redis-benchmark -h 127.0.0.1 -p 6379 -n 1000 -r 1000 -t get,set,lpush,lpop -P 1000 -c 100"
 /usr/bin/redis-benchmark -h 127.0.0.1 -p 6379 -n 1000 -r 1000 -t get,set,lpush,lpop -P 1000 -c 100
-echo
+s
 
 }
 
