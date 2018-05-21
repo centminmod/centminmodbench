@@ -13,6 +13,7 @@
 # variables
 #############
 DT=$(date +"%d%m%y-%H%M%S")
+SLEEP_TIME='20'
 
 CMBEMAIL='n'
 CMEBMAIL_ADDR=''
@@ -135,8 +136,8 @@ s
 SELFSIGNEDSSL_C='US'
 SELFSIGNEDSSL_ST='California'
 SELFSIGNEDSSL_L='Los Angeles'
-SELFSIGNEDSSL_O=''
-SELFSIGNEDSSL_OU=''
+SELFSIGNEDSSL_O='HTTPS TEST ORG'
+SELFSIGNEDSSL_OU='HTTPS TEST ORG UNIT'
 
 cd /usr/local/nginx/conf/ssl/${vhostname}
 curve=prime256v1
@@ -166,41 +167,98 @@ s
 echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
 ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
 echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
 ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
 echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
 ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
 echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
+ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
+echo "------------------------------------------------------------------------"
+s
+echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname"
+h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname
+ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
+echo "------------------------------------------------------------------------"
+s
+echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname"
+h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname
+ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
+echo "------------------------------------------------------------------------"
+s
+echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname"
+h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname
+ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
+echo "------------------------------------------------------------------------"
+s
+echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname"
+h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname
+ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 if [[ "$(nginx -V 2>&1 | grep -o 'brotli')" = 'brotli' ]]; then
 s
 echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname
 ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
 echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname
 ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
 echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname
 ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
 echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname
+ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
+s
+echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname"
+h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname
+ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
+echo "------------------------------------------------------------------------"
+s
+echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname"
+h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname
+ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
+echo "------------------------------------------------------------------------"
+s
+echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname"
+h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname
+ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
+echo "------------------------------------------------------------------------"
+s
+echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname"
+h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname
+ngxrestart >/dev/null 2>&1
+sleep $SLEEP_TIME
 fi
 
 s
