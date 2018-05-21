@@ -107,6 +107,8 @@ fi
 }
 
 ######################################################
-benchninstall
+{
+  benchninstall
+} 2>&1 | tee "centminmod-benchmark-all-${DT}.log"
 
 exit
