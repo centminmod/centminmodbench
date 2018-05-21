@@ -119,8 +119,8 @@ echo "h2load --version"
 h2load --version
 echo "------------------------------------------------------------------------"
 s
-echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
-h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
+echo "h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname"
+h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://$vhostname
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
@@ -143,8 +143,8 @@ ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
-echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname"
-h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname
+echo "h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname"
+h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
@@ -168,8 +168,8 @@ sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 if [[ "$(nginx -V 2>&1 | grep -o 'brotli')" = 'brotli' ]]; then
 s
-echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname"
-h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname
+echo "h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname"
+h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c100 -n1000 https://$vhostname
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
@@ -192,8 +192,8 @@ ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
-echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname"
-h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname
+echo "h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname"
+h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
@@ -252,10 +252,17 @@ cleanup() {
 }
 
 ######################################################
+starttime=$(TZ=UTC date +%s.%N)
 {
   https_benchmark
   cleanup
 } 2>&1 | tee "https-benchmark-all-${DT}.log"
+
+endtime=$(TZ=UTC date +%s.%N)
+
+INSTALLTIME=$(echo "scale=2;$endtime - $starttime"|bc )
+echo "" >> "https-benchmark-all-${DT}.log"
+echo "https_bench.sh Total Run Time: $INSTALLTIME seconds" >> "https-benchmark-all-${DT}.log"
 
 if [[ "$CMBEMAIL" = [yY] ]]; then
   echo "https_bench.sh completed for $(hostname -f)" | mail -s "$(hostname -f) https_bench.sh completed $(date)" $CMEBMAIL_ADDR
