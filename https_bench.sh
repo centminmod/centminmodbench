@@ -136,7 +136,7 @@ div
 cecho "setup & benchmark nginx http/2 https vhost: https://$vhostname" $boldyellow
 div
 s
-echo "$(curl -4s ipinfo.io/ip) $vhostname" >> /etc/hosts
+echo "$(curl -4s ipinfo.io/ip) $vhostname #h2load" >> /etc/hosts
 s
 echo "nv -d $vhostname -s y -u \"ftpu\$(pwgen -1cnys 31)\""
 nv -d $vhostname -s y -u "ftpu$(pwgen -1cnys 31)"
@@ -309,6 +309,7 @@ cleanup() {
     cecho "rm -rf /usr/local/nginx/conf/pre-staticfiles-local-${vhostname}.conf" $boldwhite
     rm -rf /usr/local/nginx/conf/pre-staticfiles-local-${vhostname}.conf
     s
+    sed -i '/#h2load/d' /etc/hosts
     cecho "service nginx restart" $boldwhite
     ngxrestart >/dev/null 2>&1
   fi
