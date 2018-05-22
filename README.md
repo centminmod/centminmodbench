@@ -144,7 +144,8 @@ To update script
 Nginx HTTP/2 HTTPS h2load Benchmarks
 ===============
 
-* If you want to run on existing Centmin Mod Nginx installs an extended Nginx HTTP/2 HTTPS RSA 2048 bit + ECDSA 256bit SSL certificated based [h2load](https://nghttp2.org/documentation/h2load-howto.html) tests, you can use the below commands. 
+* If you want to run on existing Centmin Mod Nginx installs an extended Nginx HTTP/2 HTTPS RSA 2048 bit + ECDSA 256bit SSL certificated based [h2load](https://nghttp2.org/documentation/h2load-howto.html) tests, you can use the below commands.
+* h2load HTTP/2 HTTPS load test tool will be run single threaded so tests only 1 cpu core of the system.
 * https_bench.sh will create a dummy Nginx HTTP/2 HTTPS vhost called http2.domain.com and setup both self-signed RSA 2048bit and ECDSA 256bit SSL certificates on the dummy Nginx vhost to run h2load HTTP/2 HTTPS load tests against. After https_bench.sh completes, it will automatically remove the http2.domain.com dummy Nginx vhost site and all SSL certificates.
 * The Nginx HTTP/2 HTTPS h2load tests will test 4 sets of SSL Ciphers for `ECDHE-RSA-AES128-GCM-SHA256`, `ECDHE-RSA-AES256-GCM-SHA384`, `ECDHE-ECDSA-AES128-GCM-SHA256` and `ECDHE-ECDSA-AES256-GCM-SHA384`. 
 * This test will test gzip (and brotli if Nginx support is detected) HTTP compression load tests using h2load HTTP/2 HTTPS tester tool. 
