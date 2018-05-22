@@ -287,6 +287,9 @@ h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c300 -n
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 fi
+s
+echo "h2load tests completed using temp /etc/hosts entry:"
+grep 'h2load' /etc/hosts | sed -e "s|$SERVERIP|server-ip-mask|"
 } 2>&1 | tee "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log"
 
 # s
