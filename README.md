@@ -151,6 +151,21 @@ Nginx HTTP/2 HTTPS h2load Benchmarks
 * These test should be run in screen session so it survives SSH session disconnection. 
 * All of the scripts output and benchmark results will be logged into a file at `/root/centminlogs/h2load-nginx-https-${DT}.log` where `${DT}` is date timestamp.
 
+### h2load HTTP/2 HTTPS load test configurations
+
+There's 8x h2load test configurations in total:
+
+* h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://http2.domain.com
+* h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://http2.domain.com
+* h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c100 -n1000 https://http2.domain.com
+* h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c100 -n1000 https://http2.domain.com
+* h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c200 -n5000 https://http2.domain.com
+* h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c200 -n5000 https://http2.domain.com
+* h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c200 -n5000 https://http2.domain.com
+* h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c200 -n5000 https://http2.domain.com
+
+### Install Commands
+
     mkdir -p /root/tools
     cd /root/tools
     wget -O https_bench.sh https://github.com/centminmod/centminmodbench/raw/master/https_bench.sh
