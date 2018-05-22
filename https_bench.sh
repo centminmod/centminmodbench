@@ -136,10 +136,15 @@ div
 cecho "setup & benchmark nginx http/2 https vhost: https://$vhostname" $boldyellow
 div
 s
-echo "$(curl -4s ipinfo.io/ip) $vhostname #h2load" >> /etc/hosts
+echo "$(curl -4s https://ipinfo.io/ip) $vhostname #h2load" >> /etc/hosts
 s
-echo "nv -d $vhostname -s y -u \"ftpu\$(pwgen -1cnys 31)\""
-nv -d $vhostname -s y -u "ftpu$(pwgen -1cnys 31)"
+if [[ "$(ps aufx | grep -v grep | grep 'pure-ftpd' 2>&1>/dev/null; echo $?)" = '0' ]]; then
+  echo "nv -d $vhostname -s y -u \"ftpu\$(pwgen -1cnys 31)\""
+  nv -d $vhostname -s y -u "ftpu$(pwgen -1cnys 31)"
+else
+  echo "nv -d $vhostname -s y"
+  nv -d $vhostname -s y
+fi
 s
 
 if [ ! -f /usr/bin/h2load ]; then
@@ -290,8 +295,10 @@ cleanup() {
   if [[ "$HTTPS_BENCHCLEANUP" = [yY] ]]; then
     s
     echo "clean up https://$vhostname"
-    cecho "pure-pw userdel $ftpuser" $boldwhite
-    pure-pw userdel $ftpuser
+    if [[ "$(ps aufx | grep -v grep | grep 'pure-ftpd' 2>&1>/dev/null; echo $?)" = '0' ]]; then
+      cecho "pure-pw userdel $ftpuser" $boldwhite
+      pure-pw userdel $ftpuser
+    fi
     cecho "rm -rf /usr/local/nginx/conf/conf.d/$vhostname.conf" $boldwhite
     rm -rf /usr/local/nginx/conf/conf.d/$vhostname.conf
     cecho "rm -rf /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf" $boldwhite

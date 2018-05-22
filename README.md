@@ -167,6 +167,8 @@ There's 8x h2load test configurations in total:
 
 ### Install Commands
 
+Note: if you already have a Nginx vhost called `http2.domain.com`, you can edit `/root/tools/https_bench.sh` script's variable `vhostname=http2.domain.com` changing it before running `https_bench.sh`.
+
     mkdir -p /root/tools
     cd /root/tools
     wget -O https_bench.sh https://github.com/centminmod/centminmodbench/raw/master/https_bench.sh
