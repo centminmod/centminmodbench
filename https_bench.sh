@@ -290,6 +290,12 @@ fi
 s
 echo "h2load tests completed using temp /etc/hosts entry:"
 grep 'h2load' /etc/hosts | sed -e "s|$SERVERIP|server-ip-mask|"
+if [ -d /usr/local/src/centminmod/.git ]; then
+  echo "centmin mod local code last commit:"
+  pushd /usr/local/src/centminmod
+  git log --pretty="%n%h %an %aD %n%s" -1
+  popd
+fi
 } 2>&1 | tee "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log"
 
 # s
