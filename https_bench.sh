@@ -8,6 +8,7 @@
 # variables
 #############
 DT=$(date +"%d%m%y-%H%M%S")
+VER='0.1'
 SLEEP_TIME='20'
 HTTPS_BENCHCLEANUP='y'
 
@@ -138,7 +139,9 @@ div
 s
 cecho "setup temp entry in /etc/hosts" $boldyellow
 SERVERIP=$(curl -4s https://ipinfo.io/ip)
-echo "$SERVERIP $vhostname #h2load" >> /etc/hosts
+if [[ ! $(grep "$SERVERIP $vhostname #h2load" /etc/hosts) ]]; then
+  echo "$SERVERIP $vhostname #h2load" >> /etc/hosts
+fi
 grep 'h2load' /etc/hosts | sed -e "s|$SERVERIP|server-ip-mask|"
 s
 if [[ "$(ps aufx | grep -v grep | grep 'pure-ftpd' 2>&1>/dev/null; echo $?)" = '0' && ! -f /usr/local/nginx/conf/ssl_ecc.conf ]]; then
