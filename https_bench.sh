@@ -124,6 +124,10 @@ baseinfo() {
   div
   df -h
   s
+
+  div
+  nginx -V
+  s
 }
 
 https_benchmark() {
