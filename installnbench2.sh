@@ -129,8 +129,8 @@ nv -d $vhostname -s y -u "ftpu$(pwgen -1cnys 31)"
 s
 
 if [ ! -f /usr/bin/h2load ]; then
-echo "yum -y install nghttp2"
-yum -y install nghttp2
+echo "yum -y -q install nghttp2"
+yum -y -q install nghttp2
 s
 fi
 
@@ -286,6 +286,8 @@ echo "/usr/bin/redis-benchmark -h 127.0.0.1 -p 6379 -n 1000 -r 1000 -t get,set,l
 /usr/bin/redis-benchmark -h 127.0.0.1 -p 6379 -n 1000 -r 1000 -t get,set,lpush,lpop -P 1000 -c 100
 s
 
+s
+echo "benchmark run complete"
 }
 
 ######################################################

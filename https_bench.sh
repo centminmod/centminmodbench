@@ -84,8 +84,8 @@ nv -d $vhostname -s y -u "ftpu$(pwgen -1cnys 31)"
 s
 
 if [ ! -f /usr/bin/h2load ]; then
-echo "yum -y install nghttp2"
-yum -y install nghttp2
+echo "yum -y -q install nghttp2"
+yum -y -q install nghttp2
 s
 fi
 
@@ -236,12 +236,6 @@ cleanup() {
     rm -rf /usr/local/nginx/conf/conf.d/$vhostname.conf
     cecho "rm -rf /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf" $boldwhite
     rm -rf /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf
-    cecho "rm -rf /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}.crt" $boldwhite
-    rm -rf /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}.crt
-    cecho "rm -rf /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}.key" $boldwhite
-    rm -rf /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}.key
-    cecho "rm -rf /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}.csr" $boldwhite
-    rm -rf /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}.csr
     cecho "rm -rf /usr/local/nginx/conf/ssl/${vhostname}" $boldwhite
     rm -rf /usr/local/nginx/conf/ssl/${vhostname}
     cecho "rm -rf /usr/local/nginx/conf/ssl_ecc.conf" $boldwhite
@@ -265,6 +259,8 @@ starttime=$(TZ=UTC date +%s.%N)
 {
   https_benchmark
   cleanup
+  s
+  echo "benchmark run complete"
   echo "result log: ${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log"
 } 2>&1 | tee "${CENTMINLOGDIR}/https-benchmark-all-${DT}.log"
 
