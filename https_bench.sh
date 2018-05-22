@@ -315,6 +315,8 @@ cleanup() {
   fi
 }
 
+trap cleanup SIGHUP SIGINT SIGTERM
+
 ######################################################
 starttime=$(TZ=UTC date +%s.%N)
 {
