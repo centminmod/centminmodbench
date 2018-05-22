@@ -207,26 +207,26 @@ ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
-echo "h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname"
-h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname | egrep -v 'progress: |starting|spawning'
+echo "h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c300 -n6000 https://$vhostname"
+h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c300 -n6000 https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
-echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname"
-h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname | egrep -v 'progress: |starting|spawning'
+echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c300 -n6000 https://$vhostname"
+h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c300 -n6000 https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
-echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname"
-h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname | egrep -v 'progress: |starting|spawning'
+echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c300 -n6000 https://$vhostname"
+h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c300 -n6000 https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
-echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname"
-h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c200 -n5000 https://$vhostname | egrep -v 'progress: |starting|spawning'
+echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c300 -n6000 https://$vhostname"
+h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c300 -n6000 https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
@@ -256,26 +256,26 @@ ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
-echo "h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname"
-h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname | egrep -v 'progress: |starting|spawning'
+echo "h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c300 -n6000 https://$vhostname"
+h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c300 -n6000 https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
-echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname"
-h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname | egrep -v 'progress: |starting|spawning'
+echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c300 -n6000 https://$vhostname"
+h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c300 -n6000 https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
-echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname"
-h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname | egrep -v 'progress: |starting|spawning'
+echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c300 -n6000 https://$vhostname"
+h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c300 -n6000 https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "------------------------------------------------------------------------"
 s
-echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname"
-h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c200 -n5000 https://$vhostname | egrep -v 'progress: |starting|spawning'
+echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c300 -n6000 https://$vhostname"
+h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c300 -n6000 https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 fi
