@@ -71,6 +71,61 @@ s() {
 	echo
 }
 
+baseinfo() {
+  cecho "-------------------------------------------" $boldgreen
+  cecho "System Information" $boldyellow
+  cecho "-------------------------------------------" $boldgreen
+  s
+
+  uname -r
+  s
+
+  cat /etc/redhat-release
+  s
+  
+  if [ -f /etc/centminmod-release ]; then
+  echo -n "Centmin Mod "
+  cat /etc/centminmod-release 2>&1 >/dev/null
+  s
+  fi
+  
+  div
+  if [ ! -f /proc/user_beancounters ]; then
+    CPUFLAGS=$(cat /proc/cpuinfo | grep '^flags' | cut -d: -f2 | awk 'NR==1')
+    lscpu
+    echo
+    echo "CPU Flags"
+    echo "$CPUFLAGS"    
+  else
+    CPUNAME=$(cat /proc/cpuinfo | grep "model name" | cut -d ":" -f2 | tr -s " " | head -n 1)
+    CPUCOUNT=$(cat /proc/cpuinfo | grep "model name" | cut -d ":" -f2 | wc -l)
+    CPUFLAGS=$(cat /proc/cpuinfo | grep '^flags' | cut -d: -f2 | awk 'NR==1')
+    echo "CPU: $CPUCOUNT x$CPUNAME"
+    uname -m
+    echo
+    echo "CPU Flags"
+    echo "$CPUFLAGS"
+  fi
+  s
+
+  if [ ! -f /proc/user_beancounters ]; then
+  div
+  lscpu -e
+  s
+  fi
+  
+  # cat /proc/cpuinfo
+  # s
+  
+  div
+  free -ml
+  s
+  
+  div
+  df -h
+  s
+}
+
 https_benchmark() {
 s
 div
@@ -117,6 +172,7 @@ sed -i "s|include \/usr\/local\/nginx\/conf\/ssl_include.conf;|\ninclude \/usr\/
 ngxrestart >/dev/null 2>&1
 
 {
+baseinfo
 s
 echo "------------------------------------------------------------------------"
 echo "h2load --version"
