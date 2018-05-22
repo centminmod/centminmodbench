@@ -21,7 +21,7 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.9.6
+VER=0.9.7
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
@@ -2301,9 +2301,9 @@ if [[ "$AUTOREPORT" != [yY] ]]; then
 	cecho "----------------------------------------------------" $boldgreen
 	s
 
-	cat ${LOGDIR}/centminmodbench_results_${DT}.log | egrep -v ' CC |ccache gcc|+DT:|+R:|+DTP:|+R1:|+R2:|+R5:|+R6|Forked child|Got:|make: Nothing|DEP .depend' | sed -e "s/$HOSTNAME/hostname/g" | perl -pe 's/\x1b.*?[mGKH]//g' > ${LOGDIR}/_publicreport_${DT}.log 2>&1
+	cat ${LOGDIR}/centminmodbench_results_${DT}.log | egrep -v ' CC |ccache gcc|+DT:|+R:|+DTP:|+R1:|+R2:|+R5:|+R6|Forked child|Got:|make: Nothing|DEP .depend|3dinfo: command not found|make all|byte-unixbench-5.1.3|Checking distribution|  exists|gcc -o|./src| valid file|Download done.|URL:https|std=gnu99|succeeded at |execl|char  c|patching file ' | sed -e "s/$HOSTNAME/hostname/g" | perl -pe 's/\x1b.*?[mGKH]//g' > ${LOGDIR}/_publicreport_${DT}.log 2>&1
 else
-	cat ${LOGDIR}/centminmodbench_results_${DT}.log | egrep -v ' CC |ccache gcc|+DT:|+R:|+DTP:|+R1:|+R2:|+R5:|+R6|Forked child|Got:|make: Nothing|DEP .depend' | sed -e "s/$HOSTNAME/hostname/g" | perl -pe 's/\x1b.*?[mGKH]//g' > ${LOGDIR}/_publicreport_${DT}.log 2>&1
+	cat ${LOGDIR}/centminmodbench_results_${DT}.log | egrep -v ' CC |ccache gcc|+DT:|+R:|+DTP:|+R1:|+R2:|+R5:|+R6|Forked child|Got:|make: Nothing|DEP .depend|3dinfo: command not found|make all|byte-unixbench-5.1.3|Checking distribution|  exists|gcc -o|./src| valid file|Download done.|URL:https|std=gnu99|succeeded at |execl|char  c|patching file ' | sed -e "s/$HOSTNAME/hostname/g" | perl -pe 's/\x1b.*?[mGKH]//g' > ${LOGDIR}/_publicreport_${DT}.log 2>&1
 
 	clear && printf '\e[3J'; cat ${LOGDIR}/_publicreport_${DT}.log
 	s
