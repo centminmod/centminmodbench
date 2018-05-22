@@ -282,8 +282,10 @@ cd centminmod-redis
 if [ ! -f /usr/bin/redis-server ]; then ./redis-install.sh install; fi
 service redis restart
 s
+{
 echo "/usr/bin/redis-benchmark -h 127.0.0.1 -p 6379 -n 1000 -r 1000 -t get,set,lpush,lpop -P 1000 -c 100"
 /usr/bin/redis-benchmark -h 127.0.0.1 -p 6379 -n 1000 -r 1000 -t get,set,lpush,lpop -P 1000 -c 100
+} 2>&1 | tee "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests-${DT}.log"
 s
 
 s
