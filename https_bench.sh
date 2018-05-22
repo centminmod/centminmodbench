@@ -136,7 +136,10 @@ div
 cecho "setup & benchmark nginx http/2 https vhost: https://$vhostname" $boldyellow
 div
 s
-echo "$(curl -4s https://ipinfo.io/ip) $vhostname #h2load" >> /etc/hosts
+cecho "setup temp entry in /etc/hosts" $boldyellow
+SERVERIP=$(curl -4s https://ipinfo.io/ip)
+echo "$SERVERIP $vhostname #h2load" >> /etc/hosts
+grep 'h2load' /etc/hosts | sed -e "s|$SERVERIP|server-ip-mask|"
 s
 if [[ "$(ps aufx | grep -v grep | grep 'pure-ftpd' 2>&1>/dev/null; echo $?)" = '0' ]]; then
   echo "nv -d $vhostname -s y -u \"ftpu\$(pwgen -1cnys 31)\""
