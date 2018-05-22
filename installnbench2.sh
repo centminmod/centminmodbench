@@ -17,6 +17,7 @@ SLEEP_TIME='20'
 
 CMBEMAIL='n'
 CMEBMAIL_ADDR=''
+CENTMINLOGDIR='/root/centminlogs'
 ###############################################################
 # Setup Colours
 black='\E[30;40m'
@@ -263,7 +264,7 @@ h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c200 -n
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 fi
-} 2>&1 | tee "h2load-nginx-https-${DT}.log"
+} 2>&1 | tee "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log"
 
 s
 div
@@ -287,13 +288,13 @@ s
 starttime=$(TZ=UTC date +%s.%N)
 {
   benchninstall
-} 2>&1 | tee "centminmod-benchmark-all-${DT}.log"
+} 2>&1 | tee "${CENTMINLOGDIR}/centminmod-benchmark-all-${DT}.log"
 
 endtime=$(TZ=UTC date +%s.%N)
 
 INSTALLTIME=$(echo "scale=2;$endtime - $starttime"|bc )
-echo "" >> "centminmod-benchmark-all-${DT}.log"
-echo "installnbench2.sh Total Run Time: $INSTALLTIME seconds" >> "centminmod-benchmark-all-${DT}.log"
+echo "" >> "${CENTMINLOGDIR}/centminmod-benchmark-all-${DT}.log"
+echo "installnbench2.sh Total Run Time: $INSTALLTIME seconds" >> "${CENTMINLOGDIR}/centminmod-benchmark-all-${DT}.log"
 
 if [[ "$CMBEMAIL" = [yY] ]]; then
   echo "installnbench2.sh completed for $(hostname -f)" | mail -s "$(hostname -f) installnbench2.sh completed $(date)" $CMEBMAIL_ADDR

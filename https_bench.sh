@@ -13,6 +13,7 @@ HTTPS_BENCHCLEANUP='y'
 
 CMBEMAIL='n'
 CMEBMAIL_ADDR=''
+CENTMINLOGDIR='/root/centminlogs'
 ###############################################################
 vhostname=http2.domain.com
 ###############################################################
@@ -218,7 +219,7 @@ h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c200 -n
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 fi
-} 2>&1 | tee "h2load-nginx-https-${DT}.log"
+} 2>&1 | tee "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log"
 }
 
 cleanup() {
@@ -260,14 +261,14 @@ starttime=$(TZ=UTC date +%s.%N)
 {
   https_benchmark
   cleanup
-  echo "result log: h2load-nginx-https-${DT}.log"
-} 2>&1 | tee "https-benchmark-all-${DT}.log"
+  echo "result log: ${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log"
+} 2>&1 | tee "${CENTMINLOGDIR}/https-benchmark-all-${DT}.log"
 
 endtime=$(TZ=UTC date +%s.%N)
 
 INSTALLTIME=$(echo "scale=2;$endtime - $starttime"|bc )
-echo "" >> "https-benchmark-all-${DT}.log"
-echo "https_bench.sh Total Run Time: $INSTALLTIME seconds" >> "https-benchmark-all-${DT}.log"
+echo "" >> "${CENTMINLOGDIR}/https-benchmark-all-${DT}.log"
+echo "https_bench.sh Total Run Time: $INSTALLTIME seconds" >> "${CENTMINLOGDIR}/https-benchmark-all-${DT}.log"
 
 if [[ "$CMBEMAIL" = [yY] ]]; then
   echo "https_bench.sh completed for $(hostname -f)" | mail -s "$(hostname -f) https_bench.sh completed $(date)" $CMEBMAIL_ADDR
