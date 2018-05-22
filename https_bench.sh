@@ -82,9 +82,11 @@ echo "nv -d $vhostname -s y -u \"ftpu\$(pwgen -1cnys 31)\""
 nv -d $vhostname -s y -u "ftpu$(pwgen -1cnys 31)"
 s
 
+if [ ! -f /usr/bin/h2load ]; then
 echo "yum -y install nghttp2"
 yum -y install nghttp2
 s
+fi
 
 echo "setup ECDSA SSL self-signed certificate"
 s
@@ -113,6 +115,7 @@ cat /usr/local/nginx/conf/ssl_ecc.conf
 sed -i "s|include \/usr\/local\/nginx\/conf\/ssl_include.conf;|\ninclude \/usr\/local\/nginx\/conf\/ssl_include.conf;\ninclude \/usr\/local\/nginx\/conf\/ssl_ecc.conf;|" /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf
 ngxrestart >/dev/null 2>&1
 
+{
 s
 echo "------------------------------------------------------------------------"
 echo "h2load --version"
@@ -215,6 +218,7 @@ h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c200 -n
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 fi
+} 2>&1 | tee "h2load-nginx-https-${DT}.log"
 }
 
 cleanup() {
@@ -246,7 +250,7 @@ cleanup() {
     cecho "rm -rf /usr/local/nginx/conf/pre-staticfiles-local-${vhostname}.conf" $boldwhite
     rm -rf /usr/local/nginx/conf/pre-staticfiles-local-${vhostname}.conf
     s
-    cecho " service nginx restart" $boldwhite
+    cecho "service nginx restart" $boldwhite
     ngxrestart >/dev/null 2>&1
   fi
 }
@@ -256,6 +260,7 @@ starttime=$(TZ=UTC date +%s.%N)
 {
   https_benchmark
   cleanup
+  echo "result log: h2load-nginx-https-${DT}.log"
 } 2>&1 | tee "https-benchmark-all-${DT}.log"
 
 endtime=$(TZ=UTC date +%s.%N)
