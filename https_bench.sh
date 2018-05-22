@@ -141,10 +141,10 @@ SERVERIP=$(curl -4s https://ipinfo.io/ip)
 echo "$SERVERIP $vhostname #h2load" >> /etc/hosts
 grep 'h2load' /etc/hosts | sed -e "s|$SERVERIP|server-ip-mask|"
 s
-if [[ "$(ps aufx | grep -v grep | grep 'pure-ftpd' 2>&1>/dev/null; echo $?)" = '0' ]]; then
+if [[ "$(ps aufx | grep -v grep | grep 'pure-ftpd' 2>&1>/dev/null; echo $?)" = '0' && ! -f /usr/local/nginx/conf/ssl_ecc.conf ]]; then
   echo "nv -d $vhostname -s y -u \"ftpu\$(pwgen -1cnys 31)\""
   nv -d $vhostname -s y -u "ftpu$(pwgen -1cnys 31)"
-else
+elif [[ ! -f /usr/local/nginx/conf/ssl_ecc.conf ]]; then
   echo "nv -d $vhostname -s y"
   nv -d $vhostname -s y
 fi
