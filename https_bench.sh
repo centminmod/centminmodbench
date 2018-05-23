@@ -8,7 +8,7 @@
 # variables
 #############
 DT=$(date +"%d%m%y-%H%M%S")
-VER='0.1'
+VER='0.2'
 SLEEP_TIME='20'
 HTTPS_BENCHCLEANUP='y'
 
@@ -20,6 +20,10 @@ TESTB_REQUESTS='6000'
 CMBEMAIL='n'
 CMEBMAIL_ADDR=''
 CENTMINLOGDIR='/root/centminlogs'
+
+SHOWSTATS='n'
+SARSTATS='y'
+NGINX_STATS='n'
 ###############################################################
 vhostname=http2.domain.com
 ###############################################################
@@ -69,8 +73,37 @@ if [ -f https_bench.ini ]; then
   . https_bench.ini
 fi
 
+stats() {
+  if [[ "$SHOWSTATS" = [yY] ]]; then
+    echo "-------------------------------------------------------------------------------------------"
+    cpu_utilisation=$(sar -u 1 3 | tail -1 | while read avg cpu user nice sys io steal idle; do echo "cpu utilisation: user ${user}% nice ${nice}% system: ${sys}% iowait ${io}% steal ${steal}% idle ${idle}%"; done)
+    echo "$cpu_utilisation"
+    echo "-------------------------------------------------------------------------------------------"
+  fi
+}
+
+sar_stats() {
+  if [[ "$SARSTATS" = [yY] ]]; then
+    if [[ "$(uname -m)" = 'x86_64' || "$(uname -m)" = 'aarch64' ]]; then
+      SARCALL='/usr/lib64/sa/sa1'
+    else
+      SARCALL='/usr/lib/sa/sa1'
+    fi
+    SAR_STARTTIME=$(date +"%H:%M:%S")
+    $SARCALL 1 &
+    getsar_pid=$!
+  fi
+}
+
+nginx_stats() {
+  if [[ "$NGINX_STATS" = [yY] && -d "/home/nginx/domains/${vhostname}/log" ]]; then
+    while true; do echo -n "$(date +"%H:%M:%S") "; curl -s http://127.0.0.1/nginx_status | sed -e 's|server ||g' | xargs | >> /home/nginx/domains/${vhostname}/log/nginx_status_${DT}.log; sleep 1; done &
+    getngxstat_pid=$!
+  fi
+}
+
 div() {
-	cecho "----------------------------------------------" $boldgreen
+	cecho "-------------------------------------------------------------------------------------------" $boldgreen
 }
 
 s() {
@@ -78,9 +111,9 @@ s() {
 }
 
 baseinfo() {
-  cecho "-------------------------------------------" $boldgreen
+  cecho "-------------------------------------------------------------------------------------------" $boldgreen
   cecho "System Information" $boldyellow
-  cecho "-------------------------------------------" $boldgreen
+  cecho "-------------------------------------------------------------------------------------------" $boldgreen
   s
 
   uname -r
@@ -194,107 +227,140 @@ ngxrestart >/dev/null 2>&1
 {
 baseinfo
 s
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 echo "h2load --version"
 h2load --version
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 s
+nginx_stats
+sar_stats
+stats
 echo "h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 s
+stats
 echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 s
+stats
 echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 s
+stats
 echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 s
+stats
 echo "h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 s
+stats
 echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 s
+stats
 echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 s
+stats
 echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
-echo "------------------------------------------------------------------------"
+stats
 if [[ "$(nginx -V 2>&1 | grep -o 'brotli')" = 'brotli' ]]; then
 s
+stats
 echo "h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 s
+stats
 echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 s
+stats
 echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 s
+stats
 echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 s
+stats
 echo "h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 s
+stats
 echo "h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 s
+stats
 echo "h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
-echo "------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------"
 s
+stats
 echo "h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname"
 h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: br' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname | egrep -v 'progress: |starting|spawning'
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
+stats
 fi
+kill $getsar_pid
+wait $getsar_pid 2>/dev/null
+kill $getngxstat_pid
+wait $getngxstat_pid 2>/dev/null
+s
+echo "-------------------------------------------------------------------------------------------"
+echo "h2load load statistics"
+echo "-------------------------------------------------------------------------------------------"
+echo "sar -q -s $SAR_STARTTIME"
+sar -q -s $SAR_STARTTIME | sed -e "s|$(hostname -f)|hostname|"
+echo "-------------------------------------------------------------------------------------------"
+echo "sar -r -s $SAR_STARTTIME"
+sar -r -s $SAR_STARTTIME | sed -e "s|$(hostname -f)|hostname|"
+echo "-------------------------------------------------------------------------------------------"
 s
 echo "h2load tests completed using temp /etc/hosts entry:"
 grep 'h2load' /etc/hosts | sed -e "s|$SERVERIP|server-ip-mask|"
