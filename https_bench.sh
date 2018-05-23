@@ -347,10 +347,14 @@ ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 stats
 fi
-kill $getsar_pid
-wait $getsar_pid 2>/dev/null
-kill $getngxstat_pid
-wait $getngxstat_pid 2>/dev/null
+if [[ "$SARSTATS" = [yY] ]]; then
+  kill $getsar_pid
+  wait $getsar_pid 2>/dev/null
+fi
+if [[ "$NGINX_STATS" = [yY] && -d "/home/nginx/domains/${vhostname}/log" ]]; then
+  kill $getngxstat_pid
+  wait $getngxstat_pid 2>/dev/null
+fi
 s
 echo "-------------------------------------------------------------------------------------------"
 echo "h2load load statistics"
