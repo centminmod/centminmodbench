@@ -198,7 +198,7 @@ To update script
 
 #### Disable Auto Removal Of http2.domain.com
 
-`https_bench.sh` script by default auto removes the test HTTP/2 HTTPS site `http2.domain.com` at end of script run. But if you want to do further manual tests on that site you can disable the auto removal routline. 
+`https_bench.sh` script by default auto removes the test HTTP/2 HTTPS site `http2.domain.com` at end of script run. But if you want to do further manual tests on that site you can disable the auto removal routine. 
 
 To disable auto removal routine, edit `/root/tools/https_bench.sh` variable `HTTPS_BENCHCLEANUP='y'` change it to `HTTPS_BENCHCLEANUP='n'` by overriding it in a separately created file persistent config file at `/root/tools/https_bench.ini`
 
