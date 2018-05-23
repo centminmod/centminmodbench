@@ -207,6 +207,84 @@ To disable auto removal routine, edit `/root/tools/https_bench.sh` variable `HTT
 Setting `HTTPS_BENCHCLEANUP='n'` will disable auto removal of test `http2.domain.com` nginx vhost site leaving it available after `https_bench.sh` run for manual testing
 then run it `https_bench.sh` once to create test `http2.domain.com` site. Note `http2.domain.com` is setup with self-signed untrusted SSL certificates.
 
+#### Example Nginx HTTP/2 HTTPS h2load benchmarks
+
+Intel Core i7 4790K CentOS 7.5 64bit with Centmin Mod Nginx 1.13.12 compiled with GCC 8.1.0 Compiler
+
+`ECDHE-RSA-AES128-GCM-SHA256` and `ECDHE-RSA-AES256-GCM-SHA384` ssl cipher tests
+
+```
+h2load --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c300 -n6000 https://http2.domain.com
+TLS Protocol: TLSv1.2
+Cipher: ECDHE-RSA-AES128-GCM-SHA256
+Server Temp Key: ECDH P-256 256 bits
+Application protocol: h2
+
+finished in 360.06ms, 16664.12 req/s, 38.56MB/s
+requests: 6000 total, 6000 started, 6000 done, 6000 succeeded, 0 failed, 0 errored, 0 timeout
+status codes: 6000 2xx, 0 3xx, 0 4xx, 0 5xx
+traffic: 13.88MB (14558700) total, 1.79MB (1878000) headers (space savings 15.41%), 11.98MB (12558000) data
+                     min         max         mean         sd        +/- sd
+time for request:      768us     51.35ms      8.34ms      4.70ms    86.87%
+time for connect:   101.90ms    180.62ms    146.54ms     14.58ms    80.67%
+time to 1st byte:   142.49ms    187.30ms    161.65ms      9.33ms    58.67%
+req/s           :      55.80       75.02       64.10        4.57    64.67%
+-------------------------------------------------------------------------------------------
+
+h2load --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c300 -n6000 https://http2.domain.com
+TLS Protocol: TLSv1.2
+Cipher: ECDHE-RSA-AES256-GCM-SHA384
+Server Temp Key: ECDH P-256 256 bits
+Application protocol: h2
+
+finished in 361.96ms, 16576.65 req/s, 38.34MB/s
+requests: 6000 total, 6000 started, 6000 done, 6000 succeeded, 0 failed, 0 errored, 0 timeout
+status codes: 6000 2xx, 0 3xx, 0 4xx, 0 5xx
+traffic: 13.88MB (14552700) total, 1.79MB (1872000) headers (space savings 15.68%), 11.98MB (12558000) data
+                     min         max         mean         sd        +/- sd
+time for request:      335us     48.39ms      9.21ms      4.48ms    83.15%
+time for connect:    94.94ms    184.70ms    148.47ms     14.47ms    81.67%
+time to 1st byte:   143.36ms    195.41ms    166.62ms     10.77ms    55.33%
+req/s           :      55.65       68.78       60.21        2.68    74.00%
+```
+
+`ECDHE-ECDSA-AES128-GCM-SHA256` and `ECDHE-ECDSA-AES256-GCM-SHA384` ssl ciphers tests
+
+```
+h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c300 -n6000 https://http2.domain.com
+TLS Protocol: TLSv1.2
+Cipher: ECDHE-ECDSA-AES128-GCM-SHA256
+Server Temp Key: ECDH P-256 256 bits
+Application protocol: h2
+
+finished in 374.88ms, 16005.08 req/s, 37.04MB/s
+requests: 6000 total, 6000 started, 6000 done, 6000 succeeded, 0 failed, 0 errored, 0 timeout
+status codes: 6000 2xx, 0 3xx, 0 4xx, 0 5xx
+traffic: 13.88MB (14558700) total, 1.79MB (1878000) headers (space savings 15.41%), 11.98MB (12558000) data
+                     min         max         mean         sd        +/- sd
+time for request:     1.32ms     61.08ms      9.21ms      9.02ms    96.58%
+time for connect:   101.72ms    173.85ms    139.61ms     27.55ms    48.00%
+time to 1st byte:   162.83ms    185.36ms    176.00ms      7.35ms    68.00%
+req/s           :      53.90       75.51       62.17        5.27    68.67%
+-------------------------------------------------------------------------------------------
+
+h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c300 -n6000 https://http2.domain.com
+TLS Protocol: TLSv1.2
+Cipher: ECDHE-ECDSA-AES256-GCM-SHA384
+Server Temp Key: ECDH P-256 256 bits
+Application protocol: h2
+
+finished in 368.49ms, 16282.84 req/s, 37.68MB/s
+requests: 6000 total, 6000 started, 6000 done, 6000 succeeded, 0 failed, 0 errored, 0 timeout
+status codes: 6000 2xx, 0 3xx, 0 4xx, 0 5xx
+traffic: 13.88MB (14558700) total, 1.79MB (1878000) headers (space savings 15.41%), 11.98MB (12558000) data
+                     min         max         mean         sd        +/- sd
+time for request:      514us     66.87ms      9.40ms     10.47ms    96.15%
+time for connect:    94.87ms    173.58ms    136.49ms     30.58ms    51.33%
+time to 1st byte:   161.75ms    184.13ms    176.00ms      7.00ms    71.67%
+req/s           :      55.38       71.86       61.91        4.31    58.67%
+```
+
 Google Spreadsheet Template
 ===============
 
