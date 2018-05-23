@@ -165,7 +165,7 @@ There's 8x h2load test configurations in total:
 * h2load --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c200 -n5000 https://http2.domain.com
 * h2load --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c200 -n5000 https://http2.domain.com
 
-### Install Commands
+#### Install Commands
 
 Note: if you already have a Nginx vhost called `http2.domain.com`, you can edit `/root/tools/https_bench.sh` script's variable `vhostname=http2.domain.com` changing it before running `https_bench.sh`.
 
@@ -195,6 +195,17 @@ To reattach the session named bench to continue with the benchmark or find the c
 To update script
 
     wget -O /root/tools/https_bench.sh https://github.com/centminmod/centminmodbench/raw/master/https_bench.sh
+
+#### Disable Auto Removal Of http2.domain.com
+
+`https_bench.sh` script by default auto removes the test HTTP/2 HTTPS site `http2.domain.com` at end of script run. But if you want to do further manual tests on that site you can disable the auto removal routline. 
+
+To disable auto removal routine, edit `/root/tools/https_bench.sh` variable `HTTPS_BENCHCLEANUP='y'` change it to `HTTPS_BENCHCLEANUP='n'` by overriding it in a separately created file persistent config file at `/root/tools/https_bench.ini`
+
+    echo "HTTPS_BENCHCLEANUP='n'" > /root/tools/https_bench.ini
+
+Setting `HTTPS_BENCHCLEANUP='n'` will disable auto removal of test `http2.domain.com` nginx vhost site leaving it available after `https_bench.sh` run for manual testing
+then run it `https_bench.sh` once to create test `http2.domain.com` site. Note `http2.domain.com` is setup with self-signed untrusted SSL certificates.
 
 Google Spreadsheet Template
 ===============
