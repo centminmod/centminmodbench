@@ -163,8 +163,8 @@ echo
 echo "/root/tools/sysbench.sh cpu"
 /root/tools/sysbench.sh cpu
 echo
-echo "/root/tools/sysbench.sh memory"
-/root/tools/sysbench.sh memory
+echo "/root/tools/sysbench.sh mem"
+/root/tools/sysbench.sh mem
 echo
 echo "/root/tools/sysbench.sh file"
 /root/tools/sysbench.sh file
