@@ -9,6 +9,7 @@
 # 3) install & run zcat/pzcat benchmarks
 # 4) setup & benchmark nginx http/2 https vhost
 # 5) redis benchmarks
+# 6) sysbench benchmarks
 ######################################################
 # variables
 #############
@@ -76,6 +77,7 @@ cecho "2). installs & runs centminmodbench.sh (UnixBench enabled) ~30-60 mins" $
 cecho "3). install & run zcat/pzcat benchmarks" $boldyellow
 cecho "4). setup & benchmark nginx http/2 https vhost" $boldyellow
 cecho "5). redis benchmarks" $boldyellow
+cecho "6). sysbench benchmarks" $boldyellow
 div
 s
 
@@ -144,6 +146,31 @@ echo "/usr/bin/redis-benchmark -h 127.0.0.1 -p 6379 -n 1000 -r 1000 -t get,set,l
 /usr/bin/redis-benchmark -h 127.0.0.1 -p 6379 -n 1000 -r 1000 -t get,set,lpush,lpop -P 1000 -c 100
 } 2>&1 | tee "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests-${DT}.log"
 s
+
+s
+div
+cecho "sysbench benchmark" $boldyellow
+div
+s
+mkdir -p /root/tools
+cd /root/tools
+wget -O sysbench.sh https://github.com/centminmod/centminmod-sysbench/raw/master/sysbench.sh
+chmod +x sysbench.sh
+echo
+echo "/root/tools/sysbench.sh install"
+/root/tools/sysbench.sh install
+echo
+echo "/root/tools/sysbench.sh cpu"
+/root/tools/sysbench.sh cpu
+echo
+echo "/root/tools/sysbench.sh memory"
+/root/tools/sysbench.sh memory
+echo
+echo "/root/tools/sysbench.sh file"
+/root/tools/sysbench.sh file
+echo
+echo "/root/tools/sysbench.sh mysql"
+/root/tools/sysbench.sh mysql
 
 s
 echo "benchmark run complete"
