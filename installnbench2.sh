@@ -204,6 +204,9 @@ echo "/root/tools/sysbench.sh file"
 echo
 echo "/root/tools/sysbench.sh mysql"
 /root/tools/sysbench.sh mysql
+echo
+echo "/root/tools/sysbench.sh mysqlro"
+/root/tools/sysbench.sh mysqlro
 
 s
 echo "benchmark run complete"
