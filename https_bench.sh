@@ -221,7 +221,9 @@ echo "  ssl_certificate      /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}
   ssl_certificate_key  /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}-ecc.key;" > /usr/local/nginx/conf/ssl_ecc.conf
 cat /usr/local/nginx/conf/ssl_ecc.conf
 
-sed -i "s|include \/usr\/local\/nginx\/conf\/ssl_include.conf;|\ninclude \/usr\/local\/nginx\/conf\/ssl_include.conf;\ninclude \/usr\/local\/nginx\/conf\/ssl_ecc.conf;|" /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf
+if [[ ! "$(grep 'ssl_ecc.conf' /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf)" ]]; then
+  sed -i "s|include \/usr\/local\/nginx\/conf\/ssl_include.conf;|\ninclude \/usr\/local\/nginx\/conf\/ssl_include.conf;\ninclude \/usr\/local\/nginx\/conf\/ssl_ecc.conf;|" /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf
+fi
 ngxrestart >/dev/null 2>&1
 
 {
