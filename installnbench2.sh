@@ -207,6 +207,27 @@ echo "/root/tools/sysbench.sh mysql"
 echo
 echo "/root/tools/sysbench.sh mysqlro"
 /root/tools/sysbench.sh mysqlro
+echo
+echo "/root/tools/sysbench.sh mysqlinsert"
+/root/tools/sysbench.sh mysqlinsert
+echo
+echo "/root/tools/sysbench.sh mysqlupdateindex"
+/root/tools/sysbench.sh mysqlupdateindex
+echo
+echo "/root/tools/sysbench.sh mysqlupdatenonindex"
+/root/tools/sysbench.sh mysqlupdatenonindex
+echo
+echo "/root/tools/sysbench.sh mysqloltpnew"
+/root/tools/sysbench.sh mysqloltpnew
+echo
+echo "/root/tools/sysbench.sh mysqlreadonly-new"
+/root/tools/sysbench.sh mysqlreadonly-new
+echo
+echo "/root/tools/sysbench.sh mysqlwriteonly-new"
+/root/tools/sysbench.sh mysqlwriteonly-new
+echo
+echo "/root/tools/sysbench.sh mysqlpointselect-new"
+/root/tools/sysbench.sh mysqlpointselect-new
 
 s
 echo "benchmark run complete"
