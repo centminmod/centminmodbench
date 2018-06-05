@@ -180,7 +180,14 @@ cecho "setup & benchmark nginx http/2 https vhost: https://$vhostname" $boldyell
 div
 s
 cecho "setup temp entry in /etc/hosts" $boldyellow
-SERVERIP=$(curl -4s https://ipinfo.io/ip)
+
+if [[ -f /usr/bin/systemd-detect-virt && "$(/usr/bin/systemd-detect-virt)" = 'lxc' ]]; then
+  # for lxd guest containers
+  SERVERIP=$(hostname -I | awk '{print $1}')
+else
+  SERVERIP=$(curl -4s https://ipinfo.io/ip)
+fi
+
 if [[ ! $(grep "$SERVERIP $vhostname #h2load" /etc/hosts) ]]; then
   echo "$SERVERIP $vhostname #h2load" >> /etc/hosts
 fi
