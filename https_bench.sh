@@ -8,7 +8,7 @@
 # variables
 #############
 DT=$(date +"%d%m%y-%H%M%S")
-VER='0.3'
+VER='0.4'
 SLEEP_TIME='20'
 HTTPS_BENCHCLEANUP='y'
 
@@ -171,6 +171,36 @@ baseinfo() {
   div
   nginx -V
   s
+}
+
+parsed() {
+  # users
+  echo
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | grep -o '\-c.\{3\}' | grep -v '\-ciph' | sed -e 's|-c||g' > /tmp/users.txt
+  # requests
+  echo
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" |  grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | grep -o '\-n.\{4\}' | sed -e 's|-n||g' > /tmp/requests.txt
+  # encoding
+  echo
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | grep -o '\Accept-Encoding: .\{4\}' | sed -e 's|Accept-Encoding: ||g' > /tmp/encoding.txt
+  # started
+  echo
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | awk -F ', ' '/requests: / {print $2}' | sed -e 's| started||g' > /tmp/started.txt
+  # succeeded
+  echo
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | awk -F ', ' '/requests: / {print $4}'| sed -e 's| succeeded||g' > /tmp/succeeded.txt
+  # requests per sec
+  echo
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | awk -F ', ' '/finished in/ {print $2}' | sed -e 's| req\/s||g' > /tmp/rps.txt
+  # protocol
+  echo
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | awk '/Protocol: / {print $2}' > /tmp/protocol.txt
+  # cipher
+  echo
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | awk '/Cipher: / {print $2}' > /tmp/cipher.txt
+  echo "users requests req/s encoding cipher protocol started succeeded"
+  paste -d ' ' /tmp/users.txt /tmp/requests.txt /tmp/rps.txt /tmp/encoding.txt /tmp/cipher.txt /tmp/protocol.txt /tmp/started.txt /tmp/succeeded.txt
+  rm -rf /tmp/users.txt /tmp/requests.txt /tmp/rps.txt /tmp/encoding.txt /tmp/cipher.txt /tmp/protocol.txt /tmp/started.txt /tmp/succeeded.txt
 }
 
 https_benchmark() {
@@ -390,9 +420,11 @@ if [ -d /usr/local/src/centminmod/.git ]; then
 fi
 } 2>&1 | tee "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log"
 
-# s
-# cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | egrep -v 'progress: |starting|spawning'
-# s
+echo
+{
+parsed
+} 2>&1 | sed '/^\s*$/d' | tee -a "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log"
+
 }
 
 cleanup() {
