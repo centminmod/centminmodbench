@@ -8,7 +8,7 @@
 # variables
 #############
 DT=$(date +"%d%m%y-%H%M%S")
-VER='0.6'
+VER='0.7'
 SLEEP_TIME='20'
 HTTPS_BENCHCLEANUP='y'
 TESTRUNS='5'
@@ -30,6 +30,8 @@ SHOWSTATS='n'
 SARSTATS='y'
 NGINX_STATS='n'
 NON_CENTMINMOD='n'
+NON_CENTMINMODTESTA='n'
+NON_CENTMINMODTESTB='y'
 ###############################################################
 vhostname=http2.domain.com
 ###############################################################
@@ -341,7 +343,7 @@ fi
   sleep $SLEEP_TIME
   echo "-------------------------------------------------------------------------------------------"
   }
-  if [[ "$NON_CENTMINMOD" = [yY] ]]; then
+  if [[ "$NON_CENTMINMODTESTA" = [yY] && "$NON_CENTMINMOD" = [yY] ]]; then
     for (( i=1; i<=$TESTRUNS; i++ ))
       do
       echo "Test Run: $i ($(hostname -s))"
@@ -387,7 +389,7 @@ fi
   sleep $SLEEP_TIME
   echo "-------------------------------------------------------------------------------------------"
   }
-  if [[ "$NON_CENTMINMOD" = [yY] ]]; then
+  if [[ "$NON_CENTMINMODTESTB" = [yY] && "$NON_CENTMINMOD" = [yY] ]]; then
     for (( i=1; i<=$TESTRUNS; i++ ))
       do
       echo "Test Run: $i ($(hostname -s))"
@@ -434,7 +436,7 @@ if [[ "$(nginx -V 2>&1 | grep -o 'brotli')" = 'brotli' ]]; then
   sleep $SLEEP_TIME
   echo "-------------------------------------------------------------------------------------------"
   }
-  if [[ "$NON_CENTMINMOD" = [yY] ]]; then
+  if [[ "$NON_CENTMINMODTESTA" = [yY] && "$NON_CENTMINMOD" = [yY] ]]; then
     for (( i=1; i<=$TESTRUNS; i++ ))
       do
       echo "Test Run: $i ($(hostname -s))"
@@ -480,7 +482,7 @@ fi
   sleep $SLEEP_TIME
   echo "-------------------------------------------------------------------------------------------"
   }
-  if [[ "$NON_CENTMINMOD" = [yY] ]]; then
+  if [[ "$NON_CENTMINMODTESTB" = [yY] && "$NON_CENTMINMOD" = [yY] ]]; then
     for (( i=1; i<=$TESTRUNS; i++ ))
       do
       echo "Test Run: $i ($(hostname -s))"
