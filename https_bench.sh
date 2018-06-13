@@ -8,7 +8,7 @@
 # variables
 #############
 DT=$(date +"%d%m%y-%H%M%S")
-VER='0.4'
+VER='0.5'
 SLEEP_TIME='20'
 HTTPS_BENCHCLEANUP='y'
 
@@ -28,6 +28,7 @@ CENTMINLOGDIR='/root/centminlogs'
 SHOWSTATS='n'
 SARSTATS='y'
 NGINX_STATS='n'
+NON_CENTMINMOD='n'
 ###############################################################
 vhostname=http2.domain.com
 ###############################################################
@@ -65,7 +66,9 @@ return
 ###############################################################
 # functions
 #############
-if [ ! -d /usr/local/nginx/conf/conf.d ]; then
+mkdir -p "$CENTMINLOGDIR"
+
+if [[ "$NON_CENTMINMOD" = [nN] && ! -d /usr/local/nginx/conf/conf.d ]]; then
   echo
   echo "Centmin Mod directory not found"
   echo "/usr/local/nginx/conf/conf.d/ is missing"
@@ -75,6 +78,11 @@ fi
 
 if [ -f https_bench.ini ]; then
   . https_bench.ini
+fi
+
+if [[ "$NON_CENTMINMOD" = [yY] ]]; then
+  SARSTATS='n'
+  HTTPS_BENCHCLEANUP='n'
 fi
 
 stats() {
@@ -123,7 +131,11 @@ baseinfo() {
   uname -r
   s
 
-  cat /etc/redhat-release
+  if [ -f /etc/redhat-release ]; then
+    cat /etc/redhat-release
+  elif [ -f /etc/lsb-release ]; then
+    cat /etc/lsb-release
+  fi
   s
   
   if [ -f /etc/centminmod-release ]; then
@@ -164,12 +176,20 @@ baseinfo() {
   free -ml
   s
   
-  div
-  df -h
-  s
+  if [[ "$NON_CENTMINMOD" = [nN] ]]; then
+    div
+    df -h
+    s
+  fi
 
   div
-  nginx -V
+  if [ -f /usr/local/nginx/sbin/nginx ]; then
+    /usr/local/nginx/sbin/nginx -V
+  elif [ -f /usr/local/openresty/nginx/sbin/nginx ]; then
+    /usr/local/openresty/nginx/sbin/nginx -V
+  else
+    nginx -V
+  fi
   s
 }
 
@@ -204,68 +224,71 @@ parsed() {
 }
 
 https_benchmark() {
-s
-div
-cecho "setup & benchmark nginx http/2 https vhost: https://$vhostname" $boldyellow
-div
-s
-cecho "setup temp entry in /etc/hosts" $boldyellow
+  if [[ "$NON_CENTMINMOD" = [nN] ]]; then
+    s
+    div
+    cecho "setup & benchmark nginx http/2 https vhost: https://$vhostname" $boldyellow
+    div
+    s
+    cecho "setup temp entry in /etc/hosts" $boldyellow
+    if [[ -f /usr/bin/systemd-detect-virt && "$(/usr/bin/systemd-detect-virt)" = 'lxc' ]]; then
+      # for lxd guest containers
+      SERVERIP=$(hostname -I | awk '{print $1}')
+    else
+      SERVERIP=$(curl -4s https://ipinfo.io/ip)
+    fi
+  fi
 
-if [[ -f /usr/bin/systemd-detect-virt && "$(/usr/bin/systemd-detect-virt)" = 'lxc' ]]; then
-  # for lxd guest containers
-  SERVERIP=$(hostname -I | awk '{print $1}')
-else
-  SERVERIP=$(curl -4s https://ipinfo.io/ip)
-fi
-
-if [[ ! $(grep "$SERVERIP $vhostname #h2load" /etc/hosts) ]]; then
-  echo "$SERVERIP $vhostname #h2load" >> /etc/hosts
-fi
-grep 'h2load' /etc/hosts | sed -e "s|$SERVERIP|server-ip-mask|"
-s
-if [[ "$(ps aufx | grep -v grep | grep 'pure-ftpd' 2>&1>/dev/null; echo $?)" = '0' && ! -f /usr/local/nginx/conf/ssl_ecc.conf ]]; then
-  echo "nv -d $vhostname -s y -u \"ftpu\$(pwgen -1cnys 31)\""
-  nv -d $vhostname -s y -u "ftpu$(pwgen -1cnys 31)"
-elif [[ ! -f /usr/local/nginx/conf/ssl_ecc.conf ]]; then
-  echo "nv -d $vhostname -s y"
-  nv -d $vhostname -s y
-fi
-s
-
-if [ ! -f /usr/bin/h2load ]; then
-echo "yum -y -q install nghttp2"
-yum -y -q install nghttp2
-s
-fi
-
-echo "setup ECDSA SSL self-signed certificate"
-s
-SELFSIGNEDSSL_C='US'
-SELFSIGNEDSSL_ST='California'
-SELFSIGNEDSSL_L='Los Angeles'
-SELFSIGNEDSSL_O='HTTPS TEST ORG'
-SELFSIGNEDSSL_OU='HTTPS TEST ORG UNIT'
-
-cd /usr/local/nginx/conf/ssl/${vhostname}
-curve=prime256v1
-echo "openssl ecparam -out ${vhostname}-ecc.key -name $curve -genkey"
-openssl ecparam -out ${vhostname}-ecc.key -name $curve -genkey
-echo "openssl req -new -sha256 -key ${vhostname}-ecc.key -nodes -out ${vhostname}-ecc.csr -subj \"/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${vhostname}\""
-openssl req -new -sha256 -key ${vhostname}-ecc.key -nodes -out ${vhostname}-ecc.csr -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${vhostname}"
-echo "openssl x509 -req -days 36500 -sha256 -in ${vhostname}-ecc.csr -signkey ${vhostname}-ecc.key -out ${vhostname}-ecc.crt"
-openssl x509 -req -days 36500 -sha256 -in ${vhostname}-ecc.csr -signkey ${vhostname}-ecc.key -out ${vhostname}-ecc.crt
-s
-ls -lah /usr/local/nginx/conf/ssl/${vhostname}
-s
-
-echo "  ssl_certificate      /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}-ecc.crt;
-  ssl_certificate_key  /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}-ecc.key;" > /usr/local/nginx/conf/ssl_ecc.conf
-cat /usr/local/nginx/conf/ssl_ecc.conf
-
-if [[ ! "$(grep 'ssl_ecc.conf' /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf)" ]]; then
-  sed -i "s|include \/usr\/local\/nginx\/conf\/ssl_include.conf;|\ninclude \/usr\/local\/nginx\/conf\/ssl_include.conf;\ninclude \/usr\/local\/nginx\/conf\/ssl_ecc.conf;|" /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf
-fi
-ngxrestart >/dev/null 2>&1
+if [[ "$NON_CENTMINMOD" = [nN] ]]; then
+  if [[ ! $(grep "$SERVERIP $vhostname #h2load" /etc/hosts) ]]; then
+    echo "$SERVERIP $vhostname #h2load" >> /etc/hosts
+  fi
+  grep 'h2load' /etc/hosts | sed -e "s|$SERVERIP|server-ip-mask|"
+  s
+  if [[ "$(ps aufx | grep -v grep | grep 'pure-ftpd' 2>&1>/dev/null; echo $?)" = '0' && ! -f /usr/local/nginx/conf/ssl_ecc.conf ]]; then
+    echo "nv -d $vhostname -s y -u \"ftpu\$(pwgen -1cnys 31)\""
+    nv -d $vhostname -s y -u "ftpu$(pwgen -1cnys 31)"
+  elif [[ ! -f /usr/local/nginx/conf/ssl_ecc.conf ]]; then
+    echo "nv -d $vhostname -s y"
+    nv -d $vhostname -s y
+  fi
+  s
+  
+  if [ ! -f /usr/bin/h2load ]; then
+  echo "yum -y -q install nghttp2"
+  yum -y -q install nghttp2
+  s
+  fi
+  
+  echo "setup ECDSA SSL self-signed certificate"
+  s
+  SELFSIGNEDSSL_C='US'
+  SELFSIGNEDSSL_ST='California'
+  SELFSIGNEDSSL_L='Los Angeles'
+  SELFSIGNEDSSL_O='HTTPS TEST ORG'
+  SELFSIGNEDSSL_OU='HTTPS TEST ORG UNIT'
+  
+  cd /usr/local/nginx/conf/ssl/${vhostname}
+  curve=prime256v1
+  echo "openssl ecparam -out ${vhostname}-ecc.key -name $curve -genkey"
+  openssl ecparam -out ${vhostname}-ecc.key -name $curve -genkey
+  echo "openssl req -new -sha256 -key ${vhostname}-ecc.key -nodes -out ${vhostname}-ecc.csr -subj \"/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${vhostname}\""
+  openssl req -new -sha256 -key ${vhostname}-ecc.key -nodes -out ${vhostname}-ecc.csr -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${vhostname}"
+  echo "openssl x509 -req -days 36500 -sha256 -in ${vhostname}-ecc.csr -signkey ${vhostname}-ecc.key -out ${vhostname}-ecc.crt"
+  openssl x509 -req -days 36500 -sha256 -in ${vhostname}-ecc.csr -signkey ${vhostname}-ecc.key -out ${vhostname}-ecc.crt
+  s
+  ls -lah /usr/local/nginx/conf/ssl/${vhostname}
+  s
+  
+  echo "  ssl_certificate      /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}-ecc.crt;
+    ssl_certificate_key  /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}-ecc.key;" > /usr/local/nginx/conf/ssl_ecc.conf
+  cat /usr/local/nginx/conf/ssl_ecc.conf
+  
+  if [[ ! "$(grep 'ssl_ecc.conf' /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf)" ]]; then
+  sed -i "s|include \/usr\/local\/nginx\/conf\/ssl_include.conf;|\ninclude \/usr\/local\/nginx\/conf\/ssl_include.conf;\ninclude \/usr\/local\/nginx\/conf\/ssl_ecc.conf;|" /usr/local/nginx/conf/conf.d/${vhostname}.  ssl.conf
+  fi
+  ngxrestart >/dev/null 2>&1
+fi # NON_CENTMINMOD = N
 
 {
 baseinfo
@@ -398,25 +421,29 @@ if [[ "$NGINX_STATS" = [yY] && -d "/home/nginx/domains/${vhostname}/log" ]]; the
   kill $getngxstat_pid
   wait $getngxstat_pid 2>/dev/null
 fi
-s
-echo "-------------------------------------------------------------------------------------------"
-echo "h2load load statistics"
-echo "-------------------------------------------------------------------------------------------"
-echo "sar -q -s $SAR_STARTTIME"
-sar -q -s $SAR_STARTTIME | sed -e "s|$(hostname -f)|hostname|"
-echo "-------------------------------------------------------------------------------------------"
-echo "sar -r -s $SAR_STARTTIME"
-sar -r -s $SAR_STARTTIME | sed -e "s|$(hostname -f)|hostname|"
-echo "-------------------------------------------------------------------------------------------"
-s
-echo "h2load tests completed using temp /etc/hosts entry:"
-grep 'h2load' /etc/hosts | sed -e "s|$SERVERIP|server-ip-mask|"
-if [ -d /usr/local/src/centminmod/.git ]; then
+if [[ "$NON_CENTMINMOD" = [nN] ]]; then
   s
-  echo "centmin mod local code last commit:"
-  pushd /usr/local/src/centminmod >/dev/null 2>&1
-  git log --pretty="%n%h %an %aD %n%s" -1
-  popd >/dev/null 2>&1
+  echo "-------------------------------------------------------------------------------------------"
+  echo "h2load load statistics"
+  echo "-------------------------------------------------------------------------------------------"
+  echo "sar -q -s $SAR_STARTTIME"
+  sar -q -s $SAR_STARTTIME | sed -e "s|$(hostname -f)|hostname|"
+  echo "-------------------------------------------------------------------------------------------"
+  echo "sar -r -s $SAR_STARTTIME"
+  sar -r -s $SAR_STARTTIME | sed -e "s|$(hostname -f)|hostname|"
+  echo "-------------------------------------------------------------------------------------------"
+fi
+s
+if [[ "$NON_CENTMINMOD" = [nN] ]]; then
+  echo "h2load tests completed using temp /etc/hosts entry:"
+  grep 'h2load' /etc/hosts | sed -e "s|$SERVERIP|server-ip-mask|"
+  if [ -d /usr/local/src/centminmod/.git ]; then
+    s
+    echo "centmin mod local code last commit:"
+    pushd /usr/local/src/centminmod >/dev/null 2>&1
+    git log --pretty="%n%h %an %aD %n%s" -1
+    popd >/dev/null 2>&1
+  fi
 fi
 } 2>&1 | tee "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log"
 
