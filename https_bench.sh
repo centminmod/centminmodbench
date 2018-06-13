@@ -224,8 +224,34 @@ parsed() {
   echo
   cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | awk '/Cipher: / {print $2}' > /tmp/cipher.txt
   echo "users requests req/s encoding cipher protocol started succeeded"
-  paste -d ' ' /tmp/users.txt /tmp/requests.txt /tmp/rps.txt /tmp/encoding.txt /tmp/cipher.txt /tmp/protocol.txt /tmp/started.txt /tmp/succeeded.txt
-  rm -rf /tmp/users.txt /tmp/requests.txt /tmp/rps.txt /tmp/encoding.txt /tmp/cipher.txt /tmp/protocol.txt /tmp/started.txt /tmp/succeeded.txt
+  paste -d ' ' /tmp/users.txt /tmp/requests.txt /tmp/rps.txt /tmp/encoding.txt /tmp/cipher.txt /tmp/protocol.txt /tmp/started.txt /tmp/succeeded.txt > /tmp/https_parsed.txt
+  cat /tmp/https_parsed.txt
+  if [[ "$NON_CENTMINMOD" = [yY] ]]; then
+    if [ ! -f /usr/bin/datamash ]; then
+      yum -y -q install datamash
+    fi
+    if [ ! -f /usr/bin/bc ]; then
+      yum -y -q install bc
+    fi
+    parsed_sum=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 sum 1)
+    parsed_sum=$(printf "%.0f\n" $parsed_sum)
+    parsed_count=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 count 1)
+    parsed_min=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 min 1)
+    parsed_avg=$(($parsed_sum/$parsed_count))
+    parsed_avg=${parsed_avg:-0}
+    parsed_max=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 max 1)
+    parsed_mean=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 mean 1)
+    parsed_stddev=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 sstdev 1)
+    parsed_stddev=$(printf "%.2f\n" $parsed_stddev)
+    echo
+    echo "-------------------------------------------------------------------------------------------"
+    echo "h2load result summary"
+    echo "min: avg: max: mean: stddev:" > /tmp/https_parsed_datamash.txt
+    echo "$parsed_min $parsed_avg $parsed_max $parsed_mean $parsed_stddev" >> /tmp/https_parsed_datamash.txt
+    cat /tmp/https_parsed_datamash.txt | column -t
+    echo "-------------------------------------------------------------------------------------------"
+  fi
+  rm -rf /tmp/users.txt /tmp/requests.txt /tmp/rps.txt /tmp/encoding.txt /tmp/cipher.txt /tmp/protocol.txt /tmp/started.txt /tmp/succeeded.txt /tmp/https_parsed.txt /tmp/https_parsed_datamash.txt
 }
 
 https_benchmark() {
