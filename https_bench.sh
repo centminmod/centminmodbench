@@ -329,6 +329,7 @@ h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "-------------------------------------------------------------------------------------------"
+testa_gziprepeat() {
 s
 stats
 echo "h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256 -H 'Accept-Encoding: gzip' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname"
@@ -336,6 +337,14 @@ h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-A
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "-------------------------------------------------------------------------------------------"
+}
+if [[ "$NON_CENTMINMOD" = [yY] ]]; then
+  testa_gziprepeat
+  testa_gziprepeat
+  testa_gziprepeat
+  testa_gziprepeat
+  testa_gziprepeat
+fi
 s
 stats
 echo "h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname"
@@ -364,6 +373,7 @@ h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "-------------------------------------------------------------------------------------------"
+testb_gziprepeat() {
 s
 stats
 echo "h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname"
@@ -371,6 +381,14 @@ h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-A
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "-------------------------------------------------------------------------------------------"
+}
+if [[ "$NON_CENTMINMOD" = [yY] ]]; then
+  testb_gziprepeat
+  testb_gziprepeat
+  testb_gziprepeat
+  testb_gziprepeat
+  testb_gziprepeat
+fi
 if [[ "$(nginx -V 2>&1 | grep -o 'brotli')" = 'brotli' ]]; then
 s
 stats
@@ -400,6 +418,7 @@ h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "-------------------------------------------------------------------------------------------"
+testa_brrepeat() {
 s
 stats
 echo "h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256 -H 'Accept-Encoding: br' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname"
@@ -407,6 +426,14 @@ h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-A
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "-------------------------------------------------------------------------------------------"
+}
+if [[ "$NON_CENTMINMOD" = [yY] ]]; then
+  testa_brrepeat
+  testa_brrepeat
+  testa_brrepeat
+  testa_brrepeat
+  testa_brrepeat
+fi
 s
 stats
 echo "h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: br' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname"
@@ -435,6 +462,7 @@ h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "-------------------------------------------------------------------------------------------"
+testb_brrepeat() {
 s
 stats
 echo "h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256 -H 'Accept-Encoding: br' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname"
@@ -442,6 +470,14 @@ h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-A
 ngxrestart >/dev/null 2>&1
 sleep $SLEEP_TIME
 echo "-------------------------------------------------------------------------------------------"
+}
+if [[ "$NON_CENTMINMOD" = [yY] ]]; then
+  testb_brrepeat
+  testb_brrepeat
+  testb_brrepeat
+  testb_brrepeat
+  testb_brrepeat
+fi
 fi
 if [[ "$SARSTATS" = [yY] ]]; then
   kill $getsar_pid
