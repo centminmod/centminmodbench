@@ -68,16 +68,16 @@ return
 #############
 mkdir -p "$CENTMINLOGDIR"
 
+if [ -f https_bench.ini ]; then
+  . https_bench.ini
+fi
+
 if [[ "$NON_CENTMINMOD" = [nN] && ! -d /usr/local/nginx/conf/conf.d ]]; then
   echo
   echo "Centmin Mod directory not found"
   echo "/usr/local/nginx/conf/conf.d/ is missing"
   echo
   exit
-fi
-
-if [ -f https_bench.ini ]; then
-  . https_bench.ini
 fi
 
 if [[ "$NON_CENTMINMOD" = [yY] ]]; then
