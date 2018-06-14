@@ -250,6 +250,7 @@ parsed() {
     echo "$parsed_min $parsed_avg $parsed_max $parsed_mean $parsed_stddev" >> /tmp/https_parsed_datamash.txt
     cat /tmp/https_parsed_datamash.txt | column -t
     echo "-------------------------------------------------------------------------------------------"
+    echo "h2load result summary end"
   fi
   rm -rf /tmp/users.txt /tmp/requests.txt /tmp/rps.txt /tmp/encoding.txt /tmp/cipher.txt /tmp/protocol.txt /tmp/started.txt /tmp/succeeded.txt /tmp/https_parsed.txt /tmp/https_parsed_datamash.txt
 }
