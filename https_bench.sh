@@ -227,11 +227,15 @@ parsed() {
   paste -d ' ' /tmp/users.txt /tmp/requests.txt /tmp/rps.txt /tmp/encoding.txt /tmp/cipher.txt /tmp/protocol.txt /tmp/started.txt /tmp/succeeded.txt > /tmp/https_parsed.txt
   cat /tmp/https_parsed.txt
   if [[ "$NON_CENTMINMOD" = [yY] ]]; then
-    if [ ! -f /usr/bin/datamash ]; then
+    if [[ -f $(which yum) && ! -f /usr/bin/datamash ]]; then
       yum -y -q install datamash
+    elif [[ -f $(which apt-get) && ! -f /usr/bin/datamash ]]; then
+      apt-get -y install datamash
     fi
-    if [ ! -f /usr/bin/bc ]; then
+    if [[ -f $(which yum) && ! -f /usr/bin/bc ]]; then
       yum -y -q install bc
+    elif [[ -f $(which apt-get) && ! -f /usr/bin/bc ]]; then
+      apt-get -y install bc
     fi
     parsed_sum=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 sum 1)
     parsed_sum=$(printf "%.0f\n" $parsed_sum)
