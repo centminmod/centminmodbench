@@ -229,29 +229,32 @@ parsed() {
   if [[ "$NON_CENTMINMOD" = [yY] ]]; then
     if [[ -f $(which yum) && ! -f /usr/bin/datamash ]]; then
       yum -y -q install datamash
-    elif [[ -f $(which apt-get) && ! -f /usr/bin/datamash ]]; then
+    fi
+    if [[ -f /usr/bin/apt-get && ! -f /usr/bin/datamash ]]; then
       apt-get -y install datamash
     fi
     if [[ -f $(which yum) && ! -f /usr/bin/bc ]]; then
       yum -y -q install bc
-    elif [[ -f $(which apt-get) && ! -f /usr/bin/bc ]]; then
+    fi
+    if [[ -f /usr/bin/apt-get && ! -f /usr/bin/bc ]]; then
       apt-get -y install bc
     fi
     parsed_sum=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 sum 1)
     parsed_sum=$(printf "%.0f\n" $parsed_sum)
     parsed_count=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 count 1)
     parsed_min=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 min 1)
-    parsed_avg=$(($parsed_sum/$parsed_count))
-    parsed_avg=${parsed_avg:-0}
+    # parsed_avg=$(($parsed_sum/$parsed_count))
+    # parsed_avg=${parsed_avg:-0}
     parsed_max=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 max 1)
     parsed_mean=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 mean 1)
+    parsed_mean=$(printf "%.0f\n" $parsed_mean)
     parsed_stddev=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 sstdev 1)
     parsed_stddev=$(printf "%.2f\n" $parsed_stddev)
     echo
     echo "-------------------------------------------------------------------------------------------"
     echo "h2load result summary"
-    echo "min: avg: max: mean: stddev:" > /tmp/https_parsed_datamash.txt
-    echo "$parsed_min $parsed_avg $parsed_max $parsed_mean $parsed_stddev" >> /tmp/https_parsed_datamash.txt
+    echo "min: avg: max: stddev:" > /tmp/https_parsed_datamash.txt
+    echo "$parsed_min $parsed_mean $parsed_max $parsed_stddev" >> /tmp/https_parsed_datamash.txt
     cat /tmp/https_parsed_datamash.txt | column -t
     echo "-------------------------------------------------------------------------------------------"
     echo "h2load result summary end"
