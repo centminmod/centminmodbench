@@ -302,14 +302,186 @@ parsed() {
     echo
     echo "req-time-min req-time-avg req-time-max"
     cat /tmp/latency-requests-parsed.txt
+
+    minreqtimeparsed_sum=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 sum 1)
+    minreqtimeparsed_sum=$(printf "%.0f\n" $minreqtimeparsed_sum)
+    minreqtimeparsed_count=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 count 1)
+    minreqtimeparsed_min=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 min 1)
+    minreqtimeparsed_min=$(printf "%.3f\n" $minreqtimeparsed_min)
+    minreqtimeparsed_max=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 max 1)
+    minreqtimeparsed_max=$(printf "%.3f\n" $minreqtimeparsed_max)
+    minreqtimeparsed_mean=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 mean 1)
+    minreqtimeparsed_mean=$(printf "%.3f\n" $minreqtimeparsed_mean)
+    minreqtimeparsed_stddev=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 sstdev 1)
+    minreqtimeparsed_stddev=$(printf "%.3f\n" $minreqtimeparsed_stddev)
+    minreqtimeparsed_pca=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 perc:95 1)
+    minreqtimeparsed_pca=$(printf "%.3f\n" $minreqtimeparsed_pca)
+    minreqtimeparsed_pcb=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 perc:99 1)
+    minreqtimeparsed_pcb=$(printf "%.3f\n" $minreqtimeparsed_pcb)
+
+    avgreqtimeparsed_sum=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 sum 1)
+    avgreqtimeparsed_sum=$(printf "%.0f\n" $avgreqtimeparsed_sum)
+    avgreqtimeparsed_count=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 count 1)
+    avgreqtimeparsed_min=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 min 1)
+    avgreqtimeparsed_min=$(printf "%.3f\n" $avgreqtimeparsed_min)
+    avgreqtimeparsed_max=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 max 1)
+    avgreqtimeparsed_max=$(printf "%.3f\n" $avgreqtimeparsed_max)
+    avgreqtimeparsed_mean=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 mean 1)
+    avgreqtimeparsed_mean=$(printf "%.3f\n" $avgreqtimeparsed_mean)
+    avgreqtimeparsed_stddev=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 sstdev 1)
+    avgreqtimeparsed_stddev=$(printf "%.3f\n" $avgreqtimeparsed_stddev)
+    avgreqtimeparsed_pca=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 perc:95 1)
+    avgreqtimeparsed_pca=$(printf "%.3f\n" $avgreqtimeparsed_pca)
+    avgreqtimeparsed_pcb=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 perc:99 1)
+    avgreqtimeparsed_pcb=$(printf "%.3f\n" $avgreqtimeparsed_pcb)
   
+    maxreqtimeparsed_sum=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 sum 1)
+    maxreqtimeparsed_sum=$(printf "%.0f\n" $maxreqtimeparsed_sum)
+    maxreqtimeparsed_count=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 count 1)
+    maxreqtimeparsed_min=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 min 1)
+    maxreqtimeparsed_min=$(printf "%.3f\n" $maxreqtimeparsed_min)
+    maxreqtimeparsed_max=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 max 1)
+    maxreqtimeparsed_max=$(printf "%.3f\n" $maxreqtimeparsed_max)
+    maxreqtimeparsed_mean=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 mean 1)
+    maxreqtimeparsed_mean=$(printf "%.3f\n" $maxreqtimeparsed_mean)
+    maxreqtimeparsed_stddev=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 sstdev 1)
+    maxreqtimeparsed_stddev=$(printf "%.3f\n" $maxreqtimeparsed_stddev)
+    maxreqtimeparsed_pca=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 perc:95 1)
+    maxreqtimeparsed_pca=$(printf "%.3f\n" $maxreqtimeparsed_pca)
+    maxreqtimeparsed_pcb=$(cat /tmp/latency-requests-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 perc:99 1)
+    maxreqtimeparsed_pcb=$(printf "%.3f\n" $maxreqtimeparsed_pcb)
+    
+    echo
+    echo "-------------------------------------------------------------------------------------------"
+    echo "h2load requests latency result summary"
+    echo "min: avg: max: stddev: perc99-min: perc99-avg: perc99-max:" > /tmp/latency-requests-parsed_datamash.txt
+    echo "$minreqtimeparsed_mean $avgreqtimeparsed_mean $maxreqtimeparsed_mean $avgreqtimeparsed_stddev $minreqtimeparsed_pcb $avgreqtimeparsed_pcb $maxreqtimeparsed_pcb" >> /tmp/latency-requests-parsed_datamash.txt
+    cat /tmp/latency-requests-parsed_datamash.txt | column -t
+    echo "-------------------------------------------------------------------------------------------"
+    echo "h2load requests latency result summary end"
+
     echo
     echo "connect-time-min connect-time-avg connect-time-max"
     cat /tmp/latency-connect-parsed.txt
+
+    minconntimeparsed_sum=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 sum 1)
+    minconntimeparsed_sum=$(printf "%.0f\n" $minconntimeparsed_sum)
+    minconntimeparsed_count=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 count 1)
+    minconntimeparsed_min=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 min 1)
+    minconntimeparsed_min=$(printf "%.3f\n" $minconntimeparsed_min)
+    minconntimeparsed_max=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 max 1)
+    minconntimeparsed_max=$(printf "%.3f\n" $minconntimeparsed_max)
+    minconntimeparsed_mean=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 mean 1)
+    minconntimeparsed_mean=$(printf "%.3f\n" $minconntimeparsed_mean)
+    minconntimeparsed_stddev=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 sstdev 1)
+    minconntimeparsed_stddev=$(printf "%.3f\n" $minconntimeparsed_stddev)
+    minconntimeparsed_pca=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 perc:95 1)
+    minconntimeparsed_pca=$(printf "%.3f\n" $minconntimeparsed_pca)
+    minconntimeparsed_pcb=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 perc:99 1)
+    minconntimeparsed_pcb=$(printf "%.3f\n" $minconntimeparsed_pcb)
+
+    avgconntimeparsed_sum=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 sum 1)
+    avgconntimeparsed_sum=$(printf "%.0f\n" $avgconntimeparsed_sum)
+    avgconntimeparsed_count=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 count 1)
+    avgconntimeparsed_min=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 min 1)
+    avgconntimeparsed_min=$(printf "%.3f\n" $avgconntimeparsed_min)
+    avgconntimeparsed_max=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 max 1)
+    avgconntimeparsed_max=$(printf "%.3f\n" $avgconntimeparsed_max)
+    avgconntimeparsed_mean=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 mean 1)
+    avgconntimeparsed_mean=$(printf "%.3f\n" $avgconntimeparsed_mean)
+    avgconntimeparsed_stddev=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 sstdev 1)
+    avgconntimeparsed_stddev=$(printf "%.3f\n" $avgconntimeparsed_stddev)
+    avgconntimeparsed_pca=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 perc:95 1)
+    avgconntimeparsed_pca=$(printf "%.3f\n" $avgconntimeparsed_pca)
+    avgconntimeparsed_pcb=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 perc:99 1)
+    avgconntimeparsed_pcb=$(printf "%.3f\n" $avgconntimeparsed_pcb)
+  
+    maxconntimeparsed_sum=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 sum 1)
+    maxconntimeparsed_sum=$(printf "%.0f\n" $maxconntimeparsed_sum)
+    maxconntimeparsed_count=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 count 1)
+    maxconntimeparsed_min=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 min 1)
+    maxconntimeparsed_min=$(printf "%.3f\n" $maxconntimeparsed_min)
+    maxconntimeparsed_max=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 max 1)
+    maxconntimeparsed_max=$(printf "%.3f\n" $maxconntimeparsed_max)
+    maxconntimeparsed_mean=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 mean 1)
+    maxconntimeparsed_mean=$(printf "%.3f\n" $maxconntimeparsed_mean)
+    maxconntimeparsed_stddev=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 sstdev 1)
+    maxconntimeparsed_stddev=$(printf "%.3f\n" $maxconntimeparsed_stddev)
+    maxconntimeparsed_pca=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 perc:95 1)
+    maxconntimeparsed_pca=$(printf "%.3f\n" $maxconntimeparsed_pca)
+    maxconntimeparsed_pcb=$(cat /tmp/latency-connect-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 perc:99 1)
+    maxconntimeparsed_pcb=$(printf "%.3f\n" $maxconntimeparsed_pcb)
+
+    echo
+    echo "-------------------------------------------------------------------------------------------"
+    echo "h2load connect latency result summary"
+    echo "min: avg: max: stddev: perc99-min: perc99-avg: perc99-max:" > /tmp/latency-connect-parsed_datamash.txt
+    echo "$minconntimeparsed_mean $avgconntimeparsed_mean $maxconntimeparsed_mean $avgconntimeparsed_stddev $minconntimeparsed_pcb $avgconntimeparsed_pcb $maxconntimeparsed_pcb" >> /tmp/latency-connect-parsed_datamash.txt
+    cat /tmp/latency-connect-parsed_datamash.txt | column -t
+    echo "-------------------------------------------------------------------------------------------"
+    echo "h2load connect latency result summary end"
   
     echo
     echo "ttfb-time-min ttfb-time-avg ttfb-time-max"
-    cat /tmp/latency-connect-parsed.txt
+    cat /tmp/latency-ttfb-parsed.txt
+
+    minttfbtimeparsed_sum=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 sum 1)
+    minttfbtimeparsed_sum=$(printf "%.0f\n" $minttfbtimeparsed_sum)
+    minttfbtimeparsed_count=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 count 1)
+    minttfbtimeparsed_min=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 min 1)
+    minttfbtimeparsed_min=$(printf "%.3f\n" $minttfbtimeparsed_min)
+    minttfbtimeparsed_max=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 max 1)
+    minttfbtimeparsed_max=$(printf "%.3f\n" $minttfbtimeparsed_max)
+    minttfbtimeparsed_mean=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 mean 1)
+    minttfbtimeparsed_mean=$(printf "%.3f\n" $minttfbtimeparsed_mean)
+    minttfbtimeparsed_stddev=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 sstdev 1)
+    minttfbtimeparsed_stddev=$(printf "%.3f\n" $minttfbtimeparsed_stddev)
+    minttfbtimeparsed_pca=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 perc:95 1)
+    minttfbtimeparsed_pca=$(printf "%.3f\n" $minttfbtimeparsed_pca)
+    minttfbtimeparsed_pcb=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $1}' | datamash --no-strict --filler 0 perc:99 1)
+    minttfbtimeparsed_pcb=$(printf "%.3f\n" $minttfbtimeparsed_pcb)
+
+    avgttfbtimeparsed_sum=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 sum 1)
+    avgttfbtimeparsed_sum=$(printf "%.0f\n" $avgttfbtimeparsed_sum)
+    avgttfbtimeparsed_count=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 count 1)
+    avgttfbtimeparsed_min=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 min 1)
+    avgttfbtimeparsed_min=$(printf "%.3f\n" $avgttfbtimeparsed_min)
+    avgttfbtimeparsed_max=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 max 1)
+    avgttfbtimeparsed_max=$(printf "%.3f\n" $avgttfbtimeparsed_max)
+    avgttfbtimeparsed_mean=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 mean 1)
+    avgttfbtimeparsed_mean=$(printf "%.3f\n" $avgttfbtimeparsed_mean)
+    avgttfbtimeparsed_stddev=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 sstdev 1)
+    avgttfbtimeparsed_stddev=$(printf "%.3f\n" $avgttfbtimeparsed_stddev)
+    avgttfbtimeparsed_pca=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 perc:95 1)
+    avgttfbtimeparsed_pca=$(printf "%.3f\n" $avgttfbtimeparsed_pca)
+    avgttfbtimeparsed_pcb=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $2}' | datamash --no-strict --filler 0 perc:99 1)
+    avgttfbtimeparsed_pcb=$(printf "%.3f\n" $avgttfbtimeparsed_pcb)
+  
+    maxttfbtimeparsed_sum=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 sum 1)
+    maxttfbtimeparsed_sum=$(printf "%.0f\n" $maxttfbtimeparsed_sum)
+    maxttfbtimeparsed_count=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 count 1)
+    maxttfbtimeparsed_min=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 min 1)
+    maxttfbtimeparsed_min=$(printf "%.3f\n" $maxttfbtimeparsed_min)
+    maxttfbtimeparsed_max=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 max 1)
+    maxttfbtimeparsed_max=$(printf "%.3f\n" $maxttfbtimeparsed_max)
+    maxttfbtimeparsed_mean=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 mean 1)
+    maxttfbtimeparsed_mean=$(printf "%.3f\n" $maxttfbtimeparsed_mean)
+    maxttfbtimeparsed_stddev=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 sstdev 1)
+    maxttfbtimeparsed_stddev=$(printf "%.3f\n" $maxttfbtimeparsed_stddev)
+    maxttfbtimeparsed_pca=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 perc:95 1)
+    maxttfbtimeparsed_pca=$(printf "%.3f\n" $maxttfbtimeparsed_pca)
+    maxttfbtimeparsed_pcb=$(cat /tmp/latency-ttfb-parsed.txt | sed -e 's|ms||g'| sed -e 's|us||g' | awk '{print $3}' | datamash --no-strict --filler 0 perc:99 1)
+    maxttfbtimeparsed_pcb=$(printf "%.3f\n" $maxttfbtimeparsed_pcb)
+
+    echo
+    echo "-------------------------------------------------------------------------------------------"
+    echo "h2load ttfb latency result summary"
+    echo "min: avg: max: stddev: perc99-min: perc99-avg: perc99-max:" > /tmp/latency-ttfb-parsed_datamash.txt
+    echo "$minttfbtimeparsed_mean $avgttfbtimeparsed_mean $maxttfbtimeparsed_mean $avgttfbtimeparsed_stddev $minttfbtimeparsed_pcb $avgttfbtimeparsed_pcb $maxttfbtimeparsed_pcb" >> /tmp/latency-ttfb-parsed_datamash.txt
+    cat /tmp/latency-ttfb-parsed_datamash.txt | column -t
+    echo "-------------------------------------------------------------------------------------------"
+    echo "h2load ttfb latency result summary end"
+
   fi
   rm -rf /tmp/users.txt /tmp/requests.txt /tmp/rps.txt /tmp/encoding.txt /tmp/cipher.txt /tmp/protocol.txt /tmp/started.txt /tmp/succeeded.txt /tmp/https_parsed.txt /tmp/https_parsed_datamash.txt
   rm -rf /tmp/latency-requests-min.txt /tmp/latency-requests-avg.txt /tmp/latency-requests-max.txt
