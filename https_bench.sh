@@ -203,10 +203,10 @@ baseinfo() {
 parsed() {
   # users
   echo
-  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | grep -o '\-c.\{3\}' | grep -v '\-ciph' | sed -e 's|-c||g' > /tmp/users.txt
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | grep -o '\-c.\{3\}' | grep -v '\-ciph' | sed -e 's|-c||g' -e 's| -||g' > /tmp/users.txt
   # requests
   echo
-  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" |  grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | grep -o '\-n.\{4\}' | sed -e 's|-n||g' > /tmp/requests.txt
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" |  grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | grep -o '\-n.\{4\}' | sed -e 's|-n||g' -e 's| ht||g' > /tmp/requests.txt
   # encoding
   echo
   cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | grep -o '\Accept-Encoding: .\{4\}' | sed -e 's|Accept-Encoding: ||g' > /tmp/encoding.txt
