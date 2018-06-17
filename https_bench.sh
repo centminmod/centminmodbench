@@ -354,7 +354,7 @@ parsed() {
     echo
     echo "-------------------------------------------------------------------------------------------"
     echo "h2load requests latency result summary"
-    echo "min: avg: max: stddev: perc99-min: perc99-avg: perc99-max:" > /tmp/latency-requests-parsed_datamash.txt
+    echo "req-min: req-avg: req-max: req-stddev: req-perc99-min: req-perc99-avg: req-perc99-max:" > /tmp/latency-requests-parsed_datamash.txt
     echo "$minreqtimeparsed_mean $avgreqtimeparsed_mean $maxreqtimeparsed_mean $avgreqtimeparsed_stddev $minreqtimeparsed_pcb $avgreqtimeparsed_pcb $maxreqtimeparsed_pcb" >> /tmp/latency-requests-parsed_datamash.txt
     cat /tmp/latency-requests-parsed_datamash.txt | column -t
     echo "-------------------------------------------------------------------------------------------"
@@ -415,7 +415,7 @@ parsed() {
     echo
     echo "-------------------------------------------------------------------------------------------"
     echo "h2load connect latency result summary"
-    echo "min: avg: max: stddev: perc99-min: perc99-avg: perc99-max:" > /tmp/latency-connect-parsed_datamash.txt
+    echo "connect-min: connect-avg: connect-max: connect-stddev: connect-perc99-min: connect-perc99-avg: connect-perc99-max:" > /tmp/latency-connect-parsed_datamash.txt
     echo "$minconntimeparsed_mean $avgconntimeparsed_mean $maxconntimeparsed_mean $avgconntimeparsed_stddev $minconntimeparsed_pcb $avgconntimeparsed_pcb $maxconntimeparsed_pcb" >> /tmp/latency-connect-parsed_datamash.txt
     cat /tmp/latency-connect-parsed_datamash.txt | column -t
     echo "-------------------------------------------------------------------------------------------"
@@ -476,7 +476,7 @@ parsed() {
     echo
     echo "-------------------------------------------------------------------------------------------"
     echo "h2load ttfb latency result summary"
-    echo "min: avg: max: stddev: perc99-min: perc99-avg: perc99-max:" > /tmp/latency-ttfb-parsed_datamash.txt
+    echo "ttfb-min: ttfb-avg: ttfb-max: ttfb-stddev: ttfb-perc99-min: ttfb-perc99-avg: ttfb-perc99-max:" > /tmp/latency-ttfb-parsed_datamash.txt
     echo "$minttfbtimeparsed_mean $avgttfbtimeparsed_mean $maxttfbtimeparsed_mean $avgttfbtimeparsed_stddev $minttfbtimeparsed_pcb $avgttfbtimeparsed_pcb $maxttfbtimeparsed_pcb" >> /tmp/latency-ttfb-parsed_datamash.txt
     cat /tmp/latency-ttfb-parsed_datamash.txt | column -t
     echo "-------------------------------------------------------------------------------------------"
