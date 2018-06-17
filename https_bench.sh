@@ -8,7 +8,7 @@
 # variables
 #############
 DT=$(date +"%d%m%y-%H%M%S")
-VER='0.7'
+VER='0.8'
 SLEEP_TIME='20'
 HTTPS_BENCHCLEANUP='y'
 TESTRUNS='5'
@@ -256,7 +256,8 @@ parsed() {
     parsed_stddev=$(printf "%.3f\n" $parsed_stddev)
     parsed_started=$(cat /tmp/https_parsed.txt | awk '{print $7}' | datamash --no-strict --filler 0 mean 1)
     parsed_succeed=$(cat /tmp/https_parsed.txt | awk '{print $8}' | datamash --no-strict --filler 0 mean 1)
-    parsed_percsuccess=$((($parsed_succeed/$parsed_started)*100))
+    # parsed_percsuccess=$((($parsed_succeed/$parsed_started)*100))
+    parsed_percsuccess=$(echo "scale=2; $parsed_succeed/$parsed_started*100" | bc)
     parsed_percsuccess=$(printf "%.2f\n" $parsed_percsuccess)
     echo
     echo "-------------------------------------------------------------------------------------------"
