@@ -201,12 +201,42 @@ baseinfo() {
 }
 
 parsed() {
+  # latency request
+  echo
+  # min
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|time for request:|time-request:|g' -e 's|time for connect:|time-connect:|g' -e 's|time to 1st byte:|time-ttfb:|g' | grep 'time-request:' | awk '{print $2}' > /tmp/latency-requests-min.txt
+  # avg
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|time for request:|time-request:|g' -e 's|time for connect:|time-connect:|g' -e 's|time to 1st byte:|time-ttfb:|g' | grep 'time-request:' | awk '{print $4}' > /tmp/latency-requests-avg.txt
+  # max
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|time for request:|time-request:|g' -e 's|time for connect:|time-connect:|g' -e 's|time to 1st byte:|time-ttfb:|g' | grep 'time-request:' | awk '{print $3}' > /tmp/latency-requests-max.txt
+  paste -d ' ' /tmp/latency-requests-min.txt /tmp/latency-requests-avg.txt /tmp/latency-requests-max.txt > /tmp/latency-requests-parsed.txt
+
+  # latency connect
+  echo
+  # min
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|time for request:|time-request:|g' -e 's|time for connect:|time-connect:|g' -e 's|time to 1st byte:|time-ttfb:|g' | grep 'time-connect:' | awk '{print $2}' > /tmp/latency-connect-min.txt
+  # avg
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|time for request:|time-request:|g' -e 's|time for connect:|time-connect:|g' -e 's|time to 1st byte:|time-ttfb:|g' | grep 'time-connect:' | awk '{print $4}' > /tmp/latency-connect-avg.txt
+  # max
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|time for request:|time-request:|g' -e 's|time for connect:|time-connect:|g' -e 's|time to 1st byte:|time-ttfb:|g' | grep 'time-connect:' | awk '{print $3}' > /tmp/latency-connect-max.txt
+  paste -d ' ' /tmp/latency-connect-min.txt /tmp/latency-connect-avg.txt /tmp/latency-connect-max.txt > /tmp/latency-connect-parsed.txt
+
+  # latency ttfb
+  echo
+  # min
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|time for request:|time-request:|g' -e 's|time for connect:|time-connect:|g' -e 's|time to 1st byte:|time-ttfb:|g' | grep 'time-ttfb:' | awk '{print $2}' > /tmp/latency-ttfb-min.txt
+  # avg
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|time for request:|time-request:|g' -e 's|time for connect:|time-connect:|g' -e 's|time to 1st byte:|time-ttfb:|g' | grep 'time-ttfb:' | awk '{print $4}' > /tmp/latency-ttfb-avg.txt
+  # max
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|time for request:|time-request:|g' -e 's|time for connect:|time-connect:|g' -e 's|time to 1st byte:|time-ttfb:|g' | grep 'time-ttfb:' | awk '{print $3}' > /tmp/latency-ttfb-max.txt
+  paste -d ' ' /tmp/latency-ttfb-min.txt /tmp/latency-ttfb-avg.txt /tmp/latency-ttfb-max.txt > /tmp/latency-ttfb-parsed.txt
+
   # users
   echo
   cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | grep -o '\-c.\{3\}' | grep -v '\-ciph' | sed -e 's|-c||g' -e 's| -||g' > /tmp/users.txt
   # requests
   echo
-  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" |  grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | grep -o '\-n.\{4\}' | sed -e 's|-n||g' -e 's| ht||g' > /tmp/requests.txt
+  cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" |  grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | grep -o '\-n.\{4\}' | sed -e 's|-n||g' -e 's| ht||g' -e 's| h||g' > /tmp/requests.txt
   # encoding
   echo
   cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | grep -o '\Accept-Encoding: .\{4\}' | sed -e 's|Accept-Encoding: ||g' > /tmp/encoding.txt
@@ -228,6 +258,7 @@ parsed() {
   echo "users requests req/s encoding cipher protocol started succeeded"
   paste -d ' ' /tmp/users.txt /tmp/requests.txt /tmp/rps.txt /tmp/encoding.txt /tmp/cipher.txt /tmp/protocol.txt /tmp/started.txt /tmp/succeeded.txt > /tmp/https_parsed.txt
   cat /tmp/https_parsed.txt
+
   if [[ "$NON_CENTMINMOD" = [yY] ]]; then
     if [[ -f $(which yum) && ! -f /usr/bin/datamash ]]; then
       yum -y -q install datamash
@@ -267,8 +298,24 @@ parsed() {
     cat /tmp/https_parsed_datamash.txt | column -t
     echo "-------------------------------------------------------------------------------------------"
     echo "h2load result summary end"
+
+    echo
+    echo "req-time-min req-time-avg req-time-max"
+    cat /tmp/latency-requests-parsed.txt
+  
+    echo
+    echo "connect-time-min connect-time-avg connect-time-max"
+    cat /tmp/latency-connect-parsed.txt
+  
+    echo
+    echo "ttfb-time-min ttfb-time-avg ttfb-time-max"
+    cat /tmp/latency-connect-parsed.txt
   fi
   rm -rf /tmp/users.txt /tmp/requests.txt /tmp/rps.txt /tmp/encoding.txt /tmp/cipher.txt /tmp/protocol.txt /tmp/started.txt /tmp/succeeded.txt /tmp/https_parsed.txt /tmp/https_parsed_datamash.txt
+  rm -rf /tmp/latency-requests-min.txt /tmp/latency-requests-avg.txt /tmp/latency-requests-max.txt
+  rm -rf /tmp/latency-connect-min.txt /tmp/latency-connect-avg.txt /tmp/latency-connect-max.txt
+  rm -rf /tmp/latency-ttfb-min.txt /tmp/latency-ttfb-avg.txt /tmp/latency-ttfb-max.txt
+  rm -rf /tmp/latency-requests-parsed.txt /tmp/latency-connect-parsed.txt /tmp/latency-connect-parsed.txt
 }
 
 https_benchmark() {
