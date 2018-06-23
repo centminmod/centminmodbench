@@ -8,7 +8,7 @@
 # variables
 #############
 DT=$(date +"%d%m%y-%H%M%S")
-VER='1.0'
+VER='1.1'
 SLEEP_TIME='10'
 HTTPS_BENCHCLEANUP='y'
 TESTRUNS='5'
@@ -259,6 +259,47 @@ parsed() {
   echo "users requests req/s encoding cipher protocol started succeeded"
   paste -d ' ' /tmp/users.txt /tmp/requests.txt /tmp/rps.txt /tmp/encoding.txt /tmp/cipher.txt /tmp/protocol.txt /tmp/started.txt /tmp/succeeded.txt > /tmp/https_parsed.txt
   cat /tmp/https_parsed.txt
+
+   if [[ "$NON_CENTMINMOD" = [nN] ]]; then
+    if [[ -f $(which yum) && ! -f /usr/bin/datamash ]]; then
+      yum -y -q install datamash
+    fi
+    if [[ -f /usr/bin/apt-get && ! -f /usr/bin/datamash ]]; then
+      apt-get -y install datamash
+    fi
+    if [[ -f $(which yum) && ! -f /usr/bin/bc ]]; then
+      yum -y -q install bc
+    fi
+    if [[ -f /usr/bin/apt-get && ! -f /usr/bin/bc ]]; then
+      apt-get -y install bc
+    fi
+    parsed_sum=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 sum 1)
+    parsed_sum=$(printf "%.0f\n" $parsed_sum)
+    parsed_count=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 count 1)
+    parsed_min=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 min 1)
+    parsed_min=$(printf "%.3f\n" $parsed_min)
+    # parsed_avg=$(($parsed_sum/$parsed_count))
+    # parsed_avg=${parsed_avg:-0}
+    parsed_max=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 max 1)
+    parsed_max=$(printf "%.3f\n" $parsed_max)
+    parsed_mean=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 mean 1)
+    parsed_mean=$(printf "%.3f\n" $parsed_mean)
+    parsed_stddev=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 sstdev 1)
+    parsed_stddev=$(printf "%.3f\n" $parsed_stddev)
+    parsed_started=$(cat /tmp/https_parsed.txt | awk '{print $7}' | datamash --no-strict --filler 0 mean 1)
+    parsed_succeed=$(cat /tmp/https_parsed.txt | awk '{print $8}' | datamash --no-strict --filler 0 mean 1)
+    # parsed_percsuccess=$((($parsed_succeed/$parsed_started)*100))
+    parsed_percsuccess=$(echo "scale=2; $parsed_succeed/$parsed_started*100" | bc)
+    parsed_percsuccess=$(printf "%.2f\n" $parsed_percsuccess)
+    echo
+    echo "-------------------------------------------------------------------------------------------"
+    echo "h2load result summary"
+    echo "min: avg: max: stddev: requests-succeeded:" > /tmp/https_parsed_datamash.txt
+    echo "$parsed_min $parsed_mean $parsed_max $parsed_stddev $parsed_percsuccess" >> /tmp/https_parsed_datamash.txt
+    cat /tmp/https_parsed_datamash.txt | column -t
+    echo "-------------------------------------------------------------------------------------------"
+    echo "h2load result summary end"
+  fi
 
   if [[ "$NON_CENTMINMOD" = [yY] ]]; then
     if [[ -f $(which yum) && ! -f /usr/bin/datamash ]]; then
