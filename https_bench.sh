@@ -8,8 +8,8 @@
 # variables
 #############
 DT=$(date +"%d%m%y-%H%M%S")
-VER='0.9'
-SLEEP_TIME='20'
+VER='1.0'
+SLEEP_TIME='10'
 HTTPS_BENCHCLEANUP='y'
 TESTRUNS='5'
 
@@ -88,6 +88,7 @@ fi
 if [[ "$NON_CENTMINMOD" = [yY] ]]; then
   SARSTATS='n'
   HTTPS_BENCHCLEANUP='n'
+  SLEEP_TIME='20'
 fi
 
 stats() {
@@ -552,7 +553,7 @@ if [[ "$NON_CENTMINMOD" = [nN] ]]; then
   cat /usr/local/nginx/conf/ssl_ecc.conf
   
   if [[ ! "$(grep 'ssl_ecc.conf' /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf)" ]]; then
-  sed -i "s|include \/usr\/local\/nginx\/conf\/ssl_include.conf;|\ninclude \/usr\/local\/nginx\/conf\/ssl_include.conf;\ninclude \/usr\/local\/nginx\/conf\/ssl_ecc.conf;|" /usr/local/nginx/conf/conf.d/${vhostname}.  ssl.conf
+  sed -i "s|include \/usr\/local\/nginx\/conf\/ssl_include.conf;|\ninclude \/usr\/local\/nginx\/conf\/ssl_include.conf;\ninclude \/usr\/local\/nginx\/conf\/ssl_ecc.conf;|" /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf
   fi
   ngxrestart >/dev/null 2>&1
 fi # NON_CENTMINMOD = N
@@ -575,27 +576,27 @@ if [[ "$NON_CENTMINMOD" = [nN] ]]; then
   sleep $SLEEP_TIME
   echo "-------------------------------------------------------------------------------------------"
   s
-  nginx_stats
-  sar_stats
-  stats
+  # nginx_stats
+  # sar_stats
+  # stats
   echo "h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname/${htwo_testfile}"
   h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname/${htwo_testfile} | egrep -v 'progress: |starting|spawning'
   ngxrestart >/dev/null 2>&1
   sleep $SLEEP_TIME
   echo "-------------------------------------------------------------------------------------------"
   s
-  nginx_stats
-  sar_stats
-  stats
+  # nginx_stats
+  # sar_stats
+  # stats
   echo "h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname/${htwo_testfile}"
   h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname/${htwo_testfile} | egrep -v 'progress: |starting|spawning'
   ngxrestart >/dev/null 2>&1
   sleep $SLEEP_TIME
   echo "-------------------------------------------------------------------------------------------"
   s
-  nginx_stats
-  sar_stats
-  stats
+  # nginx_stats
+  # sar_stats
+  # stats
   echo "h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname/${htwo_testfile}"
   h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTA_USERS} -n${TESTA_REQUESTS} https://$vhostname/${htwo_testfile} | egrep -v 'progress: |starting|spawning'
   ngxrestart >/dev/null 2>&1
@@ -626,36 +627,36 @@ fi
   fi
 if [[ "$NON_CENTMINMOD" = [nN] ]]; then
   s
-  nginx_stats
-  sar_stats
-  stats
+  # nginx_stats
+  # sar_stats
+  # stats
   echo "h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname/${htwo_testfile}"
   h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-RSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname/${htwo_testfile} | egrep -v 'progress: |starting|spawning'
   ngxrestart >/dev/null 2>&1
   sleep $SLEEP_TIME
   echo "-------------------------------------------------------------------------------------------"
   s
-  nginx_stats
-  sar_stats
-  stats
+  # nginx_stats
+  # sar_stats
+  # stats
   echo "h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname/${htwo_testfile}"
   h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-RSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname/${htwo_testfile} | egrep -v 'progress: |starting|spawning'
   ngxrestart >/dev/null 2>&1
   sleep $SLEEP_TIME
   echo "-------------------------------------------------------------------------------------------"
   s
-  nginx_stats
-  sar_stats
-  stats
+  # nginx_stats
+  # sar_stats
+  # stats
   echo "h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname/${htwo_testfile}"
   h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES128-GCM-SHA256 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname/${htwo_testfile} | egrep -v 'progress: |starting|spawning'
   ngxrestart >/dev/null 2>&1
   sleep $SLEEP_TIME
   echo "-------------------------------------------------------------------------------------------"
   s
-  nginx_stats
-  sar_stats
-  stats
+  # nginx_stats
+  # sar_stats
+  # stats
   echo "h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname/${htwo_testfile}"
   h2load -t${HTWOLOAD_THREADS} --ciphers=ECDHE-ECDSA-AES256-GCM-SHA384 -H 'Accept-Encoding: gzip' -c${TESTB_USERS} -n${TESTB_REQUESTS} https://$vhostname/${htwo_testfile} | egrep -v 'progress: |starting|spawning'
   ngxrestart >/dev/null 2>&1
