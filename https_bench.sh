@@ -71,6 +71,12 @@ return
 #############
 mkdir -p "$CENTMINLOGDIR"
 
+if [[ "$NON_CENTMINMOD" = [yY] ]]; then
+  SARSTATS='n'
+  HTTPS_BENCHCLEANUP='n'
+  SLEEP_TIME='20'
+fi
+
 if [ -f https_bench.ini ]; then
   . https_bench.ini
 fi
@@ -83,12 +89,6 @@ if [[ "$NON_CENTMINMOD" = [nN] ]]; then
     echo
     exit
   fi
-fi
-
-if [[ "$NON_CENTMINMOD" = [yY] ]]; then
-  SARSTATS='n'
-  HTTPS_BENCHCLEANUP='n'
-  SLEEP_TIME='20'
 fi
 
 stats() {
