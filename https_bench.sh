@@ -8,7 +8,7 @@
 # variables
 #############
 DT=$(date +"%d%m%y-%H%M%S")
-VER='1.1'
+VER='1.2'
 SLEEP_TIME='10'
 HTTPS_BENCHCLEANUP='y'
 TESTRUNS='5'
@@ -27,7 +27,7 @@ CMEBMAIL_ADDR=''
 CENTMINLOGDIR='/root/centminlogs'
 
 SHOWSTATS='n'
-SARSTATS='y'
+SARSTATS='n'
 NGINX_STATS='n'
 NON_CENTMINMOD='n'
 NON_CENTMINMODTESTA='n'
@@ -569,34 +569,36 @@ if [[ "$NON_CENTMINMOD" = [nN] ]]; then
   s
   fi
   
-  echo "setup ECDSA SSL self-signed certificate"
-  s
-  SELFSIGNEDSSL_C='US'
-  SELFSIGNEDSSL_ST='California'
-  SELFSIGNEDSSL_L='Los Angeles'
-  SELFSIGNEDSSL_O='HTTPS TEST ORG'
-  SELFSIGNEDSSL_OU='HTTPS TEST ORG UNIT'
-  
-  cd /usr/local/nginx/conf/ssl/${vhostname}
-  curve=prime256v1
-  echo "openssl ecparam -out ${vhostname}-ecc.key -name $curve -genkey"
-  openssl ecparam -out ${vhostname}-ecc.key -name $curve -genkey
-  echo "openssl req -new -sha256 -key ${vhostname}-ecc.key -nodes -out ${vhostname}-ecc.csr -subj \"/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${vhostname}\""
-  openssl req -new -sha256 -key ${vhostname}-ecc.key -nodes -out ${vhostname}-ecc.csr -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${vhostname}"
-  echo "openssl x509 -req -days 36500 -sha256 -in ${vhostname}-ecc.csr -signkey ${vhostname}-ecc.key -out ${vhostname}-ecc.crt"
-  openssl x509 -req -days 36500 -sha256 -in ${vhostname}-ecc.csr -signkey ${vhostname}-ecc.key -out ${vhostname}-ecc.crt
-  s
-  ls -lah /usr/local/nginx/conf/ssl/${vhostname}
-  s
-  
-  echo "  ssl_certificate      /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}-ecc.crt;
-    ssl_certificate_key  /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}-ecc.key;" > /usr/local/nginx/conf/ssl_ecc.conf
-  cat /usr/local/nginx/conf/ssl_ecc.conf
-  
-  if [[ ! "$(grep 'ssl_ecc.conf' /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf)" ]]; then
-  sed -i "s|include \/usr\/local\/nginx\/conf\/ssl_include.conf;|\ninclude \/usr\/local\/nginx\/conf\/ssl_include.conf;\ninclude \/usr\/local\/nginx\/conf\/ssl_ecc.conf;|" /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf
+  if [ ! -f "/usr/local/nginx/conf/ssl/${vhostname}/${vhostname}-ecc.crt" ]; then
+    echo "setup ECDSA SSL self-signed certificate"
+    s
+    SELFSIGNEDSSL_C='US'
+    SELFSIGNEDSSL_ST='California'
+    SELFSIGNEDSSL_L='Los Angeles'
+    SELFSIGNEDSSL_O='HTTPS TEST ORG'
+    SELFSIGNEDSSL_OU='HTTPS TEST ORG UNIT'
+    
+    cd /usr/local/nginx/conf/ssl/${vhostname}
+    curve=prime256v1
+    echo "openssl ecparam -out ${vhostname}-ecc.key -name $curve -genkey"
+    openssl ecparam -out ${vhostname}-ecc.key -name $curve -genkey
+    echo "openssl req -new -sha256 -key ${vhostname}-ecc.key -nodes -out ${vhostname}-ecc.csr -subj \"/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${vhostname}\""
+    openssl req -new -sha256 -key ${vhostname}-ecc.key -nodes -out ${vhostname}-ecc.csr -subj "/C=${SELFSIGNEDSSL_C}/ST=${SELFSIGNEDSSL_ST}/L=${SELFSIGNEDSSL_L}/O=${SELFSIGNEDSSL_O}/OU=${SELFSIGNEDSSL_OU}/CN=${vhostname}"
+    echo "openssl x509 -req -days 36500 -sha256 -in ${vhostname}-ecc.csr -signkey ${vhostname}-ecc.key -out ${vhostname}-ecc.crt"
+    openssl x509 -req -days 36500 -sha256 -in ${vhostname}-ecc.csr -signkey ${vhostname}-ecc.key -out ${vhostname}-ecc.crt
+    s
+    ls -lah /usr/local/nginx/conf/ssl/${vhostname}
+    s
+    
+    echo "  ssl_certificate      /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}-ecc.crt;
+      ssl_certificate_key  /usr/local/nginx/conf/ssl/${vhostname}/${vhostname}-ecc.key;" > /usr/local/nginx/conf/ssl_ecc.conf
+    cat /usr/local/nginx/conf/ssl_ecc.conf
+    
+    if [[ ! "$(grep 'ssl_ecc.conf' /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf)" ]]; then
+    sed -i "s|include \/usr\/local\/nginx\/conf\/ssl_include.conf;|\ninclude \/usr\/local\/nginx\/conf\/ssl_include.conf;\ninclude \/usr\/local\/nginx\/conf\/ssl_ecc.conf;|" /usr/local/nginx/conf/conf.d/${vhostname}.ssl.conf
+    fi
+    ngxrestart >/dev/null 2>&1
   fi
-  ngxrestart >/dev/null 2>&1
 fi # NON_CENTMINMOD = N
 
 {
@@ -848,7 +850,7 @@ if [[ "$NGINX_STATS" = [yY] && -d "/home/nginx/domains/${vhostname}/log" ]]; the
   kill $getngxstat_pid
   wait $getngxstat_pid 2>/dev/null
 fi
-if [[ "$NON_CENTMINMOD" = [nN] ]]; then
+if [[ "$NON_CENTMINMOD" = [nN] && "$SARSTATS" = [yY] ]]; then
   s
   echo "-------------------------------------------------------------------------------------------"
   echo "h2load load statistics"
