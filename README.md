@@ -207,6 +207,10 @@ To disable auto removal routine, edit `/root/tools/https_bench.sh` variable `HTT
 Setting `HTTPS_BENCHCLEANUP='n'` will disable auto removal of test `http2.domain.com` nginx vhost site leaving it available after `https_bench.sh` run for manual testing
 then run it `https_bench.sh` once to create test `http2.domain.com` site. Note `http2.domain.com` is setup with self-signed untrusted SSL certificates.
 
+If you also want to disable sar stats logging
+
+    echo "SARSTATS='n'" >> /root/tools/https_bench.ini
+
 #### Example Nginx HTTP/2 HTTPS h2load benchmarks
 
 Intel Core i7 4790K CentOS 7.5 64bit with Centmin Mod Nginx 1.13.12 compiled with GCC 8.1.0 Compiler
