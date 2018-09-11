@@ -10,6 +10,7 @@
 # 4) setup & benchmark nginx http/2 https vhost
 # 5) redis benchmarks
 # 6) sysbench benchmarks
+# 7) geekbench
 ######################################################
 # variables
 #############
@@ -71,13 +72,14 @@ benchninstall() {
 
 s
 div
-cecho "6 tasks will be performaned which can take up to 90-120 mins" $boldyellow
+cecho "7 tasks will be performaned which can take up to 100-150 mins" $boldyellow
 cecho "1). install latest Centmin Mod Beta LEMP stack ~15-30 mins" $boldyellow
 cecho "2). installs & runs centminmodbench.sh (UnixBench enabled) ~30-60 mins" $boldyellow
 cecho "3). install & run zcat/pzcat benchmarks" $boldyellow
 cecho "4). setup & benchmark nginx http/2 https vhost" $boldyellow
 cecho "5). redis benchmarks" $boldyellow
 cecho "6). sysbench benchmarks" $boldyellow
+cecho "7). geekbench" $boldyellow
 div
 s
 
@@ -228,6 +230,27 @@ echo "/root/tools/sysbench.sh mysqlwriteonly-new"
 echo
 echo "/root/tools/sysbench.sh mysqlpointselect-new"
 /root/tools/sysbench.sh mysqlpointselect-new
+
+s
+div
+cecho "geekbench" $boldyellow
+div
+s
+cd /svr-setup
+wget http://cdn.geekbench.com/Geekbench-4.2.3-Linux.tar.gz
+tar xvzf Geekbench-4.2.3-Linux.tar.gz
+cd Geekbench-4.2.3-Linux
+./geekbench4 2>&1 | tee geektest.log
+geekurl=$(cat geektest.log | awk -F ' ' '/https:\/\/browser.geekbench.com\/v4\/cpu\// {print $1}' | head -n1)
+curl -4s $geekurl > geekbench-raw.txt
+cat geekbench-raw.txt | awk '/<th class/{print $0}' | grep -oP "(?<=<th class='name'>)[^<]*" | awk 'NR>2' | sed -e 's| |-|g' > name.txt
+cat geekbench-raw.txt | awk '/<th class/{print $0}' | grep -oP "(?<=<th class='score'>)[^<]*" | awk 'NR>2' > score.txt
+paste -d ' ' name.txt score.txt | column -t > geekbench-results.txt
+sed -i 's/Multi-Core-Score/\nMulti-Core-Score/' geekbench-results.txt
+echo
+echo $geekurl
+echo
+cat geekbench-results.txt
 
 s
 echo "benchmark run complete"
