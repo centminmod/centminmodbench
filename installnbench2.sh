@@ -204,6 +204,9 @@ echo
 echo "/root/tools/sysbench.sh file"
 /root/tools/sysbench.sh file
 echo
+echo "/root/tools/sysbench.sh file-fsync"
+/root/tools/sysbench.sh file-fsync
+echo
 echo "/root/tools/sysbench.sh mysql"
 /root/tools/sysbench.sh mysql
 echo
