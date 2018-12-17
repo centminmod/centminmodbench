@@ -141,6 +141,38 @@ To update script
 
     wget -O /root/tools/installnbench2.sh https://github.com/centminmod/centminmodbench/raw/master/installnbench2.sh
 
+Benchmark Extended Only
+===============
+
+If you want to automate on existing Centmin Mod installs both centminmodbench.sh run + extended Nginx HTTP/2 HTTPS RSA 2048 bit + ECDSA 256bit SSL certificated based [h2load](https://nghttp2.org/documentation/h2load-howto.html) tests, zcat/pzcat log processing tests and redis benchmark tests, you can use the below commands. The Nginx HTTP/2 HTTPS h2load tests will test 4 sets of SSL Ciphers for `ECDHE-RSA-AES128-GCM-SHA256`, `ECDHE-RSA-AES256-GCM-SHA384`, `ECDHE-ECDSA-AES128-GCM-SHA256` and `ECDHE-ECDSA-AES256-GCM-SHA384`. This test may take over 60-120 minutes to complete depending on your server hardware specs i.e. number of cpu cores, cpu clock speed, memory bandwidth speed, disk I/O performance and network connectivity speed etc. As such test should be run in screen session so it survives SSH session disconnection. All of the scripts output and benchmark results will be logged into a file at `/root/centminlogs/centminmod-fullbench-all-${DT}.log` where `${DT}` is date timestamp.
+
+    mkdir -p /root/tools
+    cd /root/tools
+    wget -O fullbench.sh https://github.com/centminmod/centminmodbench/raw/master/fullbench.sh
+    chmod +x fullbench.sh
+    yum -y install screen
+    screen -dmS fullbench
+    screen -r fullbench
+    time /root/tools/fullbench.sh
+
+If your SSH session drops out, the script is still running via the screen session called bench. You can use this command to view available sessions:
+
+     screen -ls
+
+Sample output
+
+    There is a screen on:
+            2136.fullbench      (Detached)
+    1 Socket in /var/run/screen/S-root.
+
+To reattach the session named bench to continue with the benchmark or find the completed benchmark output, type:
+
+    screen -r fullbench
+
+To update script
+
+    wget -O /root/tools/fullbench.sh https://github.com/centminmod/centminmodbench/raw/master/fullbench.sh
+
 Nginx HTTP/2 HTTPS h2load Benchmarks
 ===============
 
