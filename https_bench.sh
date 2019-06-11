@@ -8,7 +8,7 @@
 # variables
 #############
 DT=$(date +"%d%m%y-%H%M%S")
-VER='1.2'
+VER='1.3'
 SLEEP_TIME='10'
 HTTPS_BENCHCLEANUP='y'
 TESTRUNS='5'
@@ -241,6 +241,8 @@ parsed() {
   # encoding
   echo
   cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -v 'Process Request Failure:' | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | grep -o '\Accept-Encoding: .\{4\}' | sed -e 's|Accept-Encoding: ||g' > /tmp/encoding.txt
+    # remove unwanted characters
+  sed -i "s|'||g" /tmp/encoding.txt
   # started
   echo
   cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -v 'Process Request Failure:' | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | awk -F ', ' '/requests: / {print $2}' | sed -e 's| started||g' > /tmp/started.txt
