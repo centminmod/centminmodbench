@@ -21,7 +21,7 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.9.8
+VER=0.9.9
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
@@ -936,7 +936,7 @@ phpi() {
 }
 
 changedir() {
-	if [[ ! -d "${DIR_TMP}/php-${PHPVER}" ]]; then
+	if [ ! -d "${DIR_TMP}/php-${PHPVER}" ]; then
 		pushd "${DIR_TMP}"
 		tar xzf php-${PHPVER}.tar.gz
 		popd
@@ -987,10 +987,7 @@ fmicrobench() {
 	cecho "-------------------------------------------" $boldgreen
 	
 	changedir
-	if [[" -d ch $PHPMICROBENCHLOG" ]]; then
-		tar xzf php-5.6.40.tar.gz
-	fi
-	tou"ch $PHPMICROBENCHLOG"
+	touch "$PHPMICROBENCHLOG"
 	echo -e "\n$(date)" >> $PHPMICROBENCHLOG
 	for ((i = 0 ; i < $RUNS ; i++)); do
 		{
