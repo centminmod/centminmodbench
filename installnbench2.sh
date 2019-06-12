@@ -60,6 +60,10 @@ if [ -f centminmodbench.ini ]; then
   . centminmodbench.ini
 fi
 
+if [ ! -d "$CENTMINLOGDIR" ]; then
+  mkdir -p $CENTMINLOGDIR
+fi
+
 div() {
 	cecho "----------------------------------------------" $boldgreen
 }
