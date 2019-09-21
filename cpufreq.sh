@@ -8,6 +8,8 @@ cpus_seq=$((cpus-1))
 cpumodelname=$(lscpu | awk -F ': ' '/Model name/ {print $2}' | sed -e 's|(R)||g' | xargs);
 cpumodellabel=$(echo $cpumodelname | sed -e 's| |-|g');
 dt=$(date +"%d%m%y-%H%M%S")
+turbostat_enable='n'
+cpupower_enable='y'
 
 if [ ! -f /usr/bin/gnuplot ]; then
   yum -q -y install gnuplot
@@ -27,9 +29,13 @@ fi
 
 getcpufreq() {
 if [ ! -d $logdir ]; then mkdir -p $logdir; fi
-if [ -f /usr/bin/cpupower ]; then
-/usr/bin/cpupower monitor -m "Mperf" -i 1 | egrep -v 'Mperf|CPU' | cut -d\| -f1,4 | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; fflush(); }' > "${logdir}/log-${dt}.log"
-for cid in $(seq 0 $cpus_seq); do grep " ${cid}|" "${logdir}/log-${dt}.log" >> "${logdir}/${cid}.log"; done
+if [[ "$cpupower_enable" = [yY] && -f /usr/bin/cpupower ]]; then
+  /usr/bin/cpupower monitor -m "Mperf" -i 1 | egrep -v 'Mperf|CPU' | cut -d\| -f1,4 | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; fflush(); }' > "${logdir}/log-${dt}.log"
+  for cid in $(seq 0 $cpus_seq); do grep " ${cid}|" "${logdir}/log-${dt}.log" >> "${logdir}/${cid}.log"; done
+fi
+if [[ "$turbostat_enable" = [yY] && -f /usr/bin/turbostat ]]; then
+  /usr/bin/turbostat -n1 -i1 | egrep -v 'CPU|\-'| awk '{print $2"|", $5}' | column -t | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; fflush(); }' > "${logdir}/log-${dt}.log"
+  for cid in $(seq 0 $cpus_seq); do grep " ${cid}|" "${logdir}/log-${dt}.log" >> "${logdir}/${cid}.log"; done
 fi
 ls -lahrt "${logdir}" | egrep -v 'log-|.csv|datamash'
 }
