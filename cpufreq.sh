@@ -18,6 +18,12 @@ fi
 if [ ! -d /usr/include/pango-1.0 ]; then
   yum -q -y install pango-devel
 fi
+if [ ! -f /usr/bin/datamash ]; then
+  if [ -z "$(rpm -qa epel-release | grep -o epel)" ]; then
+    yum -q -y install epel-release
+  fi
+  yum -q -y install datamash
+fi
 
 getcpufreq() {
 if [ ! -d $logdir ]; then mkdir -p $logdir; fi
@@ -25,7 +31,7 @@ if [ -f /usr/bin/cpupower ]; then
 /usr/bin/cpupower monitor -m "Mperf" -i 1 | egrep -v 'Mperf|CPU' | cut -d\| -f1,4 | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; fflush(); }' > "${logdir}/log-${dt}.log"
 for cid in $(seq 0 $cpus_seq); do grep " ${cid}|" "${logdir}/log-${dt}.log" >> "${logdir}/${cid}.log"; done
 fi
-ls -lahrt "${logdir}" | egrep -v 'log-|.csv'
+ls -lahrt "${logdir}" | egrep -v 'log-|.csv|datamash'
 }
 
 clear() {
@@ -33,20 +39,57 @@ clear() {
 }
 
 csv_parse() {
-  for cid in $(seq 0 $cpus_seq); do 
+  for cid in $(seq 0 $cpus_seq); do
     awk '{print $1,$2,$4}'  "${logdir}/${cid}.log" >> "${logdir}/${cid}.csv"
+  done
+}
+
+csv_stats() {
+  datamash_dt=$(date +"%d%m%y-%H%M%S")
+  for cid in $(seq 0 $cpus_seq); do
+    parsed_min=$(awk '{print $4}' "${logdir}/${cid}.log" | datamash --no-strict --filler 0 min 1)
+    parsed_min=$(printf "%.0f\n" $parsed_min)
+    parsed_max=$(awk '{print $4}' "${logdir}/${cid}.log" | datamash --no-strict --filler 0 max 1)
+    parsed_max=$(printf "%.0f\n" $parsed_max)
+    parsed_mean=$(awk '{print $4}' "${logdir}/${cid}.log" | datamash --no-strict -R 1 --filler 0 mean 1)
+    parsed_mean=$(printf "%.0f\n" $parsed_mean)
+    echo "cpu ${cid} min frequency: $parsed_min" >> "${logdir}/datamash-${cid}-min-${datamash_dt}.log"
+    echo "cpu ${cid} avg frequency: $parsed_mean" >> "${logdir}/datamash-${cid}-avg-${datamash_dt}.log"
+    echo "cpu ${cid} max frequency: $parsed_max" >> "${logdir}/datamash-${cid}-max-${datamash_dt}.log"
+    echo "cat ${logdir}/datamash-${cid}-min-${datamash_dt}.log"
+    cat "${logdir}/datamash-${cid}-min-${datamash_dt}.log"
+    echo "cat ${logdir}/datamash-${cid}-avg-${datamash_dt}.log"
+    cat "${logdir}/datamash-${cid}-avg-${datamash_dt}.log"
+    echo "cat ${logdir}/datamash-${cid}-max-${datamash_dt}.log"
+    cat "${logdir}/datamash-${cid}-max-${datamash_dt}.log"
   done
 }
 
 generate_gnuplot() {
   cpuid=$1
+  fmin=$2
+  favg=$3
+  fmax=$4
+  fmin_count=$5
+  favg_count=$6
+  fmax_count=$7
+
+  # dynamic set xtic value according to number data points collected
+  # if less than 300 data points collected then use 1 min xtics
+  # if more than 300 data points collected then use 5 min xtics
+  if [ "$fmin_count" -lt 300 ]; then
+    xtics_set=1
+  else
+    xtics_set=5
+  fi
+
 echo '#!/usr/bin/gnuplot' > cpufreq-${cpuid}.gplot
 echo "reset
 
 # Terminal config
 set terminal pngcairo size 900,600 enhanced font 'Verdana,8'
 set output '${logdir}/cpufreq-${cpuid}.png'
-set title \"$cpumodelname CPU ${cpuid} Frequency by George Liu (centminmod.com)\"
+set title \"$cpumodelname CPU ${cpuid} Frequency\nby George Liu (centminmod.com)\n\nCPU ${cpuid} Frequency (Mhz) Min: $fmin Avg: $favg Max: $fmax\"
 # set key bmargin
 set key left top
 
@@ -63,13 +106,18 @@ set autoscale xy
 set xdata time
 set timefmt \"%Y-%m-%d %H:%M:%S\"
 set format x \"%H:%M\"
-set xtics 5*60
+set xtics ${xtics_set}*60
 set xlabel \"Time\"
 set ylabel \"CPU ${cpuid} Frequency\"
 
 # Background grid
 set style line 11 lc rgb '#aeb6bf' lt 0 lw 2
 set grid back ls 11
+
+# Custom min, avg, max frequency values
+# set label 'Min: $fmin' at 0.5,-0.35
+# set label 'Avg: $favg' at 0.5,-0.25
+# set label 'Max: $fmax' at 0.5,-0.15
 
 # Statistics
 # A_min, A_max, A_median
@@ -91,7 +139,14 @@ plot_charts() {
   for cid in $(seq 0 $cpus_seq); do
     echo
     echo "generating chart for cpu $cid frequency"
-    generate_gnuplot "$cid"
+    # calculate cpu frequency min, avg, max
+    cpumin=$(awk '{print $5}' ${logdir}/datamash-${cid}-min-${datamash_dt}.log)
+    cpumin_count=$(wc -l < ${logdir}/datamash-${cid}-min-${datamash_dt}.log)
+    cpuavg=$(awk '{print $5}' ${logdir}/datamash-${cid}-avg-${datamash_dt}.log)
+    cpuavg_count=$(wc -l < ${logdir}/datamash-${cid}-avg-${datamash_dt}.log)
+    cpumax=$(awk '{print $5}' ${logdir}/datamash-${cid}-max-${datamash_dt}.log)
+    cpumax_count=$(wc -l < ${logdir}/datamash-${cid}-max-${datamash_dt}.log)
+    generate_gnuplot "$cid" "$cpumin" "$cpuavg" "$cpumax" "$cpumin_count" "$cpuavg_count" "$cpumax_count"
     echo
   done
 }
@@ -102,6 +157,7 @@ case "$1" in
     ;;
   plot )
     csv_parse
+    csv_stats
     plot_charts
     ;;
   clear )
