@@ -44,21 +44,26 @@ echo '#!/usr/bin/gnuplot' > cpufreq-${cpuid}.gplot
 echo "reset
 
 # Terminal config
-set terminal pngcairo enhanced font 'Verdana,8'
+set terminal pngcairo size 900,600 enhanced font 'Verdana,8'
 set output '${logdir}/cpufreq-${cpuid}.png'
-set title \"$cpumodelname CPU ${cpuid} Frequency\"
-set key bmargin
+set title \"$cpumodelname CPU ${cpuid} Frequency by George Liu (centminmod.com)\"
+# set key bmargin
+set key left top
 
 # Line style
-set style line 1 lc rgb '#e74c3c' pt 1 ps 1 lt 1 lw 2 # line1
+#set style line 1 lc rgb '#e74c3c' pt 1 ps 1 lt 1 lw 2 # line1
+set style line 1 lc rgb '#e41a1c' pt 1 ps 1 lt 1 lw 1 # line1
 
 # Axis configuration
-set style line 11 lc rgb '#2c3e50' lt 1 lw 1.5 # Axis line
+#set style line 11 lc rgb '#2c3e50' lt 1 lw 1.5 # Axis line
+set style line 11 lc rgb '#808080' lt 1 lw 1.5 # Axis line
 set border 3 back ls 11
 set tics nomirror
 set autoscale xy
 set xdata time
 set timefmt \"%Y-%m-%d %H:%M:%S\"
+set format x \"%H:%M\"
+set xtics 5*60
 set xlabel \"Time\"
 set ylabel \"CPU ${cpuid} Frequency\"
 
@@ -66,8 +71,17 @@ set ylabel \"CPU ${cpuid} Frequency\"
 set style line 11 lc rgb '#aeb6bf' lt 0 lw 2
 set grid back ls 11
 
+# Statistics
+# A_min, A_max, A_median
+# stats '${logdir}/${cpuid}.csv' using 3 name "STATSA"
+# set yrange [STATSA_min_x:STATSA_max_x]
+# set label 1 "Maximun" at STATSA_pos_max_y, STATSA_max_y offset 1,-0.5
+# set label 2 "Minimun" at STATSA_pos_min_y, STATSA_min_y offset 1,0.5
+
 # Begin plotting
 plot '${logdir}/${cpuid}.csv' using 1:3 title 'Mhz' with l ls 1, \\
+     # STATSA_min_y w l lc rgb"#00ffff" notitle, \\
+     # STATSA_max_y w l lc rgb"#00ffff" notitle
 " >> cpufreq-${cpuid}.gplot
 cat cpufreq-${cpuid}.gplot
 gnuplot cpufreq-${cpuid}.gplot
