@@ -28,19 +28,20 @@ if [ ! -f /usr/bin/datamash ]; then
 fi
 
 getcpufreq() {
+  statsmode=$1
 if [ ! -d $logdir ]; then mkdir -p $logdir; fi
-if [[ "$cpupower_enable" = [yY] && -f /usr/bin/cpupower ]]; then
+if [[ "$cpupower_enable" = [yY] && -f /usr/bin/cpupower ]] || [[ "$statsmode" = 'cpupower' && -f /usr/bin/cpupower ]]; then
   /usr/bin/cpupower monitor -m "Mperf" -i 1 | egrep -v 'Mperf|CPU' | cut -d\| -f1,4 | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; fflush(); }' > "${logdir}/log-${dt}.log"
   for cid in $(seq 0 $cpus_seq); do grep " ${cid}|" "${logdir}/log-${dt}.log" >> "${logdir}/${cid}.log"; done
 fi
-if [[ "$turbostat_enable" = [yY] && -f /usr/bin/turbostat ]]; then
+if [[ "$turbostat_enable" = [yY] && -f /usr/bin/turbostat ]] || [[ "$statsmode" = 'turbostat' && -f /usr/bin/turbostat ]]; then
   /usr/bin/turbostat -n1 -i1 | egrep -v 'CPU|\-'| awk '{print $2"|", $5}' | column -t | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; fflush(); }' > "${logdir}/log-${dt}.log"
   for cid in $(seq 0 $cpus_seq); do grep " ${cid}|" "${logdir}/log-${dt}.log" >> "${logdir}/${cid}.log"; done
 fi
 ls -lahrt "${logdir}" | egrep -v 'log-|.csv|datamash'
 }
 
-clear() {
+clear_logs() {
   rm -rf ${logdir}/*
 }
 
@@ -82,11 +83,16 @@ generate_gnuplot() {
 
   # dynamic set xtic value according to number data points collected
   # if less than 300 data points collected then use 1 min xtics
-  # if more than 300 data points collected then use 5 min xtics
-  if [ "$fmin_count" -lt 300 ]; then
+  # if more than 300 but less than 600 data points collected then use 5 min xtics
+  # if more than 600 data points then user 15 min xtics
+  if [ "$fmin_count" -lt 600 ]; then
     xtics_set=1
-  else
+  elif [[ "$fmin_count" -ge 600 && "$fmin_count" -le 900 ]]; then
     xtics_set=5
+  elif [[ "$fmin_count" -ge 900 && "$fmin_count" -le 10800 ]]; then
+    xtics_set=15
+  else
+    xtics_set=30
   fi
 
 echo '#!/usr/bin/gnuplot' > cpufreq-${cpuid}.gplot
@@ -95,7 +101,7 @@ echo "reset
 # Terminal config
 set terminal pngcairo size 900,600 enhanced font 'Verdana,8'
 set output '${logdir}/cpufreq-${cpuid}.png'
-set title \"$cpumodelname CPU ${cpuid} Frequency\nby George Liu (centminmod.com)\n\nCPU ${cpuid} Frequency (Mhz) Min: $fmin Avg: $favg Max: $fmax\"
+set title \"$cpumodelname CPU ${cpuid} Frequency\nby George Liu (centminmod.com)\n\nCPU ${cpuid} Frequency (Mhz) Min: $fmin   Avg: $favg   Max: $fmax\"
 # set key bmargin
 set key left top
 
@@ -147,11 +153,11 @@ plot_charts() {
     echo "generating chart for cpu $cid frequency"
     # calculate cpu frequency min, avg, max
     cpumin=$(awk '{print $5}' ${logdir}/datamash-${cid}-min-${datamash_dt}.log)
-    cpumin_count=$(wc -l < ${logdir}/datamash-${cid}-min-${datamash_dt}.log)
+    cpumin_count=$(wc -l < ${logdir}/${cpuid}.csv)
     cpuavg=$(awk '{print $5}' ${logdir}/datamash-${cid}-avg-${datamash_dt}.log)
-    cpuavg_count=$(wc -l < ${logdir}/datamash-${cid}-avg-${datamash_dt}.log)
+    cpuavg_count=$(wc -l < ${logdir}/${cpuid}.csv)
     cpumax=$(awk '{print $5}' ${logdir}/datamash-${cid}-max-${datamash_dt}.log)
-    cpumax_count=$(wc -l < ${logdir}/datamash-${cid}-max-${datamash_dt}.log)
+    cpumax_count=$(wc -l < ${logdir}/${cpuid}.csv)
     generate_gnuplot "$cid" "$cpumin" "$cpuavg" "$cpumax" "$cpumin_count" "$cpuavg_count" "$cpumax_count"
     echo
   done
@@ -161,15 +167,21 @@ case "$1" in
   freq )
     getcpufreq
     ;;
+  freq-cpupower )
+    getcpufreq cpupower
+    ;;
+  freq-turbostat )
+    getcpufreq turbostat
+    ;;
   plot )
     csv_parse
     csv_stats
     plot_charts
     ;;
   clear )
-    clear
+    clear_logs
     ;;
   * )
-    echo "$0 {freq|plot|clear}"
+    echo "$0 {freq|freq-cpupower|freq-turbostat|plot|clear}"
     ;;
 esac
