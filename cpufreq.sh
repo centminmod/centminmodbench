@@ -8,9 +8,14 @@ cpus_seq=$((cpus-1))
 cpumodelname=$(lscpu | awk -F ': ' '/Model name/ {print $2}' | sed -e 's|(R)||g' | xargs);
 cpumodellabel=$(echo $cpumodelname | sed -e 's| |-|g');
 dt=$(date +"%d%m%y-%H%M%S")
-turbostat_enable='n'
-cpupower_enable='y'
+turbostat_enable='y'
+turbostat_stress='n'
+turbostat_stress_interval='1'
+cpupower_enable='n'
 
+if [ ! -f /usr/bin/stress ]; then
+  yum -q -y install stress
+fi
 if [ ! -f /usr/bin/gnuplot ]; then
   yum -q -y install gnuplot
 fi
@@ -29,16 +34,33 @@ fi
 
 getcpufreq() {
   statsmode=$1
+  stresscheck=$2
+  stress_cores=$3
 if [ ! -d $logdir ]; then mkdir -p $logdir; fi
 if [[ "$cpupower_enable" = [yY] && -f /usr/bin/cpupower ]] || [[ "$statsmode" = 'cpupower' && -f /usr/bin/cpupower ]]; then
-  /usr/bin/cpupower monitor -m "Mperf" -i 1 | egrep -v 'Mperf|CPU' | cut -d\| -f1,4 | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; fflush(); }' > "${logdir}/log-${dt}.log"
+  /usr/bin/cpupower monitor -m "Mperf" -i 1 > "${logdir}/fulllog-${dt}.log"
+  cat "${logdir}/fulllog-${dt}.log" | egrep -v 'Mperf|CPU' | cut -d\| -f1,4 | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; fflush(); }' > "${logdir}/log-${dt}.log"
   for cid in $(seq 0 $cpus_seq); do grep " ${cid}|" "${logdir}/log-${dt}.log" >> "${logdir}/${cid}.log"; done
 fi
 if [[ "$turbostat_enable" = [yY] && -f /usr/bin/turbostat ]] || [[ "$statsmode" = 'turbostat' && -f /usr/bin/turbostat ]]; then
-  /usr/bin/turbostat -n1 -i1 | egrep -v 'CPU|\-'| awk '{print $2"|", $5}' | column -t | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; fflush(); }' > "${logdir}/log-${dt}.log"
+  if [[ "$turbostat_stress" = [yY] || "$stresscheck" = 'stress' ]]; then
+    if [[ "$stress_cores" -eq 1 ]]; then
+      stress_cpus='1'
+    fi
+    stress_label="\\n\\nload test: stress -c $stress_cpus -t $turbostat_stress_interval"
+    echo "$stress_label" > "${logdir}/stress-label.log"
+    # echo > "${logdir}/stress-label.log"
+    /usr/bin/turbostat -o "${logdir}/fulllog-${dt}.log" stress -c "$cpus" -t "$turbostat_stress_interval"
+    cat "${logdir}/fulllog-${dt}.log" | egrep -v 'CPU|\-|stress|sec'| awk '{print $2"|", $5}' | column -t | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; fflush(); }' > "${logdir}/log-${dt}.log"
+  else
+    stress_label=""
+    echo > "${logdir}/stress-label.log"
+    /usr/bin/turbostat -n1 -i1 > "${logdir}/fulllog-${dt}.log"
+    cat "${logdir}/fulllog-${dt}.log" | egrep -v 'CPU|\-|stress|sec'| awk '{print $2"|", $5}' | column -t | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; fflush(); }' > "${logdir}/log-${dt}.log"
+  fi
   for cid in $(seq 0 $cpus_seq); do grep " ${cid}|" "${logdir}/log-${dt}.log" >> "${logdir}/${cid}.log"; done
 fi
-ls -lahrt "${logdir}" | egrep -v 'log-|.csv|datamash'
+ls -lAhrt "${logdir}" | egrep -v 'log-|.csv|datamash|cpufreq-|stress'
 }
 
 clear_logs() {
@@ -47,6 +69,7 @@ clear_logs() {
 
 csv_parse() {
   for cid in $(seq 0 $cpus_seq); do
+    echo > "${logdir}/${cid}.csv"
     awk '{print $1,$2,$4}'  "${logdir}/${cid}.log" >> "${logdir}/${cid}.csv"
   done
 }
@@ -81,6 +104,8 @@ generate_gnuplot() {
   favg_count=$6
   fmax_count=$7
 
+  stress_label=$(cat "${logdir}/stress-label.log")
+
   # dynamic set xtic value according to number data points collected
   # if less than 300 data points collected then use 1 min xtics
   # if more than 300 but less than 600 data points collected then use 5 min xtics
@@ -101,7 +126,7 @@ echo "reset
 # Terminal config
 set terminal pngcairo size 900,600 enhanced font 'Verdana,8'
 set output '${logdir}/cpufreq-${cpuid}.png'
-set title \"$cpumodelname CPU ${cpuid} Frequency\nby George Liu (centminmod.com)\n\nCPU ${cpuid} Frequency (Mhz) Min: $fmin   Avg: $favg   Max: $fmax\"
+set title \"$cpumodelname CPU ${cpuid} Frequency\nby George Liu (centminmod.com)\n\nCPU ${cpuid} Frequency (Mhz) Min: ${fmin}   Avg: ${favg}   Max: ${fmax}${stress_label}\"
 # set key bmargin
 set key left top
 
@@ -153,15 +178,24 @@ plot_charts() {
     echo "generating chart for cpu $cid frequency"
     # calculate cpu frequency min, avg, max
     cpumin=$(awk '{print $5}' ${logdir}/datamash-${cid}-min-${datamash_dt}.log)
-    cpumin_count=$(wc -l < ${logdir}/${cpuid}.csv)
+    cpumin_count=$(wc -l < ${logdir}/${cid}.log)
     cpuavg=$(awk '{print $5}' ${logdir}/datamash-${cid}-avg-${datamash_dt}.log)
-    cpuavg_count=$(wc -l < ${logdir}/${cpuid}.csv)
+    cpuavg_count=$(wc -l < ${logdir}/${cid}.log)
     cpumax=$(awk '{print $5}' ${logdir}/datamash-${cid}-max-${datamash_dt}.log)
-    cpumax_count=$(wc -l < ${logdir}/${cpuid}.csv)
+    cpumax_count=$(wc -l < ${logdir}/${cid}.log)
     generate_gnuplot "$cid" "$cpumin" "$cpuavg" "$cpumax" "$cpumin_count" "$cpuavg_count" "$cpumax_count"
     echo
   done
 }
+
+autoplot() {
+  sleep 3
+  csv_parse
+  csv_stats
+  plot_charts
+}
+
+# trap autoplot SIGHUP SIGINT SIGTERM
 
 case "$1" in
   freq )
@@ -173,6 +207,12 @@ case "$1" in
   freq-turbostat )
     getcpufreq turbostat
     ;;
+  freq-turbostat-stress )
+    getcpufreq turbostat stress
+    ;;
+  freq-turbostat-stress-1 )
+    getcpufreq turbostat stress 1
+    ;;
   plot )
     csv_parse
     csv_stats
@@ -182,6 +222,6 @@ case "$1" in
     clear_logs
     ;;
   * )
-    echo "$0 {freq|freq-cpupower|freq-turbostat|plot|clear}"
+    echo "$0 {freq|freq-cpupower|freq-turbostat|freq-turbostat-stress|freq-turbostat-stress-1|plot|clear}"
     ;;
 esac
