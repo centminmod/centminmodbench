@@ -120,6 +120,7 @@ generate_gnuplot() {
     xtics_set=30
   fi
 
+# generate individual cpu thread charts
 echo '#!/usr/bin/gnuplot' > cpufreq-${cpuid}.gplot
 echo "reset
 
@@ -172,6 +173,85 @@ cat cpufreq-${cpuid}.gplot
 gnuplot cpufreq-${cpuid}.gplot
 }
 
+generate_gnuplot_all() {
+  stress_label=$(cat "${logdir}/stress-label.log")
+
+# generate all cpu threads chart
+echo '#!/usr/bin/gnuplot' > cpufreq-all.gplot
+echo "reset
+
+# Terminal config
+set terminal pngcairo size 1000,1000 enhanced font 'Verdana,8'
+set output '${logdir}/cpufreq-all.png'
+set multiplot layout $(($cpus/2)), 2 title \"$cpumodelname CPU Frequency\nby George Liu (centminmod.com)${stress_label}\"
+" >> cpufreq-all.gplot
+
+cpus_matched=$(lscpu --all --extended | grep -v CPU | awk '{print $4,$1}' | tail -$(($(nproc)/2)))
+
+# generate each cpu plot
+for cpuid_all in $cpus_matched; do
+  fmin=$(cat "${logdir}/${cpuid_all}-min.log")
+  favg=$(cat "${logdir}/${cpuid_all}-avg.log")
+  fmax=$(cat "${logdir}/${cpuid_all}-max.log")
+  cpumin_count=$(wc -l < ${logdir}/${cpuid_all}.log)
+  cpuavg_count=$(wc -l < ${logdir}/${cpuid_all}.log)
+  cpumax_count=$(wc -l < ${logdir}/${cpuid_all}.log)
+
+  # dynamic set xtic value according to number data points collected
+  # if less than 300 data points collected then use 1 min xtics
+  # if more than 300 but less than 600 data points collected then use 5 min xtics
+  # if more than 600 data points then user 15 min xtics
+  if [ "$fmin_count" -lt 600 ]; then
+    xtics_set_all=1
+  elif [[ "$fmin_count" -ge 600 && "$fmin_count" -le 900 ]]; then
+    xtics_set_all=5
+  elif [[ "$fmin_count" -ge 900 && "$fmin_count" -le 10800 ]]; then
+    xtics_set_all=15
+  else
+    xtics_set_all=30
+  fi
+
+echo "
+#############
+### chart ${cpuid_all}
+set title \"CPU ${cpuid_all} Frequency (Mhz) Min: ${fmin}   Avg: ${favg}   Max: ${fmax}\" font \", 7\"
+set key left top
+
+# Line style
+#set style line 1 lc rgb '#e74c3c' pt 1 ps 1 lt 1 lw 2 # line1
+set style line 1 lc rgb '#e41a1c' pt 1 ps 1 lt 1 lw 1 # line1
+
+# Axis configuration
+#set style line 11 lc rgb '#2c3e50' lt 1 lw 1.5 # Axis line
+set style line 11 lc rgb '#808080' lt 1 lw 1.5 # Axis line
+set border 3 back ls 11
+set tics nomirror
+set autoscale xy
+set xdata time
+set timefmt \"%Y-%m-%d %H:%M:%S\"
+set format x \"%H:%M\"
+set xtics ${xtics_set_all}*60 font \", 7\"
+set ytics 100 font \", 7\"
+# set xlabel \"Time\"
+# set ylabel \"CPU ${cpuid_all} Frequency\"
+unset key
+
+# Background grid
+set style line 11 lc rgb '#aeb6bf' lt 0 lw 2
+set grid back ls 11
+
+# Begin plotting
+plot '${logdir}/${cpuid_all}.csv' using 1:3 title 'Mhz' with l ls 1, \\
+" >> cpufreq-all.gplot
+done
+
+echo "
+unset multiplot" >> cpufreq-all.gplot
+
+cat cpufreq-all.gplot
+gnuplot cpufreq-all.gplot
+}
+
 plot_charts() {
   for cid in $(seq 0 $cpus_seq); do
     echo
@@ -183,9 +263,15 @@ plot_charts() {
     cpuavg_count=$(wc -l < ${logdir}/${cid}.log)
     cpumax=$(awk '{print $5}' ${logdir}/datamash-${cid}-max-${datamash_dt}.log)
     cpumax_count=$(wc -l < ${logdir}/${cid}.log)
+    # generate log files for each cpu threads min, avg, max values
+    echo "$cpumin" > "${logdir}/${cid}-min.log"
+    echo "$cpuavg" > "${logdir}/${cid}-avg.log"
+    echo "$cpumax" > "${logdir}/${cid}-max.log"
     generate_gnuplot "$cid" "$cpumin" "$cpuavg" "$cpumax" "$cpumin_count" "$cpuavg_count" "$cpumax_count"
     echo
   done
+  generate_gnuplot_all
+  echo
 }
 
 autoplot() {
