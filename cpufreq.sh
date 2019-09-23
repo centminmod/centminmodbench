@@ -221,10 +221,14 @@ for cpuid_all in $cpus_matched; do
   fi
 
   # dynamically adjust ytics value if range is less than 100
-  if [[ "$(($fmax-$fmin))" -lt '100' ]]; then
-    ytics_interval='#set ytics 100'
+  if [[ "$(($fmax-$fmin))" -le '25' ]]; then
+    ytics_interval='set ytics 10'
+  elif [[ "$(($fmax-$fmin))" -gt '25' && "$(($fmax-$fmin))" -le '50' ]]; then
+    ytics_interval='set ytics 10'
+  elif [[ "$(($fmax-$fmin))" -gt '51' && "$(($fmax-$fmin))" -le '100' ]]; then
+    ytics_interval='set ytics 25'
   else
-    ytics_interval='set ytics 100'
+    ytics_interval='#set ytics 100'
   fi
 
 echo "
