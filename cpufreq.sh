@@ -40,7 +40,7 @@ if [ ! -d $logdir ]; then mkdir -p $logdir; fi
 if [[ "$cpupower_enable" = [yY] && -f /usr/bin/cpupower ]] || [[ "$statsmode" = 'cpupower' && -f /usr/bin/cpupower ]]; then
   /usr/bin/cpupower monitor -m "Mperf" -i 1 > "${logdir}/fulllog-${dt}.log"
   cat "${logdir}/fulllog-${dt}.log" | egrep -v 'Mperf|CPU' | cut -d\| -f1,4 | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; fflush(); }' > "${logdir}/log-${dt}.log"
-  for cid in $(seq 0 $cpus_seq); do grep " ${cid}|" "${logdir}/log-${dt}.log" >> "${logdir}/${cid}.log"; done
+  for cid in $(seq -s " " 0 $cpus_seq); do grep " ${cid}|" "${logdir}/log-${dt}.log" >> "${logdir}/${cid}.log"; done
 fi
 if [[ "$turbostat_enable" = [yY] && -f /usr/bin/turbostat ]] || [[ "$statsmode" = 'turbostat' && -f /usr/bin/turbostat ]]; then
   if [[ "$turbostat_stress" = [yY] || "$stresscheck" = 'stress' ]]; then
@@ -58,7 +58,7 @@ if [[ "$turbostat_enable" = [yY] && -f /usr/bin/turbostat ]] || [[ "$statsmode" 
     /usr/bin/turbostat -n1 -i1 > "${logdir}/fulllog-${dt}.log"
     cat "${logdir}/fulllog-${dt}.log" | egrep -v 'CPU|\-|stress|sec'| awk '{print $2"|", $5}' | column -t | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; fflush(); }' > "${logdir}/log-${dt}.log"
   fi
-  for cid in $(seq 0 $cpus_seq); do grep " ${cid}|" "${logdir}/log-${dt}.log" >> "${logdir}/${cid}.log"; done
+  for cid in $(seq -s " " 0 $cpus_seq); do grep " ${cid}|" "${logdir}/log-${dt}.log" >> "${logdir}/${cid}.log"; done
 fi
 ls -lAhrt "${logdir}" | egrep -v 'log-|.csv|datamash|cpufreq-|stress'
 }
@@ -68,7 +68,7 @@ clear_logs() {
 }
 
 csv_parse() {
-  for cid in $(seq 0 $cpus_seq); do
+  for cid in $(seq -s " " 0 $cpus_seq); do
     echo > "${logdir}/${cid}.csv"
     awk '{print $1,$2,$4}'  "${logdir}/${cid}.log" >> "${logdir}/${cid}.csv"
   done
@@ -76,7 +76,7 @@ csv_parse() {
 
 csv_stats() {
   datamash_dt=$(date +"%d%m%y-%H%M%S")
-  for cid in $(seq 0 $cpus_seq); do
+  for cid in $(seq -s " " 0 $cpus_seq); do
     parsed_min=$(awk '{print $4}' "${logdir}/${cid}.log" | datamash --no-strict --filler 0 min 1)
     parsed_min=$(printf "%.0f\n" $parsed_min)
     parsed_max=$(awk '{print $4}' "${logdir}/${cid}.log" | datamash --no-strict --filler 0 max 1)
@@ -188,6 +188,15 @@ set multiplot layout $(($cpus/2)), 2 title \"$cpumodelname CPU Frequency\nby Geo
 
 cpus_matched=$(lscpu --all --extended | grep -v CPU | awk '{print $4,$1}' | tail -$(($(nproc)/2)))
 
+# older intel cpu check
+if [[ "$(echo $cpus_matched | grep -w 0)" != '0' ]]; then
+  #   cpus_matched=$(lscpu --all --extended | grep -v CPU | awk '{print $4,$1}' | sed -n '0~2p')
+  cpus_matched=$(seq -s " " 0 $cpus_seq)
+fi
+echo
+echo $cpus_matched
+echo
+
 # generate each cpu plot
 for cpuid_all in $cpus_matched; do
   fmin=$(cat "${logdir}/${cpuid_all}-min.log")
@@ -211,6 +220,13 @@ for cpuid_all in $cpus_matched; do
     xtics_set_all=30
   fi
 
+  # dynamically adjust ytics value if range is less than 100
+  if [[ "$(($fmax-$fmin))" -lt '100' ]]; then
+    ytics_interval='#set ytics 100'
+  else
+    ytics_interval='set ytics 100'
+  fi
+
 echo "
 #############
 ### chart ${cpuid_all}
@@ -231,7 +247,7 @@ set xdata time
 set timefmt \"%Y-%m-%d %H:%M:%S\"
 set format x \"%H:%M\"
 set xtics ${xtics_set_all}*60 font \", 7\"
-set ytics 100 font \", 7\"
+$ytics_interval font \", 7\"
 # set xlabel \"Time\"
 # set ylabel \"CPU ${cpuid_all} Frequency\"
 unset key
@@ -253,7 +269,7 @@ gnuplot cpufreq-all.gplot
 }
 
 plot_charts() {
-  for cid in $(seq 0 $cpus_seq); do
+  for cid in $(seq -s " " 0 $cpus_seq); do
     echo
     echo "generating chart for cpu $cid frequency"
     # calculate cpu frequency min, avg, max
