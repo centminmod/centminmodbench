@@ -21,7 +21,7 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.9.9
+VER=0.10.0
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
@@ -1278,7 +1278,7 @@ bandwidthbench() {
 		cecho "-------------------------------------------" $boldgreen
 		s
 		div
-		download_benchmark 'Linode, Tokyo, JP' 'http://speedtest.tokyo.linode.com/100MB-tokyo.bin'
+		download_benchmark 'Linode, Tokyo, JP' 'http://speedtest.tokyo2.linode.com/100MB-tokyo2.bin'
 		div
 		download_benchmark 'Softlayer, Singapore' 'http://speedtest.sng01.softlayer.com/downloads/test100.zip'
 			if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
@@ -2142,7 +2142,7 @@ axelbench() {
     cecho "-------------------------------------------" $boldgreen
     s
     div
-    axel_benchmark 'Linode, Tokyo, JP' 'http://speedtest.tokyo.linode.com/100MB-tokyo.bin'
+    axel_benchmark 'Linode, Tokyo, JP' 'http://speedtest.tokyo2.linode.com/100MB-tokyo2.bin'
     div
     axel_benchmark 'Softlayer, Singapore' 'http://speedtest.sng01.softlayer.com/downloads/test100.zip'
       if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
