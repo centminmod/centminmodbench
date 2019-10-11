@@ -50,12 +50,12 @@ if [[ "$turbostat_enable" = [yY] && -f /usr/bin/turbostat ]] || [[ "$statsmode" 
     stress_label="\\n\\nload test: stress -c $stress_cpus -t $turbostat_stress_interval"
     echo "$stress_label" > "${logdir}/stress-label.log"
     # echo > "${logdir}/stress-label.log"
-    /usr/bin/turbostat -o "${logdir}/fulllog-${dt}.log" stress -c "$cpus" -t "$turbostat_stress_interval"
+    /usr/bin/turbostat -q -o "${logdir}/fulllog-${dt}.log" stress -c "$cpus" -t "$turbostat_stress_interval"
     cat "${logdir}/fulllog-${dt}.log" | egrep -v 'CPU|\-|stress|sec'| awk '{print $2"|", $5}' | column -t | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; fflush(); }' > "${logdir}/log-${dt}.log"
   else
     stress_label=""
     echo > "${logdir}/stress-label.log"
-    /usr/bin/turbostat -n1 -i1 > "${logdir}/fulllog-${dt}.log"
+    /usr/bin/turbostat -q -n1 -i1 > "${logdir}/fulllog-${dt}.log"
     cat "${logdir}/fulllog-${dt}.log" | egrep -v 'CPU|\-|stress|sec'| awk '{print $2"|", $5}' | column -t | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; fflush(); }' > "${logdir}/log-${dt}.log"
   fi
   for cid in $(seq -s " " 0 $cpus_seq); do grep " ${cid}|" "${logdir}/log-${dt}.log" >> "${logdir}/${cid}.log"; done
