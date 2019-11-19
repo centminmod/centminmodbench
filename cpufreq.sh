@@ -175,13 +175,38 @@ gnuplot cpufreq-${cpuid}.gplot
 
 generate_gnuplot_all() {
   stress_label=$(cat "${logdir}/stress-label.log")
+  if [[ "$cpus" -ge '224' && "$cpus" -le '255' ]]; then
+    chartheight=17000
+  elif [[ "$cpus" -ge '192' && "$cpus" -le '223' ]]; then
+    chartheight=15000
+  elif [[ "$cpus" -ge '160' && "$cpus" -le '191' ]]; then
+    chartheight=13000
+  elif [[ "$cpus" -ge '128' && "$cpus" -le '159' ]]; then
+    chartheight=11000
+  elif [[ "$cpus" -ge '96' && "$cpus" -le '127' ]]; then
+    chartheight=8000
+  elif [[ "$cpus" -ge '80' && "$cpus" -le '95' ]]; then
+    chartheight=6500
+  elif [[ "$cpus" -ge '64' && "$cpus" -le '79' ]]; then
+    chartheight=5500
+  elif [[ "$cpus" -ge '48' && "$cpus" -le '63' ]]; then
+    chartheight=4000
+  elif [[ "$cpus" -ge '32' && "$cpus" -le '47' ]]; then
+    chartheight=3000
+  elif [[ "$cpus" -ge '24' && "$cpus" -le '31' ]]; then
+    chartheight=1500
+  elif [[ "$cpus" -ge '16' && "$cpus" -le '23' ]]; then
+    chartheight=1000
+  else
+    chartheight=1000
+  fi
 
 # generate all cpu threads chart
 echo '#!/usr/bin/gnuplot' > cpufreq-all.gplot
 echo "reset
 
 # Terminal config
-set terminal pngcairo size 1000,1000 enhanced font 'Verdana,8'
+set terminal pngcairo size 1000,$chartheight enhanced font 'Verdana,8'
 set output '${logdir}/cpufreq-all.png'
 set multiplot layout $(($cpus/2)), 2 title \"$cpumodelname CPU Frequency\nby George Liu (centminmod.com)${stress_label}\"
 " >> cpufreq-all.gplot
