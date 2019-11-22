@@ -21,7 +21,7 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.10.0
+VER=0.10.1
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
@@ -854,12 +854,12 @@ if [ ! -d "byte-unixbench-${UNIXBENCH_VER}" ]; then
 		echo ""
 	fi
 fi
-		wget -cnv https://gist.githubusercontent.com/centminmod/7bea01c6698377d1345a/raw/unixbench.patch
+		#wget -cnv https://gist.githubusercontent.com/centminmod/7bea01c6698377d1345a/raw/unixbench.patch
 				
 		cd "byte-unixbench-${UNIXBENCH_VER}/UnixBench"
-		mv ../../unixbench.patch .	
+		#mv ../../unixbench.patch .	
 		make -j${CPUS} 2>&1
-		patch Run unixbench.patch
+		#patch Run unixbench.patch
 		# exit
 		cecho "-------------------------------------------" $boldgreen
 		cecho "Running UnixBench" $boldyellow
