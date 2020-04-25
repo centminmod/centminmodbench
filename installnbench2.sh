@@ -276,12 +276,12 @@ curl -4s $geekurl > geekbench-raw.txt
 # name scores
 cat geekbench-raw.txt | grep -A4 "<th class='name'" | egrep -v '<br>|th>|<th|--' | sed -e 's| |-|g' | xargs -L2 > name-scores.txt
 # cat geekbench-raw.txt | grep -A5 "<td class='name'" | egrep -v '<br>|td>|<td|--' | sed -e 's| |-|g' | xargs -L2 >> name-scores.txt
-cat name-scores.txt | column -t > geekbench-results.txt
-sed -i 's/Multi-Core-Score/\nMulti-Core-Score/' geekbench-results.txt
+cat name-scores.txt | column -t > geekbenchv5-results.txt
+sed -i 's/Multi-Core-Score/\nMulti-Core-Score/' geekbenchv5-results.txt
 echo
 echo $geekurl
 echo
-cat geekbench-results.txt
+cat geekbenchv5-results.txt
 
 s
 echo "ls -lahrt /root/centminlogs/"
