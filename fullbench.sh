@@ -173,6 +173,45 @@ s
 cat "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests-${DT}-markdown-table.log" | grep -v '\-\-\-' | sed -e 's| \| |,|g' -e 's|\:||g' -e 's|\|||g' -e 's| ||'
 s
 
+{
+echo "/usr/bin/redis-benchmark -h 127.0.0.1 -p 6379 -n 10000 -r 10000 -t get,set,lpush,lpop -P 1000 -c 500"
+/usr/bin/redis-benchmark -h 127.0.0.1 -p 6379 -n 10000 -r 10000 -t get,set,lpush,lpop -P 1000 -c 500
+} 2>&1 | tee "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}.log"
+
+s
+cat "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}.log" | grep -A9 ' SET ' | sed -e 's| milliseconds|ms|g' -e 's|====== ||' | awk '{print $1, $2, $3}' | sed -e 's| completed||' -e 's| parallel||' -e 's| ======| redis|' -e 's| bytes|bytes|' -e 's|keep alive: 1|1 keepalive|' -e 's| per|/s|' -e 's|<= |<=|g' | grep -v 'ms' | xargs | awk '{ for (i=1;i<=NF;i+=2) print $i" |" }' | xargs | sed -e 's|SET: \||\||' | tee "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-set.log"
+echo "| --- | --- | --- | --- | --- | --- |" | tee -a "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-set.log"
+cat "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}.log" | grep -A9 ' SET ' | sed -e 's| milliseconds|ms|g' -e 's|====== ||' | awk '{print $1, $2, $3}' | sed -e 's| completed||' -e 's| parallel||' -e 's| ======| redis|' -e 's| bytes|bytes|' -e 's|keep alive: 1|1 keepalive|' -e 's| per|/s|' -e 's|<= |<=|g' | grep -v 'ms' | xargs |  awk '{for (i=2; i<=NF; i+=2)print $i" |" }' | xargs | sed -e 's|SET |\| SET |' | tee -a "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-set.log"
+
+s
+cat "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}.log" | grep -A9 ' GET ' | sed -e 's| milliseconds|ms|g' -e 's|====== ||' | awk '{print $1, $2, $3}' | sed -e 's| completed||' -e 's| parallel||' -e 's| ======| redis|' -e 's| bytes|bytes|' -e 's|keep alive: 1|1 keepalive|' -e 's| per|/s|' -e 's|<= |<=|g' | grep -v 'ms' | xargs |  awk '{for (i=2; i<=NF; i+=2)print $i" |" }' | xargs | sed -e 's|redis |\| redis |' | tee "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-get.log"
+echo "| --- | --- | --- | --- | --- | --- |" | tee -a "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-get.log"
+cat "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}.log" | grep -A9 ' GET ' | sed -e 's| milliseconds|ms|g' -e 's|====== ||' | awk '{print $1, $2, $3}' | sed -e 's| completed||' -e 's| parallel||' -e 's| ======| redis|' -e 's| bytes|bytes|' -e 's|keep alive: 1|1 keepalive|' -e 's| per|/s|' -e 's|<= |<=|g' | grep -v 'ms' | xargs | awk '{ for (i=1;i<=NF;i+=2) print $i" |" }' | xargs | sed -e 's|GET |\| GET|' | tee -a "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-get.log"
+
+s
+cat "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}.log" | grep -A9 ' LPUSH ' | sed -e 's| milliseconds|ms|g' -e 's|====== ||' | awk '{print $1, $2, $3}' | sed -e 's| completed||' -e 's| parallel||' -e 's| ======| redis|' -e 's| bytes|bytes|' -e 's|keep alive: 1|1 keepalive|' -e 's| per|/s|' -e 's|<= |<=|g' | grep -v 'ms' | xargs |  awk '{for (i=2; i<=NF; i+=2)print $i" |" }' | xargs | sed -e 's|LPUSH |\| LPUSH |' -e 's|redis |\| redis |' | tee "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-lpush.log"
+echo "| --- | --- | --- | --- | --- | --- |" | tee -a "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-lpush.log"
+cat "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}.log" | grep -A9 ' LPUSH ' | sed -e 's| milliseconds|ms|g' -e 's|====== ||' | awk '{print $1, $2, $3}' | sed -e 's| completed||' -e 's| parallel||' -e 's| ======| redis|' -e 's| bytes|bytes|' -e 's|keep alive: 1|1 keepalive|' -e 's| per|/s|' -e 's|<= |<=|g' | grep -v 'ms' | xargs | awk '{ for (i=1;i<=NF;i+=2) print $i" |" }' | xargs | sed -e 's|LPUSH |\| LPUSH |' | tee -a "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-lpush.log"
+
+s
+cat "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}.log" | grep -A9 ' LPOP ' | sed -e 's| milliseconds|ms|g' -e 's|====== ||' | awk '{print $1, $2, $3}' | sed -e 's| completed||' -e 's| parallel||' -e 's| ======| redis|' -e 's| bytes|bytes|' -e 's|keep alive: 1|1 keepalive|' -e 's| per|/s|' -e 's|<= |<=|g' | grep -v 'ms' | xargs | awk '{ for (i=1;i<=NF;i+=2) print $i" |" }' | xargs | sed -e 's|LPOP: \||\||' | tee "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-lpop.log"
+echo "| --- | --- | --- | --- | --- | --- |" | tee -a "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-lpop.log"
+cat "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}.log" | grep -A9 ' LPOP ' | sed -e 's| milliseconds|ms|g' -e 's|====== ||' | awk '{print $1, $2, $3}' | sed -e 's| completed||' -e 's| parallel||' -e 's| ======| redis|' -e 's| bytes|bytes|' -e 's|keep alive: 1|1 keepalive|' -e 's| per|/s|' -e 's|<= |<=|g' | grep -v 'ms' | xargs |  awk '{for (i=2; i<=NF; i+=2)print $i" |" }' | xargs | sed -e 's|LPOP |\| LPOP |' | tee -a "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-lpop.log"
+
+s
+{
+head -n1 "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-set.log"
+echo "| --- | --- | --- | --- | --- | --- |"
+tail -1 "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-set.log"
+tail -1 "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-get.log"
+tail -1 "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-lpush.log"
+tail -1 "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-lpop.log"
+} 2>&1 | tee "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-table.log"
+s
+
+cat "${CENTMINLOGDIR}/centminmod-benchmark-redis-tests2-${DT}-markdown-table.log" | grep -v '\-\-\-' | sed -e 's| \| |,|g' -e 's|\:||g' -e 's|\|||g' -e 's| ||'
+s
+
 s
 div
 cecho "sysbench benchmark" $boldyellow
