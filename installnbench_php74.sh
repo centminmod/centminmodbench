@@ -2,7 +2,7 @@
 ######################################################
 # written by George Liu (eva2000) centminmod.com
 # when ran with command
-# curl -sL https://github.com/centminmod/centminmodbench/raw/master/installnbench2.sh | bash
+# curl -sL https://github.com/centminmod/centminmodbench/raw/master/installnbench_php74.sh | bash
 # runs 6 tasks
 # 1) install latest Centmin Mod Beta LEMP stack
 # 2) installs and runs centminmodbench.sh (UnixBench enabled)
@@ -77,7 +77,7 @@ benchninstall() {
 s
 div
 cecho "7 tasks will be performaned which can take up to 100-150 mins" $boldyellow
-cecho "1). install latest Centmin Mod Beta LEMP stack ~15-30 mins" $boldyellow
+cecho "1). install latest Centmin Mod Beta LEMP stack with PHP 7.4 default ~25-45 mins" $boldyellow
 cecho "2). installs & runs centminmodbench.sh (UnixBench enabled) ~30-60 mins" $boldyellow
 cecho "3). install & run zcat/pzcat benchmarks" $boldyellow
 cecho "4). setup & benchmark nginx http/2 https vhost" $boldyellow
@@ -90,11 +90,11 @@ s
 s
 div
 cecho "installing Centmin Mod Beta LEMP stack" $boldyellow
-cecho "will take ~15-30 minutes" $boldyellow
+cecho "will take ~25-45 minutes" $boldyellow
 div
 s
-echo "yum -y update; curl -O https://centminmod.com/betainstaller.sh && chmod 0700 betainstaller.sh && bash betainstaller.sh"
-yum -y update; curl -O https://centminmod.com/betainstaller.sh && chmod 0700 betainstaller.sh && bash betainstaller.sh
+echo "yum -y update; curl -O https://centminmod.com/betainstaller74.sh && chmod 0700 betainstaller74.sh && bash betainstaller74.sh"
+yum -y update; curl -O https://centminmod.com/betainstaller74.sh && chmod 0700 betainstaller74.sh && bash betainstaller74.sh
 
 s
 div
@@ -301,10 +301,10 @@ endtime=$(TZ=UTC date +%s.%N)
 
 INSTALLTIME=$(echo "scale=2;$endtime - $starttime"|bc )
 echo "" >> "${CENTMINLOGDIR}/centminmod-benchmark-all-${DT}.log"
-echo "installnbench2.sh Total Run Time: $INSTALLTIME seconds" >> "${CENTMINLOGDIR}/centminmod-benchmark-all-${DT}.log"
+echo "installnbench_php74.sh Total Run Time: $INSTALLTIME seconds" >> "${CENTMINLOGDIR}/centminmod-benchmark-all-${DT}.log"
 
 if [[ "$CMBEMAIL" = [yY] ]]; then
-  echo "installnbench2.sh completed for $(hostname -f)" | mail -s "$(hostname -f) installnbench2.sh completed $(date)" $CMEBMAIL_ADDR
+  echo "installnbench_php74.sh completed for $(hostname -f)" | mail -s "$(hostname -f) installnbench_php74.sh completed $(date)" $CMEBMAIL_ADDR
 fi
 
 exit
