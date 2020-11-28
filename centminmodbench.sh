@@ -21,7 +21,7 @@ SCRIPTNAME=centminmodbench.sh
 SCRIPTAUTHOR='George Liu (eva2000)'
 SCRIPTSITE='http://centminmod.com'
 SCRIPTGITHUB='http://bench.centminmod.com'
-VER=0.10.1
+VER=0.10.2
 ###############################################################
 EMAIL='youremail@yourdomain.com'
 DEBUG='n'
@@ -1241,8 +1241,8 @@ bandwidthbench() {
 		download_benchmark 'Softlayer, Washington, DC, USA' 'http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
 		div
 		download_benchmark 'VersaWeb, Las Vegas, Nevada' 'http://lg.las1.as53340.net/100MB.test'
-		div
-		download_benchmark 'OVH, BHS, Canada' 'http://bhs.proof.ovh.net/files/100Mio.dat'
+		# div
+		# download_benchmark 'OVH, BHS, Canada' 'http://bhs.proof.ovh.net/files/100Mio.dat'
 			if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
 			div
 			download_benchmark 'Vultr, Los Angeles, California' 'http://lax-ca-us-ping.vultr.com/vultr.com.100MB.bin'
@@ -1295,8 +1295,8 @@ bandwidthbench() {
 		s
 		div
 		download_benchmark 'Linode, London, UK' 'http://speedtest.london.linode.com/100MB-london.bin'
-		div
-		download_benchmark 'OVH, Paris, France' 'http://proof.ovh.net/files/100Mio.dat'
+		# div
+		# download_benchmark 'OVH, Paris, France' 'http://proof.ovh.net/files/100Mio.dat'
 		div
 		download_benchmark 'SmartDC, Rotterdam, Netherlands' 'http://mirror.i3d.net/100mb.bin'
 			if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
@@ -2105,8 +2105,8 @@ axelbench() {
     axel_benchmark 'Softlayer, Washington, DC, USA' 'http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
     div
     axel_benchmark 'VersaWeb, Las Vegas, Nevada' 'http://lg.las1.as53340.net/100MB.test'
-    div
-    axel_benchmark 'OVH, BHS, Canada' 'http://bhs.proof.ovh.net/files/100Mio.dat'
+    # div
+    # axel_benchmark 'OVH, BHS, Canada' 'http://bhs.proof.ovh.net/files/100Mio.dat'
       if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
       div
       axel_benchmark 'Vultr, Los Angeles, California' 'http://lax-ca-us-ping.vultr.com/vultr.com.100MB.bin'
@@ -2159,8 +2159,8 @@ axelbench() {
     s
     div
     axel_benchmark 'Linode, London, UK' 'http://speedtest.london.linode.com/100MB-london.bin'
-    div
-    axel_benchmark 'OVH, Paris, France' 'http://proof.ovh.net/files/100Mio.dat'
+    # div
+    # axel_benchmark 'OVH, Paris, France' 'http://proof.ovh.net/files/100Mio.dat'
     div
     axel_benchmark 'SmartDC, Rotterdam, Netherlands' 'http://mirror.i3d.net/100mb.bin'
       if [[ "$RUN_VULTRTESTS" = [yY] ]]; then
