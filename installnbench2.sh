@@ -265,9 +265,9 @@ cecho "geekbench 5" $boldyellow
 div
 s
 cd /svr-setup
-wget -4 https://cdn.geekbench.com/Geekbench-5.2.5-Linux.tar.gz
-tar xvzf Geekbench-5.2.5-Linux.tar.gz
-cd Geekbench-5.2.5-Linux
+wget -4 https://cdn.geekbench.com/Geekbench-5.3.1-Linux.tar.gz
+tar xvzf Geekbench-5.3.1-Linux.tar.gz
+cd Geekbench-5.3.1-Linux
 ./geekbench5 2>&1 | tee geektest.log
 geekurl=$(cat geektest.log | awk -F ' ' '/https:\/\/browser.geekbench.com\/v5\/cpu\// {print $1}' | head -n1)
 curl -4s $geekurl > geekbench-raw.txt
