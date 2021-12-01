@@ -11,8 +11,11 @@
 # variables
 #############
 DT=$(date +"%d%m%y-%H%M%S")
+SLEEP_TIME='20'
 
-
+CMBEMAIL='n'
+CMEBMAIL_ADDR=''
+CENTMINLOGDIR='/root/centminlogs'
 ###############################################################
 # Setup Colours
 black='\E[30;40m'
@@ -48,6 +51,14 @@ return
 ###############################################################
 # functions
 #############
+
+if [ -f centminmodbench.ini ]; then
+  . centminmodbench.ini
+fi
+
+if [ ! -d "$CENTMINLOGDIR" ]; then
+  mkdir -p $CENTMINLOGDIR
+fi
 
 div() {
 	cecho "----------------------------------------------" $boldgreen
@@ -107,8 +118,19 @@ fi
 }
 
 ######################################################
+starttime=$(TZ=UTC date +%s.%N)
 {
   benchninstall
-} 2>&1 | tee "centminmod-benchmark-all-${DT}.log"
+} 2>&1 | tee "${CENTMINLOGDIR}/centminmod-benchmark-all-${DT}.log"
+
+endtime=$(TZ=UTC date +%s.%N)
+
+INSTALLTIME=$(echo "scale=2;$endtime - $starttime"|bc )
+echo "" >> "${CENTMINLOGDIR}/centminmod-benchmark-all-${DT}.log"
+echo "installnbench.sh Total Run Time: $INSTALLTIME seconds" >> "${CENTMINLOGDIR}/centminmod-benchmark-all-${DT}.log"
+
+if [[ "$CMBEMAIL" = [yY] ]]; then
+  echo "installnbench.sh completed for $(hostname -f)" | mail -s "$(hostname -f) installnbench.sh completed $(date)" $CMEBMAIL_ADDR
+fi
 
 exit

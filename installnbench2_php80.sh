@@ -76,7 +76,7 @@ benchninstall() {
 
 s
 div
-cecho "7 tasks will be performaned which can take up to 100-150 mins" $boldyellow
+cecho "7 tasks will be performaned which can take up to 100-240 mins" $boldyellow
 cecho "1). install latest Centmin Mod Beta LEMP stack ~15-30 mins" $boldyellow
 cecho "2). installs & runs centminmodbench.sh (UnixBench enabled) ~30-60 mins" $boldyellow
 cecho "3). install & run zcat/pzcat benchmarks" $boldyellow
@@ -90,11 +90,11 @@ s
 s
 div
 cecho "installing Centmin Mod Beta LEMP stack" $boldyellow
-cecho "will take ~15-30 minutes" $boldyellow
+cecho "will take ~15-60 minutes" $boldyellow
 div
 s
-echo "yum -y update; curl -O https://centminmod.com/betainstaller.sh && chmod 0700 betainstaller.sh && bash betainstaller.sh"
-yum -y update; curl -O https://centminmod.com/betainstaller.sh && chmod 0700 betainstaller.sh && bash betainstaller.sh
+echo "yum -y update; curl -O https://centminmod.com/betainstaller80.sh && chmod 0700 betainstaller80.sh && bash betainstaller80.sh"
+yum -y update; curl -O https://centminmod.com/betainstaller80.sh && chmod 0700 betainstaller80.sh && bash betainstaller80.sh
 
 s
 div

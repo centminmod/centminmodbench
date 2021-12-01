@@ -76,8 +76,8 @@ benchninstall() {
 
 s
 div
-cecho "7 tasks will be performaned which can take up to 100-150 mins" $boldyellow
-cecho "1). install latest Centmin Mod Beta LEMP stack with PHP 7.4 default ~25-45 mins" $boldyellow
+cecho "7 tasks will be performaned which can take up to 100-240 mins" $boldyellow
+cecho "1). install latest Centmin Mod Beta LEMP stack with PHP 7.4 default ~25-75 mins" $boldyellow
 cecho "2). installs & runs centminmodbench.sh (UnixBench enabled) ~30-60 mins" $boldyellow
 cecho "3). install & run zcat/pzcat benchmarks" $boldyellow
 cecho "4). setup & benchmark nginx http/2 https vhost" $boldyellow
@@ -90,7 +90,7 @@ s
 s
 div
 cecho "installing Centmin Mod Beta LEMP stack" $boldyellow
-cecho "will take ~25-45 minutes" $boldyellow
+cecho "will take ~25-75 minutes" $boldyellow
 div
 s
 echo "yum -y update; curl -O https://centminmod.com/betainstaller74.sh && chmod 0700 betainstaller74.sh && bash betainstaller74.sh"
@@ -265,9 +265,9 @@ cecho "geekbench 5" $boldyellow
 div
 s
 cd /svr-setup
-wget -4 https://cdn.geekbench.com/Geekbench-5.2.5-Linux.tar.gz
-tar xvzf Geekbench-5.2.5-Linux.tar.gz
-cd Geekbench-5.2.5-Linux
+wget -4 https://cdn.geekbench.com/Geekbench-5.4.3-Linux.tar.gz
+tar xvzf Geekbench-5.4.3-Linux.tar.gz
+cd Geekbench-5.4.3-Linux
 ./geekbench5 2>&1 | tee geektest.log
 geekurl=$(cat geektest.log | awk -F ' ' '/https:\/\/browser.geekbench.com\/v5\/cpu\// {print $1}' | head -n1)
 curl -4s $geekurl > geekbench-raw.txt
