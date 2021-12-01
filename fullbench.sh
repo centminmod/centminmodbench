@@ -279,9 +279,9 @@ cecho "geekbench" $boldyellow
 div
 s
 cd /svr-setup
-wget http://cdn.geekbench.com/Geekbench-4.2.3-Linux.tar.gz
-tar xvzf Geekbench-4.2.3-Linux.tar.gz
-cd Geekbench-4.2.3-Linux
+wget -4 https://cdn.geekbench.com/Geekbench-4.4.4-Linux.tar.gz
+tar xvzf Geekbench-4.4.4-Linux.tar.gz
+cd Geekbench-4.4.4-Linux
 ./geekbench4 2>&1 | tee geektest.log
 geekurl=$(cat geektest.log | awk -F ' ' '/https:\/\/browser.geekbench.com\/v4\/cpu\// {print $1}' | head -n1)
 curl -4s $geekurl > geekbench-raw.txt
@@ -300,9 +300,9 @@ cecho "geekbench 5" $boldyellow
 div
 s
 cd /svr-setup
-wget http://cdn.geekbench.com/Geekbench-5.3.1-Linux.tar.gz
-tar xvzf Geekbench-5.3.1-Linux.tar.gz
-cd Geekbench-5.3.1-Linux
+wget -4 https://cdn.geekbench.com/Geekbench-5.4.3-Linux.tar.gz
+tar xvzf Geekbench-5.4.3-Linux.tar.gz
+cd Geekbench-5.4.3-Linux
 ./geekbench5 2>&1 | tee geektest.log
 geekurl=$(cat geektest.log | awk -F ' ' '/https:\/\/browser.geekbench.com\/v5\/cpu\// {print $1}' | head -n1)
 curl -4s $geekurl > geekbench-raw.txt
