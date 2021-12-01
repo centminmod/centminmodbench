@@ -8,7 +8,7 @@
 # variables
 #############
 DT=$(date +"%d%m%y-%H%M%S")
-VER='1.5'
+VER='1.6'
 SLEEP_TIME='10'
 HTTPS_BENCHCLEANUP='y'
 HTTPS_DUALCERT='y'
@@ -37,6 +37,7 @@ NON_CENTMINMODTESTA='n'
 NON_CENTMINMODTESTB='y'
 ###############################################################
 vhostname=http2.domain.com
+CNIP=$(curl -4s https://ipinfo.io/ip)
 ###############################################################
 # Setup Colours
 black='\E[30;40m'
@@ -565,10 +566,14 @@ if [[ "$NON_CENTMINMOD" = [nN] ]]; then
   s
   if [[ "$(ps aufx | grep -v grep | grep 'pure-ftpd' 2>&1>/dev/null; echo $?)" = '0' && ! -f /usr/local/nginx/conf/ssl_ecc.conf ]]; then
     echo "nv -d $vhostname -s y -u \"ftpu\$(pwgen -1cnys 31)\""
-    nv -d $vhostname -s y -u "ftpu$(pwgen -1cnys 31)"
+    echo
+    echo "creating http2.domain.com Nginx vhost..."
+    nv -d $vhostname -s y -u "ftpu$(pwgen -1cnys 31)" 2>&1 | sed -e "s|$CNIP|xxx.xxx.xxx.xxx|g" -e 's|FTP username created for http2.domain.com : .*|FTP username created for http2.domain.com : ******|g' -e 's|FTP password created for http2.domain.com : .*|FTP password created for http2.domain.com : ******|g'
   elif [[ ! -f /usr/local/nginx/conf/ssl_ecc.conf ]]; then
     echo "nv -d $vhostname -s y"
-    nv -d $vhostname -s y
+    echo
+    echo "creating http2.domain.com Nginx vhost..."
+    nv -d $vhostname -s y 2>&1 | sed -e "s|$CNIP|xxx.xxx.xxx.xxx|g" -e 's|FTP username created for http2.domain.com : .*|FTP username created for http2.domain.com : ******|g' -e 's|FTP password created for http2.domain.com : .*|FTP password created for http2.domain.com : ******|g'
   fi
   s
   
