@@ -563,12 +563,13 @@ if [[ "$NON_CENTMINMOD" = [nN] ]]; then
     echo "$SERVERIP $vhostname #h2load" >> /etc/hosts
   fi
   grep 'h2load' /etc/hosts | sed -e "s|$SERVERIP|server-ip-mask|"
+  ftpuser="ftpu$(pwgen -1cns 36)"
   s
   if [[ "$(ps aufx | grep -v grep | grep 'pure-ftpd' 2>&1>/dev/null; echo $?)" = '0' && ! -f /usr/local/nginx/conf/ssl_ecc.conf ]]; then
-    echo "nv -d $vhostname -s y -u \"ftpu\$(pwgen -1cnys 31)\""
+    echo "nv -d $vhostname -s y -u ${ftpuser}"
     echo
     echo "creating ${vhostname} Nginx vhost..."
-    nv -d "$vhostname" -s y -u "ftpu$(pwgen -1cnys 31)" 2>&1 | sed -e "s|$CNIP|xxx.xxx.xxx.xxx|g" -e "s|FTP username created for ${vhostname} : .*|FTP username created for ${vhostname} : ******|g" -e "s|FTP password created for ${vhostname} : .*|FTP password created for ${vhostname} : ******|g" -e "s|FTP password auto generated: .*|FTP password auto generated: *******|g"
+    nv -d "$vhostname" -s y -u "${ftpuser}" 2>&1 | sed -e "s|$CNIP|xxx.xxx.xxx.xxx|g" -e "s|FTP username created for ${vhostname} : .*|FTP username created for ${vhostname} : ******|g" -e "s|FTP password created for ${vhostname} : .*|FTP password created for ${vhostname} : ******|g" -e "s|FTP password auto generated: .*|FTP password auto generated: *******|g"  -e "s| pure-pw userdel .*| pure-pw userdel *******|g"
     if [ -f "/usr/local/nginx/conf/ssl/${vhostname}/dhparam.pem" ]; then
       \cp -af "/usr/local/nginx/conf/ssl/${vhostname}/dhparam.pem" /usr/local/nginx/conf/ssl/dhparam.pem
     fi
@@ -576,7 +577,7 @@ if [[ "$NON_CENTMINMOD" = [nN] ]]; then
     echo "nv -d $vhostname -s y"
     echo
     echo "creating ${vhostname} Nginx vhost..."
-    nv -d "$vhostname" -s y 2>&1 | sed -e "s|$CNIP|xxx.xxx.xxx.xxx|g" -e "s|FTP username created for ${vhostname} : .*|FTP username created for ${vhostname} : ******|g" -e "s|FTP password created for ${vhostname} : .*|FTP password created for ${vhostname} : ******|g" -e "s|FTP password auto generated: .*|FTP password auto generated: *******|g"
+    nv -d "$vhostname" -s y 2>&1 | sed -e "s|$CNIP|xxx.xxx.xxx.xxx|g" -e "s|FTP username created for ${vhostname} : .*|FTP username created for ${vhostname} : ******|g" -e "s|FTP password created for ${vhostname} : .*|FTP password created for ${vhostname} : ******|g" -e "s|FTP password auto generated: .*|FTP password auto generated: *******|g"  -e "s| pure-pw userdel .*| pure-pw userdel *******|g"
     if [ -f "/usr/local/nginx/conf/ssl/${vhostname}/dhparam.pem" ]; then
       \cp -af "/usr/local/nginx/conf/ssl/${vhostname}/dhparam.pem" /usr/local/nginx/conf/ssl/dhparam.pem
     fi
@@ -974,7 +975,7 @@ cleanup() {
     s
     echo "clean up https://$vhostname"
     if [[ "$(ps aufx | grep -v grep | grep 'pure-ftpd' 2>&1>/dev/null; echo $?)" = '0' ]]; then
-      cecho "pure-pw userdel $ftpuser" $boldwhite
+      echo "pure-pw userdel $ftpuser" | sed -e "s|pure-pw userdel .*|pure-pw userdel *******|g"
       pure-pw userdel $ftpuser
     fi
     cecho "rm -rf /usr/local/nginx/conf/conf.d/$vhostname.conf" $boldwhite
