@@ -8,7 +8,7 @@
 # variables
 #############
 DT=$(date +"%d%m%y-%H%M%S")
-VER='1.7'
+VER='1.8'
 SLEEP_TIME='10'
 HTTPS_BENCHCLEANUP='y'
 HTTPS_DUALCERT='y'
@@ -266,9 +266,11 @@ parsed() {
   # cipher
   echo
   cat "${CENTMINLOGDIR}/h2load-nginx-https-${DT}.log" | grep -v 'Process Request Failure:' | grep -A14 'h2load -t' | sed -e 's|TLS Protocol:|Protocol:|g' -e 's|Server Temp Key|Server-Temp-Key|g' -e 's|Application protocol|Application-protocol|g' | awk '/Cipher: / {print $2}' > /tmp/cipher.txt
-  echo "users requests req/s encoding cipher protocol started succeeded"
   paste -d ' ' /tmp/users.txt /tmp/requests.txt /tmp/rps.txt /tmp/encoding.txt /tmp/cipher.txt /tmp/protocol.txt /tmp/started.txt /tmp/succeeded.txt > /tmp/https_parsed.txt
-  cat /tmp/https_parsed.txt
+  sed -n "1,2p" /tmp/https_parsed.txt > /tmp/https_parsed-100-1000-rsa.txt
+  sed -n "3,4p" /tmp/https_parsed.txt > /tmp/https_parsed-100-1000-ecdsa.txt
+  sed -n "5,6p" /tmp/https_parsed.txt > /tmp/https_parsed-300-6000-rsa.txt
+  sed -n "7,8p" /tmp/https_parsed.txt > /tmp/https_parsed-300-6000-ecdsa.txt
 
    if [[ "$NON_CENTMINMOD" = [nN] ]]; then
     if [[ -f $(which yum) && ! -f /usr/bin/datamash ]]; then
@@ -283,6 +285,8 @@ parsed() {
     if [[ -f /usr/bin/apt-get && ! -f /usr/bin/bc ]]; then
       apt-get -y install bc
     fi
+    #######################################################################
+    # all results
     parsed_sum=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 sum 1)
     parsed_sum=$(printf "%.0f\n" $parsed_sum)
     parsed_count=$(cat /tmp/https_parsed.txt | awk '{print $3}' | datamash --no-strict --filler 0 count 1)
@@ -301,13 +305,142 @@ parsed() {
     # parsed_percsuccess=$((($parsed_succeed/$parsed_started)*100))
     parsed_percsuccess=$(echo "scale=2; $parsed_succeed/$parsed_started*100" | bc)
     parsed_percsuccess=$(printf "%.2f\n" $parsed_percsuccess)
+    #######################################################################
+    # 100-1000 rsa
+    rsa_low_parsed_sum=$(cat /tmp/https_parsed-100-1000-rsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 sum 1)
+    rsa_low_parsed_sum=$(printf "%.0f\n" $rsa_low_parsed_sum)
+    rsa_low_parsed_count=$(cat /tmp/https_parsed-100-1000-rsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 count 1)
+    rsa_low_parsed_min=$(cat /tmp/https_parsed-100-1000-rsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 min 1)
+    rsa_low_parsed_min=$(printf "%.3f\n" $rsa_low_parsed_min)
+    # rsa_low_parsed_avg=$(($rsa_low_parsed_sum/$rsa_low_parsed_count))
+    # rsa_low_parsed_avg=${rsa_low_parsed_avg:-0}
+    rsa_low_parsed_max=$(cat /tmp/https_parsed-100-1000-rsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 max 1)
+    rsa_low_parsed_max=$(printf "%.3f\n" $rsa_low_parsed_max)
+    rsa_low_parsed_mean=$(cat /tmp/https_parsed-100-1000-rsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 mean 1)
+    rsa_low_parsed_mean=$(printf "%.3f\n" $rsa_low_parsed_mean)
+    rsa_low_parsed_stddev=$(cat /tmp/https_parsed-100-1000-rsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 sstdev 1)
+    rsa_low_parsed_stddev=$(printf "%.3f\n" $rsa_low_parsed_stddev)
+    rsa_low_parsed_started=$(cat /tmp/https_parsed-100-1000-rsa.txt | awk '{print $7}' | datamash --no-strict --filler 0 mean 1)
+    rsa_low_parsed_succeed=$(cat /tmp/https_parsed-100-1000-rsa.txt | awk '{print $8}' | datamash --no-strict --filler 0 mean 1)
+    # rsa_low_parsed_percsuccess=$((($rsa_low_parsed_succeed/$rsa_low_parsed_started)*100))
+    rsa_low_parsed_percsuccess=$(echo "scale=2; $rsa_low_parsed_succeed/$rsa_low_parsed_started*100" | bc)
+    rsa_low_parsed_percsuccess=$(printf "%.2f\n" $rsa_low_parsed_percsuccess)
+    #######################################################################
+    # 100-1000 ecdsa
+    ecdsa_low_parsed_sum=$(cat /tmp/https_parsed-100-1000-ecdsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 sum 1)
+    ecdsa_low_parsed_sum=$(printf "%.0f\n" $ecdsa_low_parsed_sum)
+    ecdsa_low_parsed_count=$(cat /tmp/https_parsed-100-1000-ecdsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 count 1)
+    ecdsa_low_parsed_min=$(cat /tmp/https_parsed-100-1000-ecdsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 min 1)
+    ecdsa_low_parsed_min=$(printf "%.3f\n" $ecdsa_low_parsed_min)
+    # ecdsa_low_parsed_avg=$(($ecdsa_low_parsed_sum/$ecdsa_low_parsed_count))
+    # ecdsa_low_parsed_avg=${ecdsa_low_parsed_avg:-0}
+    ecdsa_low_parsed_max=$(cat /tmp/https_parsed-100-1000-ecdsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 max 1)
+    ecdsa_low_parsed_max=$(printf "%.3f\n" $ecdsa_low_parsed_max)
+    ecdsa_low_parsed_mean=$(cat /tmp/https_parsed-100-1000-ecdsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 mean 1)
+    ecdsa_low_parsed_mean=$(printf "%.3f\n" $ecdsa_low_parsed_mean)
+    ecdsa_low_parsed_stddev=$(cat /tmp/https_parsed-100-1000-ecdsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 sstdev 1)
+    ecdsa_low_parsed_stddev=$(printf "%.3f\n" $ecdsa_low_parsed_stddev)
+    ecdsa_low_parsed_started=$(cat /tmp/https_parsed-100-1000-ecdsa.txt | awk '{print $7}' | datamash --no-strict --filler 0 mean 1)
+    ecdsa_low_parsed_succeed=$(cat /tmp/https_parsed-100-1000-ecdsa.txt | awk '{print $8}' | datamash --no-strict --filler 0 mean 1)
+    # ecdsa_low_parsed_percsuccess=$((($ecdsa_low_parsed_succeed/$ecdsa_low_parsed_started)*100))
+    ecdsa_low_parsed_percsuccess=$(echo "scale=2; $ecdsa_low_parsed_succeed/$ecdsa_low_parsed_started*100" | bc)
+    ecdsa_low_parsed_percsuccess=$(printf "%.2f\n" $ecdsa_low_parsed_percsuccess)
+    #######################################################################
+    # 300-6000 rsa
+    rsa_high_parsed_sum=$(cat /tmp/https_parsed-300-6000-rsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 sum 1)
+    rsa_high_parsed_sum=$(printf "%.0f\n" $rsa_high_parsed_sum)
+    rsa_high_parsed_count=$(cat /tmp/https_parsed-300-6000-rsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 count 1)
+    rsa_high_parsed_min=$(cat /tmp/https_parsed-300-6000-rsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 min 1)
+    rsa_high_parsed_min=$(printf "%.3f\n" $rsa_high_parsed_min)
+    # rsa_high_parsed_avg=$(($rsa_high_parsed_sum/$rsa_high_parsed_count))
+    # rsa_high_parsed_avg=${rsa_high_parsed_avg:-0}
+    rsa_high_parsed_max=$(cat /tmp/https_parsed-300-6000-rsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 max 1)
+    rsa_high_parsed_max=$(printf "%.3f\n" $rsa_high_parsed_max)
+    rsa_high_parsed_mean=$(cat /tmp/https_parsed-300-6000-rsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 mean 1)
+    rsa_high_parsed_mean=$(printf "%.3f\n" $rsa_high_parsed_mean)
+    rsa_high_parsed_stddev=$(cat /tmp/https_parsed-300-6000-rsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 sstdev 1)
+    rsa_high_parsed_stddev=$(printf "%.3f\n" $rsa_high_parsed_stddev)
+    rsa_high_parsed_started=$(cat /tmp/https_parsed-300-6000-rsa.txt | awk '{print $7}' | datamash --no-strict --filler 0 mean 1)
+    rsa_high_parsed_succeed=$(cat /tmp/https_parsed-300-6000-rsa.txt | awk '{print $8}' | datamash --no-strict --filler 0 mean 1)
+    # rsa_high_parsed_percsuccess=$((($rsa_high_parsed_succeed/$rsa_high_parsed_started)*100))
+    rsa_high_parsed_percsuccess=$(echo "scale=2; $rsa_high_parsed_succeed/$rsa_high_parsed_started*100" | bc)
+    rsa_high_parsed_percsuccess=$(printf "%.2f\n" $rsa_high_parsed_percsuccess)
+    #######################################################################
+    # 300-6000 ecdsa
+    ecdsa_high_parsed_sum=$(cat /tmp/https_parsed-300-6000-ecdsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 sum 1)
+    ecdsa_high_parsed_sum=$(printf "%.0f\n" $ecdsa_high_parsed_sum)
+    ecdsa_high_parsed_count=$(cat /tmp/https_parsed-300-6000-ecdsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 count 1)
+    ecdsa_high_parsed_min=$(cat /tmp/https_parsed-300-6000-ecdsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 min 1)
+    ecdsa_high_parsed_min=$(printf "%.3f\n" $ecdsa_high_parsed_min)
+    # ecdsa_high_parsed_avg=$(($ecdsa_high_parsed_sum/$ecdsa_high_parsed_count))
+    # ecdsa_high_parsed_avg=${ecdsa_high_parsed_avg:-0}
+    ecdsa_high_parsed_max=$(cat /tmp/https_parsed-300-6000-ecdsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 max 1)
+    ecdsa_high_parsed_max=$(printf "%.3f\n" $ecdsa_high_parsed_max)
+    ecdsa_high_parsed_mean=$(cat /tmp/https_parsed-300-6000-ecdsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 mean 1)
+    ecdsa_high_parsed_mean=$(printf "%.3f\n" $ecdsa_high_parsed_mean)
+    ecdsa_high_parsed_stddev=$(cat /tmp/https_parsed-300-6000-ecdsa.txt | awk '{print $3}' | datamash --no-strict --filler 0 sstdev 1)
+    ecdsa_high_parsed_stddev=$(printf "%.3f\n" $ecdsa_high_parsed_stddev)
+    ecdsa_high_parsed_started=$(cat /tmp/https_parsed-300-6000-ecdsa.txt | awk '{print $7}' | datamash --no-strict --filler 0 mean 1)
+    ecdsa_high_parsed_succeed=$(cat /tmp/https_parsed-300-6000-ecdsa.txt | awk '{print $8}' | datamash --no-strict --filler 0 mean 1)
+    # ecdsa_high_parsed_percsuccess=$((($ecdsa_high_parsed_succeed/$ecdsa_high_parsed_started)*100))
+    ecdsa_high_parsed_percsuccess=$(echo "scale=2; $ecdsa_high_parsed_succeed/$ecdsa_high_parsed_started*100" | bc)
+    ecdsa_high_parsed_percsuccess=$(printf "%.2f\n" $ecdsa_high_parsed_percsuccess)
+    #######################################################################
+    # all
     echo
     echo "-------------------------------------------------------------------------------------------"
-    echo "h2load result summary"
+    echo "h2load result summary: all"
+    echo "users requests req/s encoding cipher protocol started succeeded"
+    cat /tmp/https_parsed.txt
     echo "min: avg: max: stddev: requests-succeeded:" > /tmp/https_parsed_datamash.txt
     echo "$parsed_min $parsed_mean $parsed_max $parsed_stddev $parsed_percsuccess" >> /tmp/https_parsed_datamash.txt
     cat /tmp/https_parsed_datamash.txt | column -t
     echo "-------------------------------------------------------------------------------------------"
+    #######################################################################
+    # 100-1000 rsa
+    echo
+    echo "-------------------------------------------------------------------------------------------"
+    echo "h2load result summary: 100-1000 rsa"
+    echo "users requests req/s encoding cipher protocol started succeeded"
+    cat /tmp/https_parsed-100-1000-rsa.txt
+    echo "min: avg: max: stddev: requests-succeeded:" > /tmp/https_parsed_datamash-100-1000-rsa.txt
+    echo "$rsa_low_parsed_min $rsa_low_parsed_mean $rsa_low_parsed_max $rsa_low_parsed_stddev $rsa_low_parsed_percsuccess" >> /tmp/https_parsed_datamash-100-1000-rsa.txt
+    cat /tmp/https_parsed_datamash-100-1000-rsa.txt | column -t
+    echo "-------------------------------------------------------------------------------------------"
+    #######################################################################
+    # 100-1000 ecdsa
+    echo
+    echo "-------------------------------------------------------------------------------------------"
+    echo "h2load result summary: 100-1000 ecdsa"
+    echo "users requests req/s encoding cipher protocol started succeeded"
+    cat /tmp/https_parsed-100-1000-ecdsa.txt
+    echo "min: avg: max: stddev: requests-succeeded:" > /tmp/https_parsed_datamash-100-1000-ecdsa.txt
+    echo "$ecdsa_low_parsed_min $ecdsa_low_parsed_mean $ecdsa_low_parsed_max $ecdsa_low_parsed_stddev $ecdsa_low_parsed_percsuccess" >> /tmp/https_parsed_datamash-100-1000-ecdsa.txt
+    cat /tmp/https_parsed_datamash-100-1000-ecdsa.txt | column -t
+    echo "-------------------------------------------------------------------------------------------"
+    #######################################################################
+    # 300-6000 rsa
+    echo
+    echo "-------------------------------------------------------------------------------------------"
+    echo "h2load result summary: 300-6000 rsa"
+    echo "users requests req/s encoding cipher protocol started succeeded"
+    cat /tmp/https_parsed-300-6000-rsa.txt
+    echo "min: avg: max: stddev: requests-succeeded:" > /tmp/https_parsed_datamash-300-6000-rsa.txt
+    echo "$rsa_high_parsed_min $rsa_high_parsed_mean $rsa_high_parsed_max $rsa_high_parsed_stddev $rsa_high_parsed_percsuccess" >> /tmp/https_parsed_datamash-300-6000-rsa.txt
+    cat /tmp/https_parsed_datamash-300-6000-rsa.txt | column -t
+    echo "-------------------------------------------------------------------------------------------"
+    #######################################################################
+    # 300-6000 ecdsa
+    echo
+    echo "-------------------------------------------------------------------------------------------"
+    echo "h2load result summary: 300-6000 ecdsa"
+    echo "users requests req/s encoding cipher protocol started succeeded"
+    cat /tmp/https_parsed-300-6000-ecdsa.txt
+    echo "min: avg: max: stddev: requests-succeeded:" > /tmp/https_parsed_datamash-300-6000-ecsdsa.txt
+    echo "$ecdsa_high_parsed_min $ecdsa_high_parsed_mean $ecdsa_high_parsed_max $ecdsa_high_parsed_stddev $ecdsa_high_parsed_percsuccess" >> /tmp/https_parsed_datamash-300-6000-ecsdsa.txt
+    cat /tmp/https_parsed_datamash-300-6000-ecsdsa.txt | column -t
+    echo "-------------------------------------------------------------------------------------------"
+    #######################################################################
     echo "h2load result summary end"
   fi
 
@@ -536,6 +669,8 @@ parsed() {
 
   fi
   rm -rf /tmp/users.txt /tmp/requests.txt /tmp/rps.txt /tmp/encoding.txt /tmp/cipher.txt /tmp/protocol.txt /tmp/started.txt /tmp/succeeded.txt /tmp/https_parsed.txt /tmp/https_parsed_datamash.txt
+  rm -rf /tmp/https_parsed-100-1000-rsa.txt /tmp/https_parsed-100-1000-ecdsa.txt /tmp/https_parsed-300-6000-rsa.txt /tmp/https_parsed-300-6000-ecdsa.txt
+  rm -rf /tmp/https_parsed_datamash-100-1000-rsa.txt /tmp/https_parsed_datamash-100-1000-ecdsa.txt /tmp/https_parsed_datamash-300-6000-rsa.txt /tmp/https_parsed_datamash-300-6000-ecsdsa.txt
   rm -rf /tmp/latency-requests-min.txt /tmp/latency-requests-avg.txt /tmp/latency-requests-max.txt
   rm -rf /tmp/latency-connect-min.txt /tmp/latency-connect-avg.txt /tmp/latency-connect-max.txt
   rm -rf /tmp/latency-ttfb-min.txt /tmp/latency-ttfb-avg.txt /tmp/latency-ttfb-max.txt
@@ -566,7 +701,7 @@ if [[ "$NON_CENTMINMOD" = [nN] ]]; then
   ftpuser="ftpu$(pwgen -1cns 36)"
   s
   if [[ "$(ps aufx | grep -v grep | grep 'pure-ftpd' 2>&1>/dev/null; echo $?)" = '0' && ! -f /usr/local/nginx/conf/ssl_ecc.conf ]]; then
-    echo "nv -d $vhostname -s y -u ${ftpuser}"
+    echo "nv -d $vhostname -s y -u ${ftpuser}" | sed -e "s|${ftpuser}|*******|"
     echo
     echo "creating ${vhostname} Nginx vhost..."
     nv -d "$vhostname" -s y -u "${ftpuser}" 2>&1 | sed -e "s|$CNIP|xxx.xxx.xxx.xxx|g" -e "s|FTP username created for ${vhostname} : .*|FTP username created for ${vhostname} : ******|g" -e "s|FTP password created for ${vhostname} : .*|FTP password created for ${vhostname} : ******|g" -e "s|FTP password auto generated: .*|FTP password auto generated: *******|g"  -e "s| pure-pw userdel .*| pure-pw userdel *******|g"
