@@ -8,7 +8,7 @@
 # variables
 #############
 DT=$(date +"%d%m%y-%H%M%S")
-VER='1.6'
+VER='1.7'
 SLEEP_TIME='10'
 HTTPS_BENCHCLEANUP='y'
 HTTPS_DUALCERT='y'
@@ -567,13 +567,19 @@ if [[ "$NON_CENTMINMOD" = [nN] ]]; then
   if [[ "$(ps aufx | grep -v grep | grep 'pure-ftpd' 2>&1>/dev/null; echo $?)" = '0' && ! -f /usr/local/nginx/conf/ssl_ecc.conf ]]; then
     echo "nv -d $vhostname -s y -u \"ftpu\$(pwgen -1cnys 31)\""
     echo
-    echo "creating http2.domain.com Nginx vhost..."
-    nv -d $vhostname -s y -u "ftpu$(pwgen -1cnys 31)" 2>&1 | sed -e "s|$CNIP|xxx.xxx.xxx.xxx|g" -e 's|FTP username created for http2.domain.com : .*|FTP username created for http2.domain.com : ******|g' -e 's|FTP password created for http2.domain.com : .*|FTP password created for http2.domain.com : ******|g'
+    echo "creating ${vhostname} Nginx vhost..."
+    nv -d "$vhostname" -s y -u "ftpu$(pwgen -1cnys 31)" 2>&1 | sed -e "s|$CNIP|xxx.xxx.xxx.xxx|g" -e "s|FTP username created for ${vhostname} : .*|FTP username created for ${vhostname} : ******|g" -e "s|FTP password created for ${vhostname} : .*|FTP password created for ${vhostname} : ******|g" -e "s|FTP password auto generated: .*|FTP password auto generated: *******|g"
+    if [ -f "/usr/local/nginx/conf/ssl/${vhostname}/dhparam.pem" ]; then
+      \cp -af "/usr/local/nginx/conf/ssl/${vhostname}/dhparam.pem" /usr/local/nginx/conf/ssl/dhparam.pem
+    fi
   elif [[ ! -f /usr/local/nginx/conf/ssl_ecc.conf ]]; then
     echo "nv -d $vhostname -s y"
     echo
-    echo "creating http2.domain.com Nginx vhost..."
-    nv -d $vhostname -s y 2>&1 | sed -e "s|$CNIP|xxx.xxx.xxx.xxx|g" -e 's|FTP username created for http2.domain.com : .*|FTP username created for http2.domain.com : ******|g' -e 's|FTP password created for http2.domain.com : .*|FTP password created for http2.domain.com : ******|g'
+    echo "creating ${vhostname} Nginx vhost..."
+    nv -d "$vhostname" -s y 2>&1 | sed -e "s|$CNIP|xxx.xxx.xxx.xxx|g" -e "s|FTP username created for ${vhostname} : .*|FTP username created for ${vhostname} : ******|g" -e "s|FTP password created for ${vhostname} : .*|FTP password created for ${vhostname} : ******|g" -e "s|FTP password auto generated: .*|FTP password auto generated: *******|g"
+    if [ -f "/usr/local/nginx/conf/ssl/${vhostname}/dhparam.pem" ]; then
+      \cp -af "/usr/local/nginx/conf/ssl/${vhostname}/dhparam.pem" /usr/local/nginx/conf/ssl/dhparam.pem
+    fi
   fi
   s
   
